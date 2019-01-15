@@ -5,7 +5,8 @@
   "version": "0.1.0",
   "require": {
     "php": "~7.0.0|~7.1.0",
-    "magento/product-community-edition": "^2.2.6"
+    "magento/framework" : "101.0.*",
+    "magento/module-catalog-search": "^100.2.5"
   },
   "autoload": {
     "files": [ "registration.php" ],
