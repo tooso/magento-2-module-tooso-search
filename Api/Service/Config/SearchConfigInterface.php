@@ -1,6 +1,6 @@
 <?php
 
-namespace Bitbull\Tooso\Api\Service;
+namespace Bitbull\Tooso\Api\Service\Config;
 
 /**
  * @category Bitbull
@@ -29,4 +29,11 @@ interface SearchConfigInterface
      * @return string
      */
     public function getApiBaseUrl();
+
+    /**
+     * Is search response enriched
+     *
+     * @return boolean
+     */
+    public function isEnriched();
 }

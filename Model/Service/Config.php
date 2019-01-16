@@ -1,6 +1,6 @@
 <?php
 
-namespace Bitbull\Tooso\Service;
+namespace Bitbull\Tooso\Model\Service;
 
 use Bitbull\Tooso\Api\Service\ConfigInterface;
 

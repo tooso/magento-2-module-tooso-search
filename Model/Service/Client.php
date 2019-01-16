@@ -1,41 +1,46 @@
 <?php
 
-namespace Bitbull\Tooso\Service;
+namespace Bitbull\Tooso\Model\Service;
 
 use Bitbull\Tooso\Api\Service\ClientInterface;
 use Bitbull\Tooso\Api\Service\ConfigInterface;
-use \Tooso\SDK\ClientInterface as SDKClientInterface;
-use \Tooso\SDK\Client as SDKClient;
+use Tooso\SDK\ClientBuilder;
 
 class Client implements ClientInterface
 {
     /**
-     * @var SDKClientInterface
+     * @var ConfigInterface
      */
-    protected $client;
+    protected $config;
+
+    /**
+     * @var ClientBuilder
+     */
+    protected $clientBuilder;
 
     /**
      * Client constructor.
      *
      * @param ConfigInterface $config
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function __construct(ConfigInterface $config)
     {
-        $this->client = new SDKClient(
-            $config->getApiKey(),
-            $config->getApiVersion(),
-            $config->getApiBaseUrl(),
-            $config->getLanguage(),
-            $config->getStoreCode()
-        );
+        $this->config = $config;
+        $this->clientBuilder = new ClientBuilder();
     }
 
     /**
      * @inheritdoc
      */
-    public function getClient()
+    public function build()
     {
-        return $this->client;
+        return $this->clientBuilder
+                ->withApiKey($this->config->getApiKey())
+                ->withApiVersion($this->config->getApiVersion())
+                ->withApiBaseUrl($this->config->getApiBaseUrl())
+                ->withLanguage($this->config->getLanguage())
+                ->withStoreCode($this->config->getStoreCode())
+                ->withAgent('New super-cool Magento2 module')
+                ->build();
     }
 }

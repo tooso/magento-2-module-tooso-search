@@ -16,5 +16,5 @@ interface ClientInterface
      *
      * @return SDKClientInterface
      */
-    public function getClient();
+    public function build();
 }

@@ -2,6 +2,8 @@
 
 namespace Bitbull\Tooso\Api\Service;
 
+use \Tooso\SDK\Search\Result;
+
 /**
  * @category Bitbull
  * @package  Bitbull_Tooso
@@ -9,5 +11,12 @@ namespace Bitbull\Tooso\Api\Service;
  */
 interface SearchInterface
 {
-
+    /**
+     * Execute Tooso search
+     *
+     * @param string $query
+     * @param boolean $typoCorrection
+     * @return Result
+     */
+    public function execute($query, $typoCorrection = true);
 }

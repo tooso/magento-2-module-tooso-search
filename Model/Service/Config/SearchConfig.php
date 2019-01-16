@@ -1,8 +1,8 @@
 <?php
 
-namespace Bitbull\Tooso\Service;
+namespace Bitbull\Tooso\Model\Service\Config;
 
-use Bitbull\Tooso\Api\Service\SearchConfigInterface;
+use Bitbull\Tooso\Api\Service\Config\SearchConfigInterface;
 
 class SearchConfig implements SearchConfigInterface
 {
@@ -45,4 +45,11 @@ class SearchConfig implements SearchConfigInterface
 
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function isEnriched()
+    {
+
+    }
 }

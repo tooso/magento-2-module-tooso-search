@@ -4,6 +4,7 @@ namespace Bitbull\Tooso\Plugin\Model\Layer\Search\CollectionFilter;
 
 use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
+use Bitbull\Tooso\Api\Service\SearchInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Search\Model\QueryFactory;
 
@@ -21,14 +22,22 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
     protected $config = null;
 
     /**
+     * @var SearchInterface|null
+     */
+    protected $search = null;
+
+    /**
      * @param QueryFactory $queryFactory
      * @param LoggerInterface $logger
+     * @param ConfigInterface $config
+     * @param SearchInterface $search
      */
-    public function __construct(QueryFactory $queryFactory, LoggerInterface $logger, ConfigInterface $config)
+    public function __construct(QueryFactory $queryFactory, LoggerInterface $logger, ConfigInterface $config, SearchInterface $search)
     {
         parent::__construct($queryFactory);
         $this->logger = $logger;
         $this->config = $config;
+        $this->search = $search;
     }
 
     /**
@@ -45,11 +54,14 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         /** @var string $queryText */
         $queryText = $query->getQueryText();
 
-        $this->logger->debug("Searching for '$queryText'");
         if ($this->config->isSearchEnabled() !== true){
-            return parent::afterFilter($subject, $result, $collection, $category);
+            $this->logger->debug('[search] Tooso search is disable, using default Magento search');
+            parent::afterFilter($subject, $result, $collection, $category);
+            return;
         }
 
-
+        $this->logger->debug("[search] Searching for '$queryText'");
+        $result = $this->search->execute($queryText);
+        $this->logger->debug('[search] Tooso response: '.print_r($result, true));
     }
 }

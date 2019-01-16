@@ -1,24 +1,42 @@
 <?php
 
-namespace Bitbull\Tooso\Service;
+namespace Bitbull\Tooso\Model\Service;
 
-use Bitbull\Tooso\Api\Service\ConfigInterface;
+use Bitbull\Tooso\Api\Service\ClientInterface;
+use Bitbull\Tooso\Api\Service\Config\SearchConfigInterface;
 use Bitbull\Tooso\Api\Service\SearchInterface;
+use Tooso\SDK\Exception;
 
 class Search implements SearchInterface
 {
     /**
-     * @var ConfigInterface
+     * @var ClientInterface
+     */
+    protected $client;
+
+    /**
+     * @var SearchConfigInterface
      */
     protected $config;
 
     /**
      * Search constructor.
      *
-     * @param ConfigInterface $config
+     * @param ClientInterface $client
+     * @param SearchConfigInterface $config
      */
-    public function __construct(ConfigInterface $config)
+    public function __construct(ClientInterface $client, SearchConfigInterface $config)
     {
+        $this->client = $client;
         $this->config = $config;
+    }
+
+    /**
+     * @inheritdoc
+     * @throws Exception
+     */
+    public function execute($query, $typoCorrection = true)
+    {
+        return $this->client->build()->search($query, $typoCorrection, [], $this->config->isEnriched());
     }
 }

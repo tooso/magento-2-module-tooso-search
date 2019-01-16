@@ -1,12 +1,11 @@
 <?php
 
-namespace Bitbull\Tooso\Service;
+namespace Bitbull\Tooso\Model\Service;
 
 use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Tooso\SDK\Exception;
 use Magento\Framework\Logger\Monolog;
-
 
 class Logger implements LoggerInterface
 {
