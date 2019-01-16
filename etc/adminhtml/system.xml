@@ -6,10 +6,27 @@
             <label>Tooso Search Engine</label>
             <tab>catalog</tab>
             <resource>Bitbull_Tooso::search_config</resource>
-            <group id="active" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+            <group id="active" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Active Tooso</label>
-                <field id="frontend" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="frontend" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Search</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+            <group id="server" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>API Configuration</label>
+                <field id="api_key" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API key</label>
+                </field>
+                <field id="api_version" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API Version</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\ApiVersions</source_model>
+                </field>
+                <field id="api_base_url" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API base url</label>
+                </field>
+                <field id="debug_mode" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Debug mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>

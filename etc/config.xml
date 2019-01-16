@@ -1,10 +1,18 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
-        <tooso_search>
-            <general>
-                <enable>1</enable>
-            </general>
-        </tooso_search>
+        <tooso>
+            <active>
+                <frontend>1</frontend>
+            </active>
+            <server>
+                <api_key />
+                <api_base_url>https://api.tooso.ai</api_base_url>
+                <api_version>3</api_version>
+                <send_report>1</send_report>
+                <force_log>1</force_log>
+                <debug_mode>0</debug_mode>
+            </server>
+        </tooso>
     </default>
 </config>
