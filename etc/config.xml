@@ -7,7 +7,7 @@
             </active>
             <server>
                 <api_key />
-                <api_base_url>https://api.tooso.ai</api_base_url>
+                <api_base_url>https://v3dev.api.tooso.ai/</api_base_url>
                 <api_version>3</api_version>
                 <send_report>1</send_report>
                 <force_log>1</force_log>

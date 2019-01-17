@@ -21,6 +21,9 @@
     <preference for="Bitbull\Tooso\Api\Service\Config\SearchConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config\SearchConfig" />
 
+    <preference for="Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface"
+                type="Bitbull\Tooso\Model\Service\Config\AnalyticsConfig" />
+
     <preference for="Bitbull\Tooso\Api\Service\ConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config" />
 
@@ -32,4 +35,11 @@
 
     <preference for="Bitbull\Tooso\Api\Service\SearchInterface"
                 type="Bitbull\Tooso\Model\Service\Search" />
+
+    <preference for="Bitbull\Tooso\Api\Service\SessionInterface"
+                type="Bitbull\Tooso\Model\Service\Session" />
+
+    <preference for="Bitbull\Tooso\Api\Service\TrackingInterface"
+                type="Bitbull\Tooso\Model\Service\Tracking" />
+
 </config>

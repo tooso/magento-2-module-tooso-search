@@ -4,6 +4,8 @@ namespace Bitbull\Tooso\Model\Service;
 
 use Bitbull\Tooso\Api\Service\ClientInterface;
 use Bitbull\Tooso\Api\Service\ConfigInterface;
+use Bitbull\Tooso\Api\Service\LoggerInterface;
+use Bitbull\Tooso\Api\Service\TrackingInterface;
 use Tooso\SDK\ClientBuilder;
 
 class Client implements ClientInterface
@@ -19,13 +21,27 @@ class Client implements ClientInterface
     protected $clientBuilder;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $tracking;
+
+    /**
      * Client constructor.
      *
      * @param ConfigInterface $config
+     * @param TrackingInterface $tracking
+     * @param LoggerInterface $logger
      */
-    public function __construct(ConfigInterface $config)
+    public function __construct(ConfigInterface $config, TrackingInterface $tracking, LoggerInterface $logger)
     {
         $this->config = $config;
+        $this->logger = $logger;
+        $this->tracking = $tracking;
         $this->clientBuilder = new ClientBuilder();
     }
 
@@ -40,7 +56,8 @@ class Client implements ClientInterface
                 ->withApiBaseUrl($this->config->getApiBaseUrl())
                 ->withLanguage($this->config->getLanguage())
                 ->withStoreCode($this->config->getStoreCode())
-                ->withAgent('New super-cool Magento2 module')
+                ->withAgent($this->tracking->getApiAgent())
+                ->withLogger($this->logger)
                 ->build();
     }
 }

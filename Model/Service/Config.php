@@ -3,6 +3,8 @@
 namespace Bitbull\Tooso\Model\Service;
 
 use Bitbull\Tooso\Api\Service\ConfigInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Config implements ConfigInterface
 {
@@ -14,22 +16,22 @@ class Config implements ConfigInterface
     const XML_PATH_DEBUG_MODE = 'tooso/server/debug_mode';
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @var ScopeConfigInterface
      */
     protected $scopeConfig;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
     protected $storeManager;
 
     /**
      * Config constructor.
      *
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param ScopeConfigInterface $scopeConfig
+     * @param StoreManagerInterface $storeManager
      */
-    public function __construct(\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig, \Magento\Store\Model\StoreManagerInterface $storeManager)
+    public function __construct(ScopeConfigInterface $scopeConfig, StoreManagerInterface $storeManager)
     {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;

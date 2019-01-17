@@ -3,20 +3,21 @@
 namespace Bitbull\Tooso\Model\Service\Config;
 
 use Bitbull\Tooso\Api\Service\Config\SearchConfigInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class SearchConfig implements SearchConfigInterface
 {
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @var ScopeConfigInterface
      */
     protected $scopeConfig;
 
     /**
      * Config constructor.
      *
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     * @param ScopeConfigInterface $scopeConfig
      */
-    public function __construct(\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig)
+    public function __construct(ScopeConfigInterface $scopeConfig)
     {
         $this->scopeConfig = $scopeConfig;
     }
@@ -24,32 +25,8 @@ class SearchConfig implements SearchConfigInterface
     /**
      * @inheritdoc
      */
-    public function getApiKey()
-    {
-
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getApiVersion()
-    {
-
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getApiBaseUrl()
-    {
-
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function isEnriched()
     {
-
+        return false;
     }
 }
