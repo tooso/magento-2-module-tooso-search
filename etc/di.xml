@@ -30,9 +30,6 @@
     <preference for="Bitbull\Tooso\Api\Service\LoggerInterface"
                 type="Bitbull\Tooso\Model\Service\Logger" />
 
-    <preference for="Bitbull\Tooso\Api\Service\ClientInterface"
-                type="Bitbull\Tooso\Model\Service\Client" />
-
     <preference for="Bitbull\Tooso\Api\Service\SearchInterface"
                 type="Bitbull\Tooso\Model\Service\Search" />
 

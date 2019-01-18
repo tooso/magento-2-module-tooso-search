@@ -9,6 +9,7 @@ use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Customer\Model\Session as CustomerSession;
+use Tooso\SDK\ClientBuilder;
 
 class Session implements SessionInterface
 {
@@ -55,6 +56,12 @@ class Session implements SessionInterface
     protected $tracking;
 
     /**
+     * @var ClientBuilder
+     */
+    protected $clientBuilder;
+
+
+    /**
      * @param SessionManagerInterface $sessionManager
      * @param CustomerSession $session,
      * @param CookieManagerInterface $cookieManager
@@ -73,6 +80,7 @@ class Session implements SessionInterface
         $this->analyticsConfig = $analyticsConfig;
         $this->cookieManager = $cookieManager;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
+        $this->clientBuilder = new ClientBuilder();
     }
 
     /**
@@ -141,17 +149,13 @@ class Session implements SessionInterface
     }
 
     /**
-     * @inheritdoc
+     * Generate new client ID
+     *
+     * @return string
      */
     private function _generateClientId()
     {
-        $uuid = sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
-            mt_rand( 0, 0xffff ),
-            mt_rand( 0, 0x0fff ) | 0x4000,
-            mt_rand( 0, 0x3fff ) | 0x8000,
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
-        );
-        return 'TA.'.$uuid;
+        $uuid = $this->clientBuilder->build()->getUuid();
+        return 'TA.'.$uuid; //TODO: use constant
     }
 }

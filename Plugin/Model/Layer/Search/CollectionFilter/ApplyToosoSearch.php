@@ -7,6 +7,7 @@ use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\SearchInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Search\Model\QueryFactory;
+use Tooso\SDK\Search\Result;
 
 class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter
 {
@@ -61,7 +62,10 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         }
 
         $this->logger->debug("[search] Searching for '$queryText'");
+        /** @var Result $result */
         $result = $this->search->execute($queryText);
-        $this->logger->debug('[search] Tooso response: '.print_r($result, true));
+        $products = $result->getResults();
+        $collection->addFieldToFilter('entity_id', array('in' => (sizeof($products) > 0) ? $products : array(0)));
+        $this->logger->debug('[search] Searching query updated');
     }
 }

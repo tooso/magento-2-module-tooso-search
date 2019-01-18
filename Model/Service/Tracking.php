@@ -2,7 +2,6 @@
 
 namespace Bitbull\Tooso\Model\Service;
 
-use Bitbull\Tooso\Api\Service\ClientInterface;
 use Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\SessionInterface;
@@ -45,11 +44,6 @@ class Tracking implements TrackingInterface
     protected $url;
 
     /**
-     * @var ClientInterface
-     */
-    protected $client;
-
-    /**
      * @var AnalyticsConfigInterface
      */
     private $analyticsConfig;
@@ -63,6 +57,7 @@ class Tracking implements TrackingInterface
      * @param RemoteAddress $remoteAddress
      * @param Header $httpHeader
      * @param UrlInterface $url
+     * @param AnalyticsConfigInterface $analyticsConfig
      */
     public function __construct(
         LoggerInterface $logger,
