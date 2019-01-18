@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Bitbull\Tooso\Model\Logger;
 
 use Magento\Framework\Logger\Handler\Base;
