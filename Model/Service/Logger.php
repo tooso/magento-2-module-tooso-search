@@ -38,7 +38,7 @@ class Logger implements LoggerInterface
     public function log($message, $level = null)
     {
         if ($level === null) {
-            $level = Monolog::DEBUG;
+            $level = Monolog::INFO;
         }
         $this->logger->log($level, $message);
     }

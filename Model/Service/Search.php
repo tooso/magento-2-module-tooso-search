@@ -2,23 +2,25 @@
 
 namespace Bitbull\Tooso\Model\Service;
 
-use Bitbull\Tooso\Api\Service\ClientInterface;
 use Bitbull\Tooso\Api\Service\Config\SearchConfigInterface;
+use Bitbull\Tooso\Api\Service\ConfigInterface;
+use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\SearchInterface;
 use Bitbull\Tooso\Api\Service\TrackingInterface;
 use Tooso\SDK\Exception;
+use Tooso\SDK\ClientBuilder;
 
 class Search implements SearchInterface
 {
     /**
-     * @var ClientInterface
+     * @var ConfigInterface
      */
-    protected $client;
+    protected $config;
 
     /**
      * @var SearchConfigInterface
      */
-    protected $config;
+    protected $searchConfig;
 
     /**
      * @var TrackingInterface
@@ -26,30 +28,63 @@ class Search implements SearchInterface
     protected $tracking;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var ClientBuilder
+     */
+    protected $clientBuilder;
+
+    /**
      * Search constructor.
      *
-     * @param ClientInterface $client
-     * @param SearchConfigInterface $config
+     * @param ConfigInterface $config
+     * @param SearchConfigInterface $searchConfig
      * @param TrackingInterface $tracking
+     * @param LoggerInterface $logger
      */
-    public function __construct(ClientInterface $client, SearchConfigInterface $config, TrackingInterface $tracking)
+    public function __construct(ConfigInterface $config, SearchConfigInterface $searchConfig, TrackingInterface $tracking, LoggerInterface $logger)
     {
-        $this->client = $client;
         $this->config = $config;
+        $this->searchConfig = $searchConfig;
         $this->tracking = $tracking;
+        $this->logger = $logger;
+        $this->clientBuilder = new ClientBuilder();
     }
 
     /**
      * @inheritdoc
      * @throws Exception
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function execute($query, $typoCorrection = true)
     {
-        return $this->client->build()->search(
+        return $this->_getClient()->search(
             $query,
             $typoCorrection,
             $this->tracking->getProfilingParams(),
-            $this->config->isEnriched()
+            $this->searchConfig->isEnriched()
         );
+    }
+
+    /**
+     * Get Client
+     *
+     * @return \Tooso\SDK\Client
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function _getClient()
+    {
+        return $this->clientBuilder
+            ->withApiKey($this->config->getApiKey())
+            ->withApiVersion($this->config->getApiVersion())
+            ->withApiBaseUrl($this->config->getApiBaseUrl())
+            ->withLanguage($this->config->getLanguage())
+            ->withStoreCode($this->config->getStoreCode())
+            ->withAgent($this->tracking->getApiAgent())
+            ->withLogger($this->logger)
+            ->build();
     }
 }
