@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Bitbull\Tooso\Plugin\Model\Layer\Search\CollectionFilter;
 
@@ -49,16 +49,17 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         $collection,
         Category $category
     ) {
-        /** @var \Magento\Search\Model\Query $query */
-        $query = $this->queryFactory->get();
-        /** @var string $queryText */
-        $queryText = $query->getQueryText();
-
         if ($this->config->isSearchEnabled() !== true){
             $this->logger->debug('[search] Tooso search is disable, using default Magento search');
             parent::afterFilter($subject, $result, $collection, $category);
             return;
         }
+
+        /** @var \Magento\Search\Model\Query $query */
+        $query = $this->queryFactory->get();
+
+        /** @var string $queryText */
+        $queryText = $query->getQueryText();
 
         $this->logger->debug("[search] Searching for '$queryText'");
         $result = $this->search->execute($queryText);

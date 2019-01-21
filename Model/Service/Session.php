@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Bitbull\Tooso\Model\Service;
 
@@ -121,7 +121,7 @@ class Session implements SessionInterface
             );
         }
 
-        return substr($cid, -36);
+        return substr($cid ?? '', -36);
     }
 
     /**
