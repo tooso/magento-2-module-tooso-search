@@ -63,10 +63,9 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         $queryText = $query->getQueryText();
 
         $this->logger->debug("[search] Searching for '$queryText'");
-        /** @var Result $result */
         $result = $this->search->execute($queryText);
         $products = $result->getResults();
-        $collection->addFieldToFilter('entity_id', array('in' => (sizeof($products) > 0) ? $products : array(0)));
+        $collection->addAttributeToFilter('sku', array('in' => (sizeof($products) > 0) ? $products : array(0)));
         $this->logger->debug('[search] Searching query updated');
     }
 }
