@@ -10,9 +10,23 @@ namespace Bitbull\Tooso\Api\Service\Config;
 interface SearchConfigInterface
 {
     /**
+     * Get default limit
+     *
+     * @return int
+     */
+    public function getDefaultLimit();
+
+    /**
      * Is search response enriched
      *
      * @return boolean
      */
     public function isEnriched();
+
+    /**
+     * Is Magento search fallback enable
+     *
+     * @return boolean
+     */
+    public function isFallbackEnable();
 }

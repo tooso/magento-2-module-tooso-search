@@ -7,11 +7,18 @@ use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\SearchInterface;
 use Bitbull\Tooso\Api\Service\TrackingInterface;
+use Magento\Framework\UrlFactory;
 use Tooso\SDK\Exception;
 use Tooso\SDK\ClientBuilder;
+use Tooso\SDK\Search\Result;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\App\Request\Http as RequestHttp;
 
 class Search implements SearchInterface
 {
+    const PARAM_PARENT_SEARCH_ID = 'parentSearchId';
+    const PARAM_TYPO_CORRECTION = 'typoCorrection';
+
     /**
      * @var ConfigInterface
      */
@@ -38,35 +45,197 @@ class Search implements SearchInterface
     protected $clientBuilder;
 
     /**
+     * @var ResourceConnection
+     */
+    protected $resourceConnection;
+
+    /**
+     * @var UrlFactory
+     */
+    protected $urlFactory;
+
+    /**
+     * @var Result
+     */
+    protected $result;
+
+    /**
+     * @var RequestHttp
+     */
+    protected $request;
+
+    /**
      * Search constructor.
      *
      * @param ConfigInterface $config
      * @param SearchConfigInterface $searchConfig
      * @param TrackingInterface $tracking
      * @param LoggerInterface $logger
+     * @param ResourceConnection $resourceConnection
+     * @param UrlFactory $urlFactory
+     * @param RequestHttp $request
      */
-    public function __construct(ConfigInterface $config, SearchConfigInterface $searchConfig, TrackingInterface $tracking, LoggerInterface $logger)
+    public function __construct(
+        ConfigInterface $config,
+        SearchConfigInterface $searchConfig,
+        TrackingInterface $tracking,
+        LoggerInterface $logger,
+        ResourceConnection $resourceConnection,
+        UrlFactory $urlFactory,
+        RequestHttp $request
+    )
     {
         $this->config = $config;
         $this->searchConfig = $searchConfig;
         $this->tracking = $tracking;
         $this->logger = $logger;
+        $this->resourceConnection = $resourceConnection;
+        $this->urlFactory = $urlFactory;
+        $this->request = $request;
         $this->clientBuilder = new ClientBuilder();
     }
 
     /**
      * @inheritdoc
-     * @throws Exception
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function execute($query, $typoCorrection = true)
+    public function execute($query, $typoCorrection = true, $parentSearchId = null, $page = null, $limit = null)
     {
-        return $this->_getClient()->search(
-            $query,
-            $typoCorrection,
-            $this->tracking->getProfilingParams(),
-            $this->searchConfig->isEnriched()
-        );
+        try {
+            $params = $this->tracking->getProfilingParams();
+
+            if ($parentSearchId !== null) {
+                $params[self::PARAM_PARENT_SEARCH_ID] = $parentSearchId;
+            }
+
+            if ($limit === null) {
+                $limit = $this->searchConfig->getDefaultLimit();
+            }
+
+            $result = $this->getClient()->search(
+                $query,
+                $typoCorrection,
+                $params,
+                $this->searchConfig->isEnriched(),
+                $page,
+                $limit
+            );
+
+            if($result->isValid()){
+                $this->result = $result;
+            }
+
+        } catch (Exception $e) {
+            $this->logger->logException($e);
+        }
+
+        return $this->result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getProducts()
+    {
+        $products = array();
+
+        if ($this->result !== null) {
+
+            $skus = [];
+            if($this->searchConfig->isEnriched()){
+                $resultProducts = $this->result->getResults();
+                foreach ($resultProducts as $product) {
+                    if(!is_object($product)){
+                        $skus = $this->result->getResults();
+                        break;
+                    }
+                    $skus[] = $product->sku;
+                }
+            }else{
+                $skus = $this->result->getResults();
+            }
+
+            $i = 1;
+            $productIds = $this->getIdsBySkus($skus);
+
+            foreach ($skus as $sku) {
+                if (isset($productIds[$sku])) {
+                    $products[] = array(
+                        'sku' => $sku,
+                        'product_id' => $productIds[$sku],
+                        'relevance' => $i
+                    );
+                }
+
+                $i++;
+            }
+        }
+
+        return $products;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getParentSearchId()
+    {
+        return $this->request->getParam(self::PARAM_PARENT_SEARCH_ID);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSearchUrl($queryParam, $parentSearchId)
+    {
+        $url = $this->urlFactory->create();
+        $url->setQueryParam('q', $queryParam);
+        $url->setQueryParam(self::PARAM_PARENT_SEARCH_ID, $parentSearchId);
+        return $url->getUrl('catalogsearch/result');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isTypoCorrectedSearch()
+    {
+        return $this->request->getParam(self::PARAM_PARENT_SEARCH_ID, 'true') === 'true';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isFallbackEnable()
+    {
+        return $this->searchConfig->isFallbackEnable();
+    }
+
+    /**
+     * Get products identifiers by skus
+     *
+     * @param array $skus
+     * @return array
+     */
+    protected function getIdsBySkus($skus)
+    {
+        if (count($skus) === 0) return array();
+
+        $connection = $this->resourceConnection->getConnection();
+        $tableName = $connection->getTableName('catalog_product_entity');
+
+        $where = 'sku IN (';
+        $bind = array();
+
+        // Build the where clause with all the required placeholder for binding
+        for ($i=0, $iMax = count($skus); $i < $iMax; $i++) {
+            $bind[':sku' . $i] = $skus[$i];
+        }
+
+        $where .= implode(',', array_keys($bind)) . ')';
+
+        $select = $connection->select()
+            ->from($tableName, array('sku', 'entity_id'))
+            ->where($where);
+
+        return $connection->fetchPairs($select, $bind);
     }
 
     /**
@@ -75,7 +244,7 @@ class Search implements SearchInterface
      * @return \Tooso\SDK\Client
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    private function _getClient()
+    protected function getClient()
     {
         return $this->clientBuilder
             ->withApiKey($this->config->getApiKey())

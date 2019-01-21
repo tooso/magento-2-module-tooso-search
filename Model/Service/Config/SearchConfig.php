@@ -29,4 +29,20 @@ class SearchConfig implements SearchConfigInterface
     {
         return false;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function isFallbackEnable()
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDefaultLimit()
+    {
+        return 250;
+    }
 }
