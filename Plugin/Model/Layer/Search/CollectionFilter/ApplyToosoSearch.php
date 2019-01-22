@@ -6,6 +6,7 @@ use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\SearchInterface;
 use Bitbull\Tooso\Api\Service\SessionInterface;
+use Bitbull\Tooso\Block\SearchMessage;
 use Magento\Catalog\Model\Category;
 use Magento\Search\Model\QueryFactory;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
@@ -88,14 +89,14 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         // Check for redirect
         $redirect = $result->getRedirect();
         if($redirect !== null){
-            // TODO: respond with redirect
+            // TODO: respond with redirect to URL contained in $redirect variable
             return;
         }
 
         // Add similar result alert message
         $similarResultMessage = $result->getSimilarResultsAlert();
         if($similarResultMessage !== null && $similarResultMessage !== '') {
-            $this->messageManage->addMessage($similarResultMessage);
+            $this->messageManage->addMessage(new SearchMessage($similarResultMessage));
         }
 
         if ($result->isSearchAvailable()) {
@@ -113,7 +114,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                     $this->search->getSearchUrl($result->getOriginalSearchString(), $result->getSearchId()),
                     $result->getOriginalSearchString()
                 );
-                $this->messageManage->addMessage($message);
+                $this->messageManage->addMessage(new SearchMessage($message));
             }
 
             // Check for empty result set
@@ -132,10 +133,6 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
             }
             $collection->addAttributeToFilter('entity_id', array('in' => $products));
             $collection->getSelect()->order(new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
-
-            // TODO: remove it, only for debug purpose
-            $queryRaw = $collection->getSelect()->__toString();
-            $this->logger->debug(`[search] query: $queryRaw`);
             return;
         }
 
