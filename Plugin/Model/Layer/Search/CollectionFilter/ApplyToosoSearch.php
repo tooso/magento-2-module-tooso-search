@@ -88,54 +88,56 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         /** @var Result $result */
         $result = $this->search->execute($queryText, $typoCorrection, $parentSearchId);
 
-        // Check for redirect
-        $redirect = $result->getRedirect();
-        if ($redirect !== null) {
-            // TODO: respond with redirect to URL contained in $redirect variable
-            return;
-        }
-
-        // Add similar result alert message
-        $similarResultMessage = $result->getSimilarResultsAlert();
-        if ($similarResultMessage !== null && $similarResultMessage !== '') {
-            $this->messageManage->addMessage(new SearchMessage($similarResultMessage));
-        }
-
-        if ($result->isSearchAvailable()) {
-
-            // If this query was automatically typo-corrected, save in request scope the searchId for link
-            // this query (the parent) with the following one forced as not typo-correct
-            if ($this->search->isTypoCorrectedSearch()) {
-                $this->session->setSearchId($result->getSearchId());
-            }
-
-            // Automatic typo correction
-            if ($result->getFixedSearchString() && $queryText === $result->getOriginalSearchString()) {
-                $message = sprintf(
-                    __('Search instead for "<a href="%s">%s</a>"'),
-                    $this->search->getSearchUrl($result->getOriginalSearchString(), $result->getSearchId()),
-                    $result->getOriginalSearchString()
-                );
-                $this->messageManage->addMessage(new SearchMessage($message));
-            }
-
-            // Check for empty result set
-            if ($result->isResultEmpty() && $this->search->isFallbackEnable()) {
-                if ($result->getFixedSearchString() && $queryText === $result->getOriginalSearchString()) {
-                    $queryText = $result->getFixedSearchString();
-                }
-                $collection->addSearchFilter($queryText);
+        if ($result->isValid()) {
+            // Check for redirect
+            $redirect = $result->getRedirect();
+            if ($redirect !== null) {
+                // TODO: respond with redirect to URL contained in $redirect variable
                 return;
             }
 
-            // Add search filter
-            $products = array();
-            foreach ($this->search->getProducts() as $product) {
-                $products[] = $product['product_id'];
+            // Add similar result alert message
+            $similarResultMessage = $result->getSimilarResultsAlert();
+            if ($similarResultMessage !== null && $similarResultMessage !== '') {
+                $this->messageManage->addMessage(new SearchMessage($similarResultMessage));
             }
-            $collection->addAttributeToFilter('entity_id', array('in' => $products));
-            $collection->getSelect()->order(new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
-            return;
+
+            if ($result->isSearchAvailable()) {
+
+                // If this query was automatically typo-corrected, save in request scope the searchId for link
+                // this query (the parent) with the following one forced as not typo-correct
+                if ($this->search->isTypoCorrectedSearch()) {
+                    $this->session->setSearchId($result->getSearchId());
+                }
+
+                // Automatic typo correction
+                if ($result->getFixedSearchString() && $queryText === $result->getOriginalSearchString()) {
+                    $message = sprintf(
+                        __('Search instead for "<a href="%s">%s</a>"'),
+                        $this->search->getSearchUrl($result->getOriginalSearchString(), $result->getSearchId()),
+                        $result->getOriginalSearchString()
+                    );
+                    $this->messageManage->addMessage(new SearchMessage($message));
+                }
+
+                // Check for empty result set
+                if ($result->isResultEmpty() && $this->search->isFallbackEnable()) {
+                    if ($result->getFixedSearchString() && $queryText === $result->getOriginalSearchString()) {
+                        $queryText = $result->getFixedSearchString();
+                    }
+                    $collection->addSearchFilter($queryText);
+                    return;
+                }
+
+                // Add search filter
+                $products = array();
+                foreach ($this->search->getProducts() as $product) {
+                    $products[] = $product['product_id'];
+                }
+                $collection->addAttributeToFilter('entity_id', array('in' => $products));
+                $collection->getSelect()->order(new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
+                return;
+            }
         }
 
         if ($this->search->isFallbackEnable()) {

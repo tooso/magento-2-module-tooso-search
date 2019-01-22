@@ -126,6 +126,7 @@ class Search implements SearchInterface
 
         } catch (Exception $e) {
             $this->logger->logException($e);
+            $this->result = new Result();
         }
 
         return $this->result;
