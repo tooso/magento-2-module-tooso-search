@@ -6,12 +6,19 @@
   "require": {
     "php": "~7.0.0|~7.1.0",
     "magento/framework" : "101.0.*",
-    "magento/module-catalog-search": "^100.2.5"
+    "magento/module-catalog-search": "^100.2.5",
+    "tooso/sdk": "@dev"
   },
   "autoload": {
     "files": [ "registration.php" ],
     "psr-4": {
       "Bitbull\\Tooso\\": ""
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:tooso/tooso-sdk-php.git"
+    }
+  ]
 }
