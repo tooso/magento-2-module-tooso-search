@@ -10,6 +10,7 @@ use Bitbull\Tooso\Block\SearchMessage;
 use Magento\Catalog\Model\Category;
 use Magento\Search\Model\QueryFactory;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Tooso\SDK\Search\Result;
 
 class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter
 {
@@ -65,7 +66,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         $collection,
         Category $category
     ) {
-        if ($this->config->isSearchEnabled() !== true){
+        if ($this->config->isSearchEnabled() !== true) {
             $this->logger->debug('[search] Tooso search is disable, using default Magento search');
             parent::afterFilter($subject, $result, $collection, $category);
             return;
@@ -79,23 +80,24 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
 
         $typoCorrection = $this->search->isTypoCorrectedSearch();
         $parentSearchId = null;
-        if($typoCorrection === false){
+        if ($typoCorrection === false) {
             $parentSearchId = $this->search->getParentSearchId();
         }
 
         // Do search
+        /** @var Result $result */
         $result = $this->search->execute($queryText, $typoCorrection, $parentSearchId);
 
         // Check for redirect
         $redirect = $result->getRedirect();
-        if($redirect !== null){
+        if ($redirect !== null) {
             // TODO: respond with redirect to URL contained in $redirect variable
             return;
         }
 
         // Add similar result alert message
         $similarResultMessage = $result->getSimilarResultsAlert();
-        if($similarResultMessage !== null && $similarResultMessage !== '') {
+        if ($similarResultMessage !== null && $similarResultMessage !== '') {
             $this->messageManage->addMessage(new SearchMessage($similarResultMessage));
         }
 
@@ -142,7 +144,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         }
 
         // Apply impossible filter to force not result
-
-        $collection->addFieldToFilter('entity_id', array('null' => true));
+        // TODO: refactor this
+        $collection->addAttributeToFilter('entity_id', array('null' => true));
     }
 }

@@ -7,6 +7,10 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class SearchConfig implements SearchConfigInterface
 {
+    const XML_PATH_SEARCH_FALLBACK_ENABLE = 'tooso/search/fallback_enable';
+    const XML_PATH_SEARCH_RESPONSE_TYPE = 'tooso/search/response_type';
+    const XML_PATH_SEARCH_DEFAULT_LIMIT = 'tooso/search/default_limit';
+
     /**
      * @var ScopeConfigInterface
      */
@@ -27,7 +31,7 @@ class SearchConfig implements SearchConfigInterface
      */
     public function isEnriched()
     {
-        return false;
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_SEARCH_RESPONSE_TYPE);
     }
 
     /**
@@ -35,7 +39,7 @@ class SearchConfig implements SearchConfigInterface
      */
     public function isFallbackEnable()
     {
-        return true;
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_SEARCH_FALLBACK_ENABLE);
     }
 
     /**
@@ -43,6 +47,10 @@ class SearchConfig implements SearchConfigInterface
      */
     public function getDefaultLimit()
     {
-        return 250;
+        $value = $this->scopeConfig->getValue(self::XML_PATH_SEARCH_DEFAULT_LIMIT);
+        if ($value !== null) {
+            $value = (int) $value;
+        }
+        return $value;
     }
 }

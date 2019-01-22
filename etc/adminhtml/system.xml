@@ -30,7 +30,23 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
-            <group id="analytics" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="search" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Search Configuration</label>
+                <field id="fallback_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Magento search fallback</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Allow Magento to respond with search results when Tooso does not provide them]]></comment>
+                </field>
+                <field id="response_type" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enrich response</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[IMPORTANT NOTICE: Once this function is activated, switching back from ‘YES’ to ‘NO’ can impact your front end. Before doing it, please make sure that your Magento theme can handle an empty response from the product information retrieval function.]]></comment>
+                </field>
+                <field id="default_limit" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default query limit</label>
+                </field>
+            </group>
+            <group id="analytics" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Analytics</label>
                 <field id="cookie_domain" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Cookie domain</label>

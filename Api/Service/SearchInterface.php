@@ -20,8 +20,6 @@ interface SearchInterface
      * @param string $parentSearchId
      * @param integer $page
      * @param integer $limit
-     * @throws Exception
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @return Result
      */
     public function execute($query, $typoCorrection = true, $parentSearchId = null, $page = null, $limit = null);
