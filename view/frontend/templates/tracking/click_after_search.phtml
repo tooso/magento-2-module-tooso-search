@@ -3,8 +3,12 @@
 $currentBlock = $this->_currentBlock;
 /** @var \Tooso\SDK\Search\Result $searchData */
 $searchData = $currentBlock->search->getResult();
+$searchId = null;
+if ($searchData !== null) {
+    $searchId = $searchData->getSearchId();
+}
 ?>
 
 <script>
-    console.log('search id: <?=$searchData->getSearchId()?>');
+    console.log('search id: <?=$searchId ?: 'not set'?>');
 </script>
