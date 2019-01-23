@@ -145,7 +145,6 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
 
         // Apply impossible filter to force not result
         // TODO: refactor this
-        //$collection->addAttributeToFilter('entity_id', array('null' => true));
-        $collection->clear();
+        $collection->addAttributeToFilter('entity_id', array('null' => true));
     }
 }
