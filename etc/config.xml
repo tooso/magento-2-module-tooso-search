@@ -13,6 +13,10 @@
                 <force_log>1</force_log>
                 <debug_mode>0</debug_mode>
             </server>
+            <search>
+                <fallback_enable>0</fallback_enable>
+                <default_limit>250</default_limit>
+            </search>
         </tooso>
     </default>
 </config>

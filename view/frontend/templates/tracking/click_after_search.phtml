@@ -1,5 +1,10 @@
+<?php
+
+$currentBlock = $this->_currentBlock;
+/** @var \Tooso\SDK\Search\Result $searchData */
+$searchData = $currentBlock->search->getResult();
+?>
+
 <script>
-
-console.log('<?=date('Y-m-d h:i:s')?>')
-
+    console.log('search id: <?=$searchData->getSearchId()?>');
 </script>

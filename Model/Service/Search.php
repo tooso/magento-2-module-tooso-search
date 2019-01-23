@@ -110,15 +110,10 @@ class Search implements SearchInterface
      */
     public function execute($query, $page = null, $limit = null)
     {
-        // Check if class instance has result
-        if ($this->result !== null) {
-            return $this->result;
-        }
+        $result = $this->getResult();
 
-        // Check if registry has result
-        $this->result = $this->registry->registry(self::SEARCH_RESULT_REGISTRY_KEY);
-        if ($this->result !== null) {
-            return $this->result;
+        if ($result !== null) {
+            return $result;
         }
 
         $typoCorrection = $this->isTypoCorrectedSearch();
@@ -148,18 +143,45 @@ class Search implements SearchInterface
                 $limit
             );
 
-            if($result->isValid()){
-                $this->result = $result;
-            }
-
         } catch (Exception $e) {
             $this->logger->logException($e);
-            $this->result = new Result();
+            $result = new Result();
         }
+
+        $this->setResult($result);
+        return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getResult()
+    {
+        // Check if class instance has result
+        if ($this->result !== null) {
+            return $this->result;
+        }
+
+        // Check if registry has result and set it into class instance property
+        $this->result = $this->registry->registry(self::SEARCH_RESULT_REGISTRY_KEY);
+        if ($this->result !== null) {
+            return $this->result;
+        }
+
+        return null;
+    }
+
+    /**
+     * Set result
+     *
+     * @param Result $result
+     */
+    protected function setResult($result)
+    {
+        $this->result = $result;
 
         // Store result into registry
         $this->registry->register(self::SEARCH_RESULT_REGISTRY_KEY, $this->result, true);
-        return $this->result;
     }
 
     /**

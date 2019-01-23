@@ -23,6 +23,13 @@ interface SearchInterface
     public function execute($query, $page = null, $limit = null);
 
     /**
+     * Get last result
+     *
+     * @return Result
+     */
+    public function getResult();
+
+    /**
      * Extract product ids and score from Tooso response
      *
      * @return array
