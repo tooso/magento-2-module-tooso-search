@@ -13,9 +13,11 @@ use Tooso\SDK\ClientBuilder;
 use Tooso\SDK\Search\Result;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\App\Request\Http as RequestHttp;
+use Magento\Framework\Registry;
 
 class Search implements SearchInterface
 {
+    const SEARCH_RESULT_REGISTRY_KEY = 'tooso_search_response';
     const PARAM_PARENT_SEARCH_ID = 'parentSearchId';
     const PARAM_TYPO_CORRECTION = 'typoCorrection';
 
@@ -50,6 +52,11 @@ class Search implements SearchInterface
     protected $resourceConnection;
 
     /**
+     * @var Registry|null
+     */
+    protected $registry = null;
+
+    /**
      * @var UrlFactory
      */
     protected $urlFactory;
@@ -72,6 +79,7 @@ class Search implements SearchInterface
      * @param TrackingInterface $tracking
      * @param LoggerInterface $logger
      * @param ResourceConnection $resourceConnection
+     * @param Registry $registry
      * @param UrlFactory $urlFactory
      * @param RequestHttp $request
      */
@@ -81,6 +89,7 @@ class Search implements SearchInterface
         TrackingInterface $tracking,
         LoggerInterface $logger,
         ResourceConnection $resourceConnection,
+        Registry $registry,
         UrlFactory $urlFactory,
         RequestHttp $request
     )
@@ -90,6 +99,7 @@ class Search implements SearchInterface
         $this->tracking = $tracking;
         $this->logger = $logger;
         $this->resourceConnection = $resourceConnection;
+        $this->registry = $registry;
         $this->urlFactory = $urlFactory;
         $this->request = $request;
         $this->clientBuilder = new ClientBuilder();
@@ -98,8 +108,26 @@ class Search implements SearchInterface
     /**
      * @inheritdoc
      */
-    public function execute($query, $typoCorrection = true, $parentSearchId = null, $page = null, $limit = null)
+    public function execute($query, $page = null, $limit = null)
     {
+        // Check if class instance has result
+        if ($this->result !== null) {
+            return $this->result;
+        }
+
+        // Check if registry has result
+        $this->result = $this->registry->registry(self::SEARCH_RESULT_REGISTRY_KEY);
+        if ($this->result !== null) {
+            return $this->result;
+        }
+
+        $typoCorrection = $this->isTypoCorrectedSearch();
+        $parentSearchId = null;
+        if ($typoCorrection === false) {
+            $parentSearchId = $this->getParentSearchId();
+        }
+
+        // Do search
         try {
             $params = $this->tracking->getProfilingParams();
 
@@ -129,6 +157,8 @@ class Search implements SearchInterface
             $this->result = new Result();
         }
 
+        // Store result into registry
+        $this->registry->register(self::SEARCH_RESULT_REGISTRY_KEY, $this->result, true);
         return $this->result;
     }
 

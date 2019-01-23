@@ -11,9 +11,11 @@ use Magento\Catalog\Model\Category;
 use Magento\Search\Model\QueryFactory;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Tooso\SDK\Search\Result;
+use Magento\Framework\Registry;
 
 class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter
 {
+    const SEARCH_RESULT_REGISTRY_KEY = 'tooso_search_response';
 
     /**
      * @var LoggerInterface|null
@@ -46,8 +48,16 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
      * @param ConfigInterface $config
      * @param SearchInterface $search
      * @param SessionInterface $session
+     * @param MessageManagerInterface $messageManage
      */
-    public function __construct(QueryFactory $queryFactory, LoggerInterface $logger, ConfigInterface $config, SearchInterface $search, SessionInterface $session, MessageManagerInterface $messageManage)
+    public function __construct(
+        QueryFactory $queryFactory,
+        LoggerInterface $logger,
+        ConfigInterface $config,
+        SearchInterface $search,
+        SessionInterface $session,
+        MessageManagerInterface $messageManage
+    )
     {
         parent::__construct($queryFactory);
         $this->logger = $logger;
@@ -78,23 +88,11 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         /** @var string $queryText */
         $queryText = $query->getQueryText();
 
-        $typoCorrection = $this->search->isTypoCorrectedSearch();
-        $parentSearchId = null;
-        if ($typoCorrection === false) {
-            $parentSearchId = $this->search->getParentSearchId();
-        }
-
         // Do search
         /** @var Result $result */
-        $result = $this->search->execute($queryText, $typoCorrection, $parentSearchId);
+        $result = $this->search->execute($queryText);
 
         if ($result->isValid()) {
-            // Check for redirect
-            $redirect = $result->getRedirect();
-            if ($redirect !== null) {
-                // TODO: respond with redirect to URL contained in $redirect variable
-                return;
-            }
 
             // Add similar result alert message
             $similarResultMessage = $result->getSimilarResultsAlert();
@@ -147,6 +145,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
 
         // Apply impossible filter to force not result
         // TODO: refactor this
-        $collection->addAttributeToFilter('entity_id', array('null' => true));
+        //$collection->addAttributeToFilter('entity_id', array('null' => true));
+        $collection->clear();
     }
 }

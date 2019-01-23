@@ -16,13 +16,11 @@ interface SearchInterface
      * Execute Tooso search
      *
      * @param string $query
-     * @param boolean $typoCorrection
-     * @param string $parentSearchId
      * @param integer $page
      * @param integer $limit
      * @return Result
      */
-    public function execute($query, $typoCorrection = true, $parentSearchId = null, $page = null, $limit = null);
+    public function execute($query, $page = null, $limit = null);
 
     /**
      * Extract product ids and score from Tooso response
