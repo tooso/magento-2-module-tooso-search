@@ -62,6 +62,11 @@ class ExecuteToosoSearch implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        if ($this->config->isSearchEnabled() !== true) {
+            $this->logger->debug('[catalog search result observer] Tooso search is disable, skip logic');
+            return;
+        }
+
         $event = $observer->getEvent();
         /** @var RequestHttp $request */
         $request = $event->getRequest();
