@@ -12,6 +12,11 @@ class RequestParser implements RequestParserInterface
     const PARAM_QUERY = 'q';
     const PARAM_PARENT_SEARCH_ID = 'parentSearchId';
     const PARAM_TYPO_CORRECTION = 'typoCorrection';
+    const PARAM_ORDER_TYPE = 'product_list_order';
+    const PARAM_ORDER_DIRECTION = 'product_list_dir';
+
+    const FILTER_PARAM_SEPARATOR = ':';
+    const ORDER_PARAM_SEPARATOR = '-';
 
     /**
      * @var SearchConfigInterface
@@ -87,7 +92,16 @@ class RequestParser implements RequestParserInterface
      */
     public function getFilterParam()
     {
-        // TODO: Implement getFilterParam() method.
+        $excludeParams = $this->searchConfig->getParamFilterExclusion();
+        $requestParams = $this->request->getParams();
+        $requestParamsKeys = array_filter(array_keys($requestParams),function ($param) use ($excludeParams){
+            return !in_array($param, $excludeParams, true);
+        });
+        $filterValue = '';
+        foreach ($requestParamsKeys as $requestParamKey) {
+            $filterValue .= $requestParamKey.self::FILTER_PARAM_SEPARATOR.$requestParams[$requestParamKey];
+        }
+        return $filterValue === '' ? null : $filterValue;
     }
 
     /**
@@ -95,7 +109,16 @@ class RequestParser implements RequestParserInterface
      */
     public function getOrderParam()
     {
-        // TODO: Implement getOrderParam() method.
+        $orderType = $this->request->getParam(self::PARAM_ORDER_TYPE);
+        if ($orderType === null) {
+            return null;
+        }
+        $orderValue = $orderType;
+        $orderDirection = $this->request->getParam(self::PARAM_ORDER_DIRECTION);
+        if ($orderDirection !== null) {
+            $orderValue .= self::ORDER_PARAM_SEPARATOR.$orderDirection;
+        }
+        return $orderValue;
     }
 
     /**
@@ -111,6 +134,7 @@ class RequestParser implements RequestParserInterface
      */
     public function areFiltersHandled()
     {
+        //NOTE: currently filters are not supported by Tooso
         return false;
     }
 }

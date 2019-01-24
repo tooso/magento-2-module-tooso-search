@@ -11,6 +11,8 @@ class SearchConfig implements SearchConfigInterface
     const XML_PATH_SEARCH_RESPONSE_TYPE = 'tooso/search/response_type';
     const XML_PATH_SEARCH_DEFAULT_LIMIT = 'tooso/search/default_limit';
     const XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS = 'tooso/search/exclude_params';
+    const XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT = 'q,product_list_order,product_list_dir';
+    const XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR = ',';
 
     /**
      * @var ScopeConfigInterface
@@ -44,11 +46,14 @@ class SearchConfig implements SearchConfigInterface
      */
     public function getParamFilterExclusion()
     {
-        $value = $this->scopeConfig->getValue(self::XML_PATH_SEARCH_DEFAULT_LIMIT);
-        if ($value !== null) {
-            $value = (int) $value;
+        $value = $this->scopeConfig->getValue(self::XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS);
+        if ($value === null || trim($value) === '') {
+            $value = self::XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT;
         }
-        return $value;
+        $defaultParams = explode(self:: XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR,self::XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT);
+        $params = explode(self:: XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR,trim($value));
+
+        return array_map('trim', array_unique(array_merge($defaultParams, $params)));
     }
 
     /**
