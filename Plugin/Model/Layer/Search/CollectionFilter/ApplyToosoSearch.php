@@ -141,9 +141,9 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                 }, $this->search->getProducts());
 
                 $collection->addAttributeToFilter('entity_id', array('in' => $products));
-//                if($this->search->isSortApplicable()){
-//                    $collection->getSelect()->order(new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
-//                }
+                if($this->requestParser->isSortHandled()){
+                    $collection->getSelect()->order(new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
+                }
                 return;
             }
         }
