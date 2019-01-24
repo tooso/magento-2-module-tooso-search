@@ -67,8 +67,7 @@ class Tracking implements TrackingInterface
         Header $httpHeader,
         UrlInterface $url,
         AnalyticsConfigInterface $analyticsConfig
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->productMetadata = $productMetadata;
         $this->session = $session;
@@ -118,7 +117,7 @@ class Tracking implements TrackingInterface
             $params['uid'] = $this->session->getCustomerId();
         }
 
-        if($override !== null && is_array($override)){
+        if ($override !== null && is_array($override)) {
             $params = array_merge($params, $override);
         }
 

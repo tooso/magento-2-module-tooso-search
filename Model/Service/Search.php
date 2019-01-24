@@ -11,6 +11,7 @@ use Magento\Framework\UrlFactory;
 use Tooso\SDK\Exception;
 use Tooso\SDK\ClientBuilder;
 use Tooso\SDK\Search\Result;
+use Tooso\SDK\Search\ResultFactory;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Framework\Registry;
@@ -72,6 +73,11 @@ class Search implements SearchInterface
     protected $request;
 
     /**
+     * @var ResultFactory
+     */
+    private $resultFactory;
+
+    /**
      * Search constructor.
      *
      * @param ConfigInterface $config
@@ -82,6 +88,8 @@ class Search implements SearchInterface
      * @param Registry $registry
      * @param UrlFactory $urlFactory
      * @param RequestHttp $request
+     * @param ClientBuilder $clientBuilder
+     * @param ResultFactory $resultFactory
      */
     public function __construct(
         ConfigInterface $config,
@@ -91,9 +99,10 @@ class Search implements SearchInterface
         ResourceConnection $resourceConnection,
         Registry $registry,
         UrlFactory $urlFactory,
-        RequestHttp $request
-    )
-    {
+        RequestHttp $request,
+        ClientBuilder $clientBuilder,
+        ResultFactory $resultFactory
+    ) {
         $this->config = $config;
         $this->searchConfig = $searchConfig;
         $this->tracking = $tracking;
@@ -102,7 +111,8 @@ class Search implements SearchInterface
         $this->registry = $registry;
         $this->urlFactory = $urlFactory;
         $this->request = $request;
-        $this->clientBuilder = new ClientBuilder();
+        $this->clientBuilder = $clientBuilder;
+        $this->resultFactory = $resultFactory;
     }
 
     /**
@@ -142,10 +152,9 @@ class Search implements SearchInterface
                 $page,
                 $limit
             );
-
         } catch (Exception $e) {
             $this->logger->logException($e);
-            $result = new Result();
+            $result = $this->resultFactory->create();
         }
 
         $this->setResult($result);
@@ -189,21 +198,20 @@ class Search implements SearchInterface
      */
     public function getProducts()
     {
-        $products = array();
+        $products = [];
 
         if ($this->result !== null) {
-
             $skus = [];
-            if($this->searchConfig->isEnriched()){
+            if ($this->searchConfig->isEnriched()) {
                 $resultProducts = $this->result->getResults();
                 foreach ($resultProducts as $product) {
-                    if(!is_object($product)){
+                    if (!is_object($product)) {
                         $skus = $this->result->getResults();
                         break;
                     }
                     $skus[] = $product->sku;
                 }
-            }else{
+            } else {
                 $skus = $this->result->getResults();
             }
 
@@ -212,11 +220,11 @@ class Search implements SearchInterface
 
             foreach ($skus as $sku) {
                 if (isset($productIds[$sku])) {
-                    $products[] = array(
+                    $products[] = [
                         'sku' => $sku,
                         'product_id' => $productIds[$sku],
                         'relevance' => $i
-                    );
+                    ];
                 }
 
                 $i++;
@@ -269,13 +277,15 @@ class Search implements SearchInterface
      */
     protected function getIdsBySkus($skus)
     {
-        if (count($skus) === 0) return array();
+        if (count($skus) === 0) {
+            return [];
+        }
 
         $connection = $this->resourceConnection->getConnection();
         $tableName = $connection->getTableName('catalog_product_entity');
 
         $where = 'sku IN (';
-        $bind = array();
+        $bind = [];
 
         // Build the where clause with all the required placeholder for binding
         for ($i=0, $iMax = count($skus); $i < $iMax; $i++) {
@@ -285,7 +295,7 @@ class Search implements SearchInterface
         $where .= implode(',', array_keys($bind)) . ')';
 
         $select = $connection->select()
-            ->from($tableName, array('sku', 'entity_id'))
+            ->from($tableName, ['sku', 'entity_id'])
             ->where($where);
 
         return $connection->fetchPairs($select, $bind);

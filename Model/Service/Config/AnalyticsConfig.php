@@ -5,6 +5,7 @@ namespace Bitbull\Tooso\Model\Service\Config;
 use Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Zend\Uri\Http;
 
 class AnalyticsConfig implements AnalyticsConfigInterface
 {
@@ -21,20 +22,26 @@ class AnalyticsConfig implements AnalyticsConfigInterface
      */
     protected $storeManager;
 
+    /**
+     * @var Http
+     */
+    private $httpUriHandler;
 
     /**
      * Config constructor.
      *
      * @param ScopeConfigInterface $scopeConfig
      * @param StoreManagerInterface $storeManager
+     * @param Http $httpUriHandler
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        StoreManagerInterface $storeManager
-    )
-    {
+        StoreManagerInterface $storeManager,
+        Http $httpUriHandler
+    ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
+        $this->httpUriHandler = $httpUriHandler;
     }
 
     /**
@@ -46,9 +53,10 @@ class AnalyticsConfig implements AnalyticsConfigInterface
         if ($cookieDomain === null || trim($cookieDomain) === '') {
             if ($default === null) {
                 $url = $this->storeManager->getStore()->getBaseUrl();
-                $domainPart = explode('.', parse_url($url,  PHP_URL_HOST));
+                #$domainPart = explode('.', parse_url($url, PHP_URL_HOST));
+                $domainPart = explode('.', $this->httpUriHandler->parse($url));
                 $cookieDomain = '.'.$domainPart[count($domainPart) - 2].'.'.$domainPart[count($domainPart) - 1];
-            }else{
+            } else {
                 $cookieDomain = $default;
             }
         }

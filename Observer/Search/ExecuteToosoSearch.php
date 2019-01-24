@@ -47,8 +47,12 @@ class ExecuteToosoSearch implements ObserverInterface
      * @param SearchInterface $search
      * @param ActionFlag $actionFlag
      */
-    public function __construct(LoggerInterface $logger, ConfigInterface $config, SearchInterface $search, ActionFlag $actionFlag)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        ConfigInterface $config,
+        SearchInterface $search,
+        ActionFlag $actionFlag
+    ) {
         $this->logger = $logger;
         $this->config = $config;
         $this->search = $search;
@@ -77,7 +81,6 @@ class ExecuteToosoSearch implements ObserverInterface
         $result = $this->search->execute($queryText);
 
         if ($result->isValid()) {
-
             // Check for redirect
             $redirect = $result->getRedirect();
             if ($redirect !== null) {
@@ -90,5 +93,4 @@ class ExecuteToosoSearch implements ObserverInterface
             }
         }
     }
-
 }
