@@ -10,6 +10,7 @@ class SearchConfig implements SearchConfigInterface
     const XML_PATH_SEARCH_FALLBACK_ENABLE = 'tooso/search/fallback_enable';
     const XML_PATH_SEARCH_RESPONSE_TYPE = 'tooso/search/response_type';
     const XML_PATH_SEARCH_DEFAULT_LIMIT = 'tooso/search/default_limit';
+    const XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS = 'tooso/search/exclude_params';
 
     /**
      * @var ScopeConfigInterface
@@ -29,6 +30,30 @@ class SearchConfig implements SearchConfigInterface
     /**
      * @inheritdoc
      */
+    public function getDefaultLimit()
+    {
+        $value = $this->scopeConfig->getValue(self::XML_PATH_SEARCH_DEFAULT_LIMIT);
+        if ($value !== null) {
+            $value = (int) $value;
+        }
+        return $value;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getParamFilterExclusion()
+    {
+        $value = $this->scopeConfig->getValue(self::XML_PATH_SEARCH_DEFAULT_LIMIT);
+        if ($value !== null) {
+            $value = (int) $value;
+        }
+        return $value;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function isEnriched()
     {
         return $this->scopeConfig->isSetFlag(self::XML_PATH_SEARCH_RESPONSE_TYPE);
@@ -40,17 +65,5 @@ class SearchConfig implements SearchConfigInterface
     public function isFallbackEnable()
     {
         return $this->scopeConfig->isSetFlag(self::XML_PATH_SEARCH_FALLBACK_ENABLE);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getDefaultLimit()
-    {
-        $value = $this->scopeConfig->getValue(self::XML_PATH_SEARCH_DEFAULT_LIMIT);
-        if ($value !== null) {
-            $value = (int) $value;
-        }
-        return $value;
     }
 }

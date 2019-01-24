@@ -5,21 +5,22 @@ namespace Bitbull\Tooso\Model\Service;
 use Bitbull\Tooso\Api\Service\Config\SearchConfigInterface;
 use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
+use Bitbull\Tooso\Api\Service\Search\RequestParserInterface;
 use Bitbull\Tooso\Api\Service\SearchInterface;
 use Bitbull\Tooso\Api\Service\TrackingInterface;
-use Magento\Framework\UrlFactory;
 use Tooso\SDK\Exception;
 use Tooso\SDK\ClientBuilder;
 use Tooso\SDK\Search\Result;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Framework\Registry;
 
 class Search implements SearchInterface
 {
     const SEARCH_RESULT_REGISTRY_KEY = 'tooso_search_response';
+
+    const PARAM_FILTER = 'filter';
+    const PARAM_ORDER = 'sort';
     const PARAM_PARENT_SEARCH_ID = 'parentSearchId';
-    const PARAM_TYPO_CORRECTION = 'typoCorrection';
 
     /**
      * @var ConfigInterface
@@ -52,24 +53,19 @@ class Search implements SearchInterface
     protected $resourceConnection;
 
     /**
-     * @var Registry|null
+     * @var Registry
      */
-    protected $registry = null;
+    protected $registry;
 
     /**
-     * @var UrlFactory
+     * @var RequestParserInterface
      */
-    protected $urlFactory;
+    protected $requestParser;
 
     /**
      * @var Result
      */
     protected $result;
-
-    /**
-     * @var RequestHttp
-     */
-    protected $request;
 
     /**
      * Search constructor.
@@ -80,8 +76,7 @@ class Search implements SearchInterface
      * @param LoggerInterface $logger
      * @param ResourceConnection $resourceConnection
      * @param Registry $registry
-     * @param UrlFactory $urlFactory
-     * @param RequestHttp $request
+     * @param RequestParserInterface $requestParser
      */
     public function __construct(
         ConfigInterface $config,
@@ -90,8 +85,7 @@ class Search implements SearchInterface
         LoggerInterface $logger,
         ResourceConnection $resourceConnection,
         Registry $registry,
-        UrlFactory $urlFactory,
-        RequestHttp $request
+        RequestParserInterface $requestParser
     )
     {
         $this->config = $config;
@@ -100,15 +94,14 @@ class Search implements SearchInterface
         $this->logger = $logger;
         $this->resourceConnection = $resourceConnection;
         $this->registry = $registry;
-        $this->urlFactory = $urlFactory;
-        $this->request = $request;
+        $this->requestParser = $requestParser;
         $this->clientBuilder = new ClientBuilder();
     }
 
     /**
      * @inheritdoc
      */
-    public function execute($query, $page = null, $limit = null)
+    public function execute()
     {
         $result = $this->getResult();
 
@@ -116,10 +109,12 @@ class Search implements SearchInterface
             return $result;
         }
 
-        $typoCorrection = $this->isTypoCorrectedSearch();
+        $queryText = $this->requestParser->getQueryText();
+
+        $typoCorrection = $this->requestParser->isTypoCorrectedSearch();
         $parentSearchId = null;
         if ($typoCorrection === false) {
-            $parentSearchId = $this->getParentSearchId();
+            $parentSearchId = $this->requestParser->getParentSearchId();
         }
 
         // Do search
@@ -130,16 +125,22 @@ class Search implements SearchInterface
                 $params[self::PARAM_PARENT_SEARCH_ID] = $parentSearchId;
             }
 
-            if ($limit === null) {
-                $limit = $this->searchConfig->getDefaultLimit();
+            if (true) {
+                $params[self::PARAM_FILTER] = $this->requestParser->getFilterParam();
+            }
+            if (true) {
+                $params[self::PARAM_ORDER] = $this->requestParser->getOrderParam();
             }
 
+            $limit = $this->searchConfig->getDefaultLimit();
+
+            //NOTE: at this point page and limit param are not used
             $result = $this->getClient()->search(
-                $query,
+                $queryText,
                 $typoCorrection,
                 $params,
                 $this->searchConfig->isEnriched(),
-                $page,
+                null,
                 $limit
             );
 
@@ -148,7 +149,7 @@ class Search implements SearchInterface
             $result = new Result();
         }
 
-        $this->setResult($result);
+        $this->registerResult($result);
         return $result;
     }
 
@@ -158,17 +159,11 @@ class Search implements SearchInterface
     public function getResult()
     {
         // Check if class instance has result
-        if ($this->result !== null) {
-            return $this->result;
+        if (!$this->result) {
+            $this->result = $this->registry->registry(self::SEARCH_RESULT_REGISTRY_KEY);
         }
 
-        // Check if registry has result and set it into class instance property
-        $this->result = $this->registry->registry(self::SEARCH_RESULT_REGISTRY_KEY);
-        if ($this->result !== null) {
-            return $this->result;
-        }
-
-        return null;
+        return $this->result;
     }
 
     /**
@@ -176,7 +171,7 @@ class Search implements SearchInterface
      *
      * @param Result $result
      */
-    protected function setResult($result)
+    protected function registerResult($result)
     {
         $this->result = $result;
 
@@ -224,33 +219,6 @@ class Search implements SearchInterface
         }
 
         return $products;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getParentSearchId()
-    {
-        return $this->request->getParam(self::PARAM_PARENT_SEARCH_ID);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSearchUrl($queryParam, $parentSearchId)
-    {
-        $url = $this->urlFactory->create();
-        $url->setQueryParam('q', $queryParam);
-        $url->setQueryParam(self::PARAM_PARENT_SEARCH_ID, $parentSearchId);
-        return $url->getUrl('catalogsearch/result');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function isTypoCorrectedSearch()
-    {
-        return $this->request->getParam(self::PARAM_PARENT_SEARCH_ID, 'true') === 'true';
     }
 
     /**

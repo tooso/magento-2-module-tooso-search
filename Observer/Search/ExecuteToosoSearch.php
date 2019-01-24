@@ -14,8 +14,6 @@ use Tooso\SDK\Search\Result;
 
 class ExecuteToosoSearch implements ObserverInterface
 {
-    const QUERY_SEARCH_PARAM = 'q';
-
     /**
      * @var LoggerInterface|null
      */
@@ -67,28 +65,26 @@ class ExecuteToosoSearch implements ObserverInterface
             return;
         }
 
-        $event = $observer->getEvent();
-        /** @var RequestHttp $request */
-        $request = $event->getRequest();
-        $queryText = $request->getParam(self::QUERY_SEARCH_PARAM);
-
         // Do search
         /** @var Result $result */
-        $result = $this->search->execute($queryText);
+        $result = $this->search->execute();
 
-        if ($result->isValid()) {
-
-            // Check for redirect
-            $redirect = $result->getRedirect();
-            if ($redirect !== null) {
-                $this->actionFlag->set('', \Magento\Framework\App\Action\Action::FLAG_NO_DISPATCH, true);
-                /** @var \Magento\CatalogSearch\Controller\Result\Index\Interceptor $controllerAction */
-                $controllerAction = $observer->getControllerAction();
-                $response = $controllerAction->getResponse();
-                $response->setRedirect($redirect);
-                return;
-            }
+        if (!$result->isValid()) {
+            return;
         }
+
+        // Check for redirect
+        $redirect = $result->getRedirect();
+        if (!$redirect) {
+            return;
+        }
+
+        $this->actionFlag->set('', \Magento\Framework\App\Action\Action::FLAG_NO_DISPATCH, true);
+        /** @var \Magento\CatalogSearch\Controller\Result\Index\Interceptor $controllerAction */
+        $controllerAction = $observer->getControllerAction();
+        $response = $controllerAction->getResponse();
+        $response->setRedirect($redirect);
+
     }
 
 }

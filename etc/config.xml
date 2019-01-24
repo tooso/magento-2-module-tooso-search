@@ -16,6 +16,7 @@
             <search>
                 <fallback_enable>0</fallback_enable>
                 <default_limit>250</default_limit>
+                <exclude_params>q</exclude_params>
             </search>
         </tooso>
     </default>

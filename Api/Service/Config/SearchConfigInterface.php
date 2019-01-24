@@ -17,6 +17,13 @@ interface SearchConfigInterface
     public function getDefaultLimit();
 
     /**
+     * Get query params to exclude as filter
+     *
+     * @return array
+     */
+    public function getParamFilterExclusion();
+
+    /**
      * Is search response enriched
      *
      * @return boolean

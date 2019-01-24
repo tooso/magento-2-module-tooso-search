@@ -4,6 +4,7 @@ namespace Bitbull\Tooso\Plugin\Model\Layer\Search\CollectionFilter;
 
 use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
+use Bitbull\Tooso\Api\Service\Search\RequestParserInterface;
 use Bitbull\Tooso\Api\Service\SearchInterface;
 use Bitbull\Tooso\Api\Service\SessionInterface;
 use Bitbull\Tooso\Block\SearchMessage;
@@ -11,7 +12,6 @@ use Magento\Catalog\Model\Category;
 use Magento\Search\Model\QueryFactory;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Tooso\SDK\Search\Result;
-use Magento\Framework\Registry;
 
 class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter
 {
@@ -43,12 +43,18 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
     protected $messageManage = null;
 
     /**
+     * @var RequestParserInterface
+     */
+    protected $requestParser;
+
+    /**
      * @param QueryFactory $queryFactory
      * @param LoggerInterface $logger
      * @param ConfigInterface $config
      * @param SearchInterface $search
      * @param SessionInterface $session
      * @param MessageManagerInterface $messageManage
+     * @param RequestParserInterface $requestParser
      */
     public function __construct(
         QueryFactory $queryFactory,
@@ -56,7 +62,8 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         ConfigInterface $config,
         SearchInterface $search,
         SessionInterface $session,
-        MessageManagerInterface $messageManage
+        MessageManagerInterface $messageManage,
+        RequestParserInterface $requestParser
     )
     {
         parent::__construct($queryFactory);
@@ -65,6 +72,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         $this->search = $search;
         $this->session = $session;
         $this->messageManage = $messageManage;
+        $this->requestParser = $requestParser;
     }
 
     /**
@@ -89,51 +97,53 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         $queryText = $query->getQueryText();
 
         // Do search
-        /** @var Result $result */
-        $result = $this->search->execute($queryText);
+        /** @var Result $searchResult */
+        $searchResult = $this->search->execute();
 
-        if ($result->isValid()) {
+        if ($searchResult->isValid()) {
 
             // Add similar result alert message
-            $similarResultMessage = $result->getSimilarResultsAlert();
+            $similarResultMessage = $searchResult->getSimilarResultsAlert();
             if ($similarResultMessage !== null && $similarResultMessage !== '') {
                 $this->messageManage->addMessage(new SearchMessage($similarResultMessage));
             }
 
-            if ($result->isSearchAvailable()) {
+            if ($searchResult->isSearchAvailable()) {
 
                 // If this query was automatically typo-corrected, save in request scope the searchId for link
                 // this query (the parent) with the following one forced as not typo-correct
-                if ($this->search->isTypoCorrectedSearch()) {
-                    $this->session->setSearchId($result->getSearchId());
+                if ($this->requestParser->isTypoCorrectedSearch()) {
+                    $this->session->setSearchId($searchResult->getSearchId());
                 }
 
                 // Automatic typo correction
-                if ($result->getFixedSearchString() && $queryText === $result->getOriginalSearchString()) {
-                    $message = sprintf(
-                        __('Search instead for "<a href="%s">%s</a>"'),
-                        $this->search->getSearchUrl($result->getOriginalSearchString(), $result->getSearchId()),
-                        $result->getOriginalSearchString()
+                if ($searchResult->getFixedSearchString() !== null && $queryText === $searchResult->getOriginalSearchString()) {
+                    $message = __(
+                        'Search instead for "<a href="%s">%s</a>"',
+                        $this->requestParser->buildSearchUrl($searchResult->getOriginalSearchString(), $searchResult->getSearchId()),
+                        $searchResult->getOriginalSearchString()
                     );
                     $this->messageManage->addMessage(new SearchMessage($message));
                 }
 
                 // Check for empty result set
-                if ($result->isResultEmpty() && $this->search->isFallbackEnable()) {
-                    if ($result->getFixedSearchString() && $queryText === $result->getOriginalSearchString()) {
-                        $queryText = $result->getFixedSearchString();
+                if ($searchResult->isResultEmpty() && $this->search->isFallbackEnable()) {
+                    if ($searchResult->getFixedSearchString() && $queryText === $searchResult->getOriginalSearchString()) {
+                        $queryText = $searchResult->getFixedSearchString();
                     }
                     $collection->addSearchFilter($queryText);
                     return;
                 }
 
                 // Add search filter
-                $products = array();
-                foreach ($this->search->getProducts() as $product) {
-                    $products[] = $product['product_id'];
-                }
+                $products = array_map(function ($product) {
+                    return $product['product_id'];
+                }, $this->search->getProducts());
+
                 $collection->addAttributeToFilter('entity_id', array('in' => $products));
-                $collection->getSelect()->order(new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
+//                if($this->search->isSortApplicable()){
+//                    $collection->getSelect()->order(new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
+//                }
                 return;
             }
         }
