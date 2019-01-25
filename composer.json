@@ -1,5 +1,5 @@
 {
-  "name": "bitbull/tooso",
+  "name": "bitbull/magento-2-module-tooso-search",
   "description": "Tooso integration module for Magento 2",
   "type": "magento2-module",
   "version": "0.1.0",
@@ -7,7 +7,8 @@
     "ext-json": "*",
     "php": "~7.0.0|~7.1.0",
     "magento/framework" : "101.0.*",
-    "magento/module-catalog-search": "^100.2.5"
+    "magento/module-catalog-search": "^100.2.5",
+    "bitbull/tooso-sdk": "*"
   },
   "autoload": {
     "files": [ "registration.php" ],
