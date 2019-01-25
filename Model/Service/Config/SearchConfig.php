@@ -15,6 +15,7 @@ class SearchConfig implements SearchConfigInterface
     const SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR = ',';
     const XML_PATH_SEARCH_SUPPORTED_ORDER_TYPES = 'tooso/search/supported_order_types';
     const SEARCH_SUPPORTED_ORDER_TYPES_SEPARATOR = ',';
+    const SEARCH_SUPPORTED_ORDER_TYPES_DEFAULT = 'relevance,price-desc,price-asc,name-asc,name-desc';
 
     /**
      * @var ScopeConfigInterface
@@ -45,11 +46,14 @@ class SearchConfig implements SearchConfigInterface
 
     public function getSupportedOrderTypes()
     {
+        $defaultParams = explode(self:: SEARCH_SUPPORTED_ORDER_TYPES_SEPARATOR,self::SEARCH_SUPPORTED_ORDER_TYPES_DEFAULT);
         $value = $this->scopeConfig->getValue(self::XML_PATH_SEARCH_SUPPORTED_ORDER_TYPES);
         if ($value === null) {
-            return [];
+            return $defaultParams;
         }
-        return array_map('trim', array_unique(explode(self::SEARCH_SUPPORTED_ORDER_TYPES_SEPARATOR, $value)));
+        $params = explode(self:: SEARCH_SUPPORTED_ORDER_TYPES_SEPARATOR,$value);
+
+        return array_map('trim', array_unique(array_merge($defaultParams, $params)));
     }
 
     /**
@@ -62,7 +66,7 @@ class SearchConfig implements SearchConfigInterface
             $value = self::SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT;
         }
         $defaultParams = explode(self:: SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR,self::SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT);
-        $params = explode(self:: SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR,trim($value));
+        $params = explode(self:: SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR,$value);
 
         return array_map('trim', array_unique(array_merge($defaultParams, $params)));
     }

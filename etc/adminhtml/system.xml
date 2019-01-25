@@ -52,8 +52,8 @@
                     <label>Default query limit</label>
                 </field>
                 <field id="supported_order_types" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Supported order types</label>
-                    <comment><![CDATA[other order order type will be delegated to Magento, separate value with comma.]]></comment>
+                    <label>Additional supported order types</label>
+                    <comment><![CDATA[not supported order types will be delegated to Magento, separate value with comma.]]></comment>
                 </field>
                 <field id="exclude_params" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Parameters to exclude as filter</label>

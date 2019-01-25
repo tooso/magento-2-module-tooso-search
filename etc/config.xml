@@ -16,7 +16,6 @@
             <search>
                 <fallback_enable>0</fallback_enable>
                 <default_limit>250</default_limit>
-                <supported_order_types>relevance,price-desc,price-asc,name-asc,name-desc</supported_order_types>
             </search>
         </tooso>
     </default>
