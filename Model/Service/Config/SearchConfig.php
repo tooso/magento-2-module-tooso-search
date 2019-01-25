@@ -11,8 +11,10 @@ class SearchConfig implements SearchConfigInterface
     const XML_PATH_SEARCH_RESPONSE_TYPE = 'tooso/search/response_type';
     const XML_PATH_SEARCH_DEFAULT_LIMIT = 'tooso/search/default_limit';
     const XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS = 'tooso/search/exclude_params';
-    const XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT = 'q,product_list_order,product_list_dir';
-    const XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR = ',';
+    const SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT = 'q,product_list_order,product_list_dir';
+    const SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR = ',';
+    const XML_PATH_SEARCH_SUPPORTED_ORDER_TYPES = 'tooso/search/supported_order_types';
+    const SEARCH_SUPPORTED_ORDER_TYPES_SEPARATOR = ',';
 
     /**
      * @var ScopeConfigInterface
@@ -41,6 +43,15 @@ class SearchConfig implements SearchConfigInterface
         return $value;
     }
 
+    public function getSupportedOrderTypes()
+    {
+        $value = $this->scopeConfig->getValue(self::XML_PATH_SEARCH_SUPPORTED_ORDER_TYPES);
+        if ($value === null) {
+            return [];
+        }
+        return array_map('trim', array_unique(explode(self::SEARCH_SUPPORTED_ORDER_TYPES_SEPARATOR, $value)));
+    }
+
     /**
      * @inheritdoc
      */
@@ -48,10 +59,10 @@ class SearchConfig implements SearchConfigInterface
     {
         $value = $this->scopeConfig->getValue(self::XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS);
         if ($value === null || trim($value) === '') {
-            $value = self::XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT;
+            $value = self::SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT;
         }
-        $defaultParams = explode(self:: XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR,self::XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT);
-        $params = explode(self:: XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR,trim($value));
+        $defaultParams = explode(self:: SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR,self::SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT);
+        $params = explode(self:: SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR,trim($value));
 
         return array_map('trim', array_unique(array_merge($defaultParams, $params)));
     }

@@ -17,6 +17,13 @@ interface SearchConfigInterface
     public function getDefaultLimit();
 
     /**
+     * Get supported order types
+     *
+     * @return array
+     */
+    public function getSupportedOrderTypes();
+
+    /**
      * Get query params to exclude as filter
      *
      * @return array

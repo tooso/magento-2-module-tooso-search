@@ -15,8 +15,10 @@ class RequestParser implements RequestParserInterface
     const PARAM_ORDER_TYPE = 'product_list_order';
     const PARAM_ORDER_DIRECTION = 'product_list_dir';
 
-    const FILTER_PARAM_SEPARATOR = ':';
     const ORDER_PARAM_SEPARATOR = '-';
+    const ORDER_PARAM_DEFAULT = 'relevance';
+    const FILTER_PARAM_SEPARATOR = ':';
+    const FILTER_PARAM_PREFIX = 'magento_';
 
     /**
      * @var SearchConfigInterface
@@ -99,7 +101,7 @@ class RequestParser implements RequestParserInterface
         });
         $filterValue = '';
         foreach ($requestParamsKeys as $requestParamKey) {
-            $filterValue .= $requestParamKey.self::FILTER_PARAM_SEPARATOR.$requestParams[$requestParamKey];
+            $filterValue .= self::FILTER_PARAM_PREFIX . $requestParamKey . self::FILTER_PARAM_SEPARATOR.$requestParams[$requestParamKey];
         }
         return $filterValue === '' ? null : $filterValue;
     }
@@ -111,12 +113,15 @@ class RequestParser implements RequestParserInterface
     {
         $orderType = $this->request->getParam(self::PARAM_ORDER_TYPE);
         if ($orderType === null) {
-            return null;
+            $orderType = self::ORDER_PARAM_DEFAULT;
         }
         $orderValue = $orderType;
         $orderDirection = $this->request->getParam(self::PARAM_ORDER_DIRECTION);
         if ($orderDirection !== null) {
             $orderValue .= self::ORDER_PARAM_SEPARATOR.$orderDirection;
+        }
+        if (!in_array($orderValue, $this->searchConfig->getSupportedOrderTypes(), true)) {
+            return null;
         }
         return $orderValue;
     }
@@ -126,7 +131,7 @@ class RequestParser implements RequestParserInterface
      */
     public function isSortHandled()
     {
-        return $this->getFilterParam() !== null;
+        return $this->getOrderParam() !== null;
     }
 
     /**
@@ -134,7 +139,8 @@ class RequestParser implements RequestParserInterface
      */
     public function areFiltersHandled()
     {
-        //NOTE: currently filters are not supported by Tooso
         return false;
+        //NOTE: currently filters are not supported by Tooso
+        //return $this->getFilterParam() !== null;
     }
 }
