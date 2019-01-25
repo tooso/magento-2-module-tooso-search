@@ -7,11 +7,12 @@ use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\Search\RequestParserInterface;
 use Bitbull\Tooso\Api\Service\SearchInterface;
 use Bitbull\Tooso\Api\Service\SessionInterface;
-use Bitbull\Tooso\Block\SearchMessage;
+use Bitbull\Tooso\Block\SearchMessageFactory;
 use Magento\Catalog\Model\Category;
 use Magento\Search\Model\QueryFactory;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Tooso\SDK\Search\Result;
+use Zend_Db_ExprFactory;
 
 class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter
 {
@@ -43,6 +44,16 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
     protected $messageManage = null;
 
     /**
+     * @var SearchMessageFactory
+     */
+    private $searchMessageFactory;
+
+    /**
+     * @var Zend_Db_ExprFactory
+     */
+    private $dbExpressionFactory;
+
+    /**
      * @var RequestParserInterface
      */
     protected $requestParser;
@@ -55,6 +66,8 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
      * @param SessionInterface $session
      * @param MessageManagerInterface $messageManage
      * @param RequestParserInterface $requestParser
+     * @param SearchMessageFactory $searchMessageFactory
+     * @param Zend_Db_ExprFactory $dbExpressionFactory
      */
     public function __construct(
         QueryFactory $queryFactory,
@@ -63,7 +76,9 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         SearchInterface $search,
         SessionInterface $session,
         MessageManagerInterface $messageManage,
-        RequestParserInterface $requestParser
+        RequestParserInterface $requestParser,
+        SearchMessageFactory $searchMessageFactory,
+        Zend_Db_ExprFactory $dbExpressionFactory
     )
     {
         parent::__construct($queryFactory);
@@ -73,6 +88,8 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         $this->session = $session;
         $this->messageManage = $messageManage;
         $this->requestParser = $requestParser;
+        $this->searchMessageFactory = $searchMessageFactory;
+        $this->dbExpressionFactory = $dbExpressionFactory;
     }
 
     /**
@@ -105,7 +122,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
             // Add similar result alert message
             $similarResultMessage = $searchResult->getSimilarResultsAlert();
             if ($similarResultMessage !== null && $similarResultMessage !== '') {
-                $this->messageManage->addMessage(new SearchMessage($similarResultMessage));
+                $this->messageManage->addMessage($this->searchMessageFactory->create($similarResultMessage));
             }
 
             if ($searchResult->isSearchAvailable()) {
@@ -123,7 +140,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                         $this->requestParser->buildSearchUrl($searchResult->getOriginalSearchString(), $searchResult->getSearchId()),
                         $searchResult->getOriginalSearchString()
                     );
-                    $this->messageManage->addMessage(new SearchMessage($message));
+                    $this->messageManage->addMessage($this->searchMessageFactory->create($message));
                 }
 
                 // Check for empty result set
@@ -140,9 +157,13 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                     return $product['product_id'];
                 }, $this->search->getProducts());
 
-                $collection->addAttributeToFilter('entity_id', array('in' => $products));
+                $collection->addAttributeToFilter('entity_id', ['in' => $products]);
                 if($this->requestParser->isSortHandled()){
-                    $collection->getSelect()->order(new \Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
+                    $collection->getSelect()->order(
+                        $this->dbExpressionFactory->create(
+                            ['expression' => 'FIELD(e.entity_id, ' . implode(',', $products) . ')']
+                        )
+                    );
                 }
                 return;
             }

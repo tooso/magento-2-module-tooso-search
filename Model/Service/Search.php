@@ -10,6 +10,7 @@ use Bitbull\Tooso\Api\Service\SearchInterface;
 use Bitbull\Tooso\Api\Service\TrackingInterface;
 use Tooso\SDK\Exception;
 use Tooso\SDK\ClientBuilder;
+use Tooso\SDK\Search\ResultFactory;
 use Tooso\SDK\Search\Result;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Registry;
@@ -68,6 +69,11 @@ class Search implements SearchInterface
     protected $result;
 
     /**
+     * @var ResultFactory
+     */
+    private $resultFactory;
+
+    /**
      * Search constructor.
      *
      * @param ConfigInterface $config
@@ -77,6 +83,8 @@ class Search implements SearchInterface
      * @param ResourceConnection $resourceConnection
      * @param Registry $registry
      * @param RequestParserInterface $requestParser
+     * @param ClientBuilder $clientBuilder,
+     * @param ResultFactory $resultFactory
      */
     public function __construct(
         ConfigInterface $config,
@@ -85,7 +93,9 @@ class Search implements SearchInterface
         LoggerInterface $logger,
         ResourceConnection $resourceConnection,
         Registry $registry,
-        RequestParserInterface $requestParser
+        RequestParserInterface $requestParser,
+        ClientBuilder $clientBuilder,
+        ResultFactory $resultFactory
     )
     {
         $this->config = $config;
@@ -95,7 +105,8 @@ class Search implements SearchInterface
         $this->resourceConnection = $resourceConnection;
         $this->registry = $registry;
         $this->requestParser = $requestParser;
-        $this->clientBuilder = new ClientBuilder();
+        $this->clientBuilder = $clientBuilder;
+        $this->resultFactory = $resultFactory;
     }
 
     /**
@@ -146,7 +157,7 @@ class Search implements SearchInterface
 
         } catch (Exception $e) {
             $this->logger->logException($e);
-            $result = new Result();
+            $result = $this->resultFactory->create();
         }
 
         $this->registerResult($result);
