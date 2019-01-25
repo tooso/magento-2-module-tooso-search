@@ -15,7 +15,7 @@ class Version extends \Magento\Config\Block\System\Config\Form\Field
             $vendorDir = dirname(dirname($reflection->getFileName()));
             $packages = json_decode(file_get_contents($vendorDir . '/composer/installed.json'), true);
             foreach ($packages as $package) {
-                if ($package['name'] === 'bitbull/tooso') {
+                if ($package['name'] === 'bitbull/magento-2-tooso-search') {
                     $version = $package['version'];
                     break;
                 }
