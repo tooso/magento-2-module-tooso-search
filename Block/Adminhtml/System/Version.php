@@ -10,22 +10,24 @@ class Version extends \Magento\Config\Block\System\Config\Form\Field
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
         $version = 'undefined';
-        try{
+        try {
             $reflection = new \ReflectionClass(\Composer\Autoload\ClassLoader::class);
             $vendorDir = dirname(dirname($reflection->getFileName()));
-            $packages = json_decode(file_get_contents($vendorDir  . '/composer/installed.json'), true);
+            $packages = json_decode(file_get_contents($vendorDir . '/composer/installed.json'), true);
             foreach ($packages as $package) {
                 if ($package['name'] === 'bitbull/tooso') {
                     $version = $package['version'];
                     break;
                 }
             }
-        }catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            $version = 'error: ' . $e->getMessage();
+        }
 
         ob_start();
         ?>
         <td class="label">Module Version</td>
-        <td class="value"><?=$version?></td>
+        <td class="value"><?= $version ?></td>
         <td></td>
         <?php
         $html = ob_get_clean();

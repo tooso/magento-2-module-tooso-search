@@ -1,8 +1,7 @@
 <?php
 
-$currentBlock = $this->_currentBlock;
 /** @var \Tooso\SDK\Search\Result $searchData */
-$searchData = $currentBlock->search->getResult();
+$searchData = $block->search->getResult();
 $searchId = null;
 if ($searchData !== null) {
     $searchId = $searchData->getSearchId();

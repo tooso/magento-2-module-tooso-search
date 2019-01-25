@@ -60,27 +60,28 @@ class Session implements SessionInterface
      */
     protected $clientBuilder;
 
-
     /**
      * @param SessionManagerInterface $sessionManager
-     * @param CustomerSession $session,
+     * @param CustomerSession $session ,
      * @param CookieManagerInterface $cookieManager
      * @param CookieMetadataFactory $cookieMetadataFactory
      * @param AnalyticsConfigInterface $analyticsConfig
+     * @param ClientBuilder $clientBuilder
      */
     public function __construct(
         SessionManagerInterface $sessionManager,
         CustomerSession $session,
         CookieManagerInterface $cookieManager,
         CookieMetadataFactory $cookieMetadataFactory,
-        AnalyticsConfigInterface $analyticsConfig
+        AnalyticsConfigInterface $analyticsConfig,
+        ClientBuilder $clientBuilder
     ) {
         $this->sessionManager = $sessionManager;
         $this->session = $session;
         $this->analyticsConfig = $analyticsConfig;
         $this->cookieManager = $cookieManager;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
-        $this->clientBuilder = new ClientBuilder();
+        $this->clientBuilder = $clientBuilder;
     }
 
     /**
@@ -114,8 +115,8 @@ class Session implements SessionInterface
     public function getClientId()
     {
         $cid = $this->cookieManager->getCookie(self::COOKIE_USERID);
-        if($cid === false || $cid === ''){
-            $cid = $this->_generateClientId();
+        if ($cid === false || $cid === '') {
+            $cid = $this->generateClientId();
             $domain = $this->analyticsConfig->getCookieDomain();
             $this->cookieManager->setPublicCookie(
                 self::COOKIE_USERID,
@@ -153,7 +154,7 @@ class Session implements SessionInterface
      *
      * @return string
      */
-    private function _generateClientId()
+    private function generateClientId()
     {
         $uuid = $this->clientBuilder->build()->getUuid();
         return 'TA.'.$uuid; //TODO: use constant

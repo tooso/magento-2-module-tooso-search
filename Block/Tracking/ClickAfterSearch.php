@@ -20,8 +20,7 @@ class ClickAfterSearch extends \Magento\Framework\View\Element\Template
     public function __construct(
         Context $context,
         SearchInterface $search
-    )
-    {
+    ) {
         parent::__construct($context);
         $this->search = $search;
     }

@@ -154,7 +154,6 @@ class Search implements SearchInterface
                 null,
                 $limit
             );
-
         } catch (Exception $e) {
             $this->logger->logException($e);
             $result = $this->resultFactory->create();
@@ -195,21 +194,20 @@ class Search implements SearchInterface
      */
     public function getProducts()
     {
-        $products = array();
+        $products = [];
 
         if ($this->result !== null) {
-
             $skus = [];
-            if($this->searchConfig->isEnriched()){
+            if ($this->searchConfig->isEnriched()) {
                 $resultProducts = $this->result->getResults();
                 foreach ($resultProducts as $product) {
-                    if(!is_object($product)){
+                    if (!is_object($product)) {
                         $skus = $this->result->getResults();
                         break;
                     }
                     $skus[] = $product->sku;
                 }
-            }else{
+            } else {
                 $skus = $this->result->getResults();
             }
 
@@ -218,11 +216,11 @@ class Search implements SearchInterface
 
             foreach ($skus as $sku) {
                 if (isset($productIds[$sku])) {
-                    $products[] = array(
+                    $products[] = [
                         'sku' => $sku,
                         'product_id' => $productIds[$sku],
                         'relevance' => $i
-                    );
+                    ];
                 }
 
                 $i++;
@@ -248,13 +246,15 @@ class Search implements SearchInterface
      */
     protected function getIdsBySkus($skus)
     {
-        if (count($skus) === 0) return array();
+        if (count($skus) === 0) {
+            return [];
+        }
 
         $connection = $this->resourceConnection->getConnection();
         $tableName = $connection->getTableName('catalog_product_entity');
 
         $where = 'sku IN (';
-        $bind = array();
+        $bind = [];
 
         // Build the where clause with all the required placeholder for binding
         for ($i=0, $iMax = count($skus); $i < $iMax; $i++) {
@@ -264,7 +264,7 @@ class Search implements SearchInterface
         $where .= implode(',', array_keys($bind)) . ')';
 
         $select = $connection->select()
-            ->from($tableName, array('sku', 'entity_id'))
+            ->from($tableName, ['sku', 'entity_id'])
             ->where($where);
 
         return $connection->fetchPairs($select, $bind);
