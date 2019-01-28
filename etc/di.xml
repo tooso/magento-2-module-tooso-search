@@ -15,8 +15,10 @@
         </arguments>
     </type>
 
-    <preference for="Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter"
-                type="Bitbull\Tooso\Plugin\Model\Layer\Search\CollectionFilter\ApplyToosoSearch" />
+    <type name="Magento\Catalog\Model\Layer\Search\CollectionFilter">
+        <plugin name="searchQuery" type="Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter" disabled="true" />
+        <plugin name="searchQueryTooso" type="Bitbull\Tooso\Plugin\Model\Layer\Search\CollectionFilter\ApplyToosoSearch" />
+    </type>
 
     <preference for="Magento\CatalogSearch\Block\Result"
                 type="Bitbull\Tooso\Block\Search\Result" />
