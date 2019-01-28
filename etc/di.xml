@@ -18,6 +18,9 @@
     <preference for="Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter"
                 type="Bitbull\Tooso\Plugin\Model\Layer\Search\CollectionFilter\ApplyToosoSearch" />
 
+    <preference for="Magento\CatalogSearch\Block\Result"
+                type="Bitbull\Tooso\Block\Search\Result" />
+
     <preference for="Bitbull\Tooso\Api\Service\Config\SearchConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config\SearchConfig" />
 

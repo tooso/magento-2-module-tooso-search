@@ -141,7 +141,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                 if ($searchResult->getFixedSearchString() !== null && $queryText === $searchResult->getOriginalSearchString()) {
                     $this->logger->debug('[search plugin] Query text is typo corrected, adding frontend message');
                     $message = __(
-                        'Search instead for "<a href="%s">%s</a>"',
+                        'Search instead for "<a href="%1">%2</a>"',
                         $this->requestParser->buildSearchUrl($searchResult->getOriginalSearchString(), $searchResult->getSearchId()),
                         $searchResult->getOriginalSearchString()
                     );
