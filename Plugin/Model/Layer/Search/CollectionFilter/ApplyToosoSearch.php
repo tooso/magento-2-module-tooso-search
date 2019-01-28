@@ -160,22 +160,25 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                     return;
                 }
 
-                // Add search filter
-                $products = array_map(function ($product) {
-                    return $product['product_id'];
-                }, $this->search->getProducts());
+                if ($searchResult->isResultEmpty() === false) {
 
-                $this->logger->debug('[search plugin] Filter entity_id with ids: '.implode(',', $products));
+                    // Add search filter
+                    $products = array_map(function ($product) {
+                        return $product['product_id'];
+                    }, $this->search->getProducts());
 
-                $collection->addAttributeToFilter('entity_id', ['in' => $products]);
-                if($this->requestParser->isSortHandled()){
-                    $collection->getSelect()->order(
-                        $this->dbExpressionFactory->create(
-                            ['expression' => 'FIELD(e.entity_id, ' . implode(',', $products) . ')']
-                        )
-                    );
+                    $this->logger->debug('[search plugin] Filter entity_id with ids: '.implode(',', $products));
+
+                    $collection->addAttributeToFilter('entity_id', ['in' => $products]);
+                    if($this->requestParser->isSortHandled()){
+                        $collection->getSelect()->order(
+                            $this->dbExpressionFactory->create(
+                                ['expression' => 'FIELD(e.entity_id, ' . implode(',', $products) . ')']
+                            )
+                        );
+                    }
+                    return;
                 }
-                return;
             }
         }else{
             $this->logger->debug('[search plugin] Search response not valid');
