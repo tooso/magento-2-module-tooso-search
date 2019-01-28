@@ -17,6 +17,20 @@ interface TrackingInterface
     public function getApiAgent();
 
     /**
+     * Get current PHP version
+     *
+     * @return string
+     */
+    public function getPHPVersion();
+
+    /**
+     * Get current Magento version
+     *
+     * @return string
+     */
+    public function getMagentoVersion();
+
+    /**
      * Get current installed module version
      *
      * @return string

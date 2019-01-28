@@ -82,7 +82,37 @@ class Tracking implements TrackingInterface
      */
     public function getModuleVersion()
     {
-        return '0.1.0'; //TODO: need to be refactored
+        $version = 'undefined';
+        try {
+            $reflection = new \ReflectionClass(\Composer\Autoload\ClassLoader::class);
+            $vendorDir = dirname(dirname($reflection->getFileName()));
+            $packages = json_decode(file_get_contents($vendorDir . '/composer/installed.json'), true);
+            foreach ($packages as $package) {
+                if ($package['name'] === 'bitbull/magento-2-tooso-search') {
+                    $version = $package['version'];
+                    break;
+                }
+            }
+        } catch (\Exception $e) {
+            $version = 'error: ' . $e->getMessage();
+        }
+        return $version;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPHPVersion()
+    {
+        return PHP_VERSION;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMagentoVersion()
+    {
+        return $this->productMetadata->getVersion();
     }
 
     /**
@@ -90,10 +120,11 @@ class Tracking implements TrackingInterface
      */
     public function getApiAgent()
     {
-        $agent = 'PHP/'.PHP_VERSION;
-        $agent .= ' Magento/'.$this->productMetadata->getVersion();
-        $agent .= ' Tooso/'.$this->getModuleVersion();
-        return $agent;
+        return implode(' ', [
+            'PHP/'.$this->getPHPVersion(),
+            'Magento/'.$this->getMagentoVersion(),
+            'Tooso/'.$this->getModuleVersion(),
+        ]);
     }
 
     /**
