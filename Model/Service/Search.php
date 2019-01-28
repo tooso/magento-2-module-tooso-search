@@ -117,15 +117,19 @@ class Search implements SearchInterface
         $result = $this->getResult();
 
         if ($result !== null) {
+            $this->logger->debug('[search] Search already executed, returning result');
             return $result;
         }
 
         $queryText = $this->requestParser->getQueryText();
 
+        $this->logger->debug("[search] Searching for '$queryText'..");
+
         $typoCorrection = $this->requestParser->isTypoCorrectedSearch();
         $parentSearchId = null;
         if ($typoCorrection === false) {
             $parentSearchId = $this->requestParser->getParentSearchId();
+            $this->logger->debug("[search] Set parent search id to '$parentSearchId'");
         }
 
         // Do search
@@ -145,6 +149,7 @@ class Search implements SearchInterface
 
             $limit = $this->searchConfig->getDefaultLimit();
 
+            $this->logger->debug('[search] Executing search..');
             //NOTE: at this point page and limit param are not used
             $result = $this->getClient()->search(
                 $queryText,
@@ -154,6 +159,7 @@ class Search implements SearchInterface
                 null,
                 $limit
             );
+            $this->logger->debug('[search] Search executed');
         } catch (Exception $e) {
             $this->logger->logException($e);
             $result = $this->resultFactory->create();
@@ -183,10 +189,12 @@ class Search implements SearchInterface
      */
     protected function registerResult($result)
     {
+        $this->logger->debug('[search] Saving search result into registry..');
         $this->result = $result;
 
         // Store result into registry
         $this->registry->register(self::SEARCH_RESULT_REGISTRY_KEY, $this->result, true);
+        $this->logger->debug('[search] Result saved');
     }
 
     /**
@@ -194,6 +202,7 @@ class Search implements SearchInterface
      */
     public function getProducts()
     {
+        $this->logger->debug('[search] Searching products from result..');
         $products = [];
 
         if ($this->result !== null) {
@@ -226,6 +235,8 @@ class Search implements SearchInterface
                 $i++;
             }
         }
+
+        $this->logger->debug('[search] Found '.sizeof($products).' products');
 
         return $products;
     }

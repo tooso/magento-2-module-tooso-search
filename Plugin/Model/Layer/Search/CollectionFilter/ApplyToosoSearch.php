@@ -16,32 +16,30 @@ use Zend_Db_ExprFactory;
 
 class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter
 {
-    const SEARCH_RESULT_REGISTRY_KEY = 'tooso_search_response';
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
-     * @var LoggerInterface|null
+     * @var ConfigInterface
      */
-    protected $logger = null;
+    protected $config;
 
     /**
-     * @var ConfigInterface|null
+     * @var SearchInterface
      */
-    protected $config = null;
+    protected $search;
 
     /**
-     * @var SearchInterface|null
+     * @var SessionInterface
      */
-    protected $search = null;
+    protected $session;
 
     /**
-     * @var SessionInterface|null
+     * @var MessageManagerInterface
      */
-    protected $session = null;
-
-    /**
-     * @var MessageManagerInterface|null
-     */
-    protected $messageManage = null;
+    protected $messageManage;
 
     /**
      * @var SearchMessageFactory
@@ -102,7 +100,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         Category $category
     ) {
         if ($this->config->isSearchEnabled() !== true) {
-            $this->logger->debug('[search] Tooso search is disable, using default Magento search');
+            $this->logger->debug('[search plugin] Tooso search is disable, using default Magento search');
             parent::afterFilter($subject, $result, $collection, $category);
             return;
         }
@@ -113,6 +111,8 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         /** @var string $queryText */
         $queryText = $query->getQueryText();
 
+        $this->logger->debug('[search plugin] Executing search..');
+
         // Do search
         /** @var Result $searchResult */
         $searchResult = $this->search->execute();
@@ -122,6 +122,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
             // Add similar result alert message
             $similarResultMessage = $searchResult->getSimilarResultsAlert();
             if ($similarResultMessage !== null && $similarResultMessage !== '') {
+                $this->logger->debug('[search plugin] Adding custom frontend message');
                 $this->messageManage->addMessage($this->searchMessageFactory->create([
                     'text' => $similarResultMessage
                 ]));
@@ -132,11 +133,13 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                 // If this query was automatically typo-corrected, save in request scope the searchId for link
                 // this query (the parent) with the following one forced as not typo-correct
                 if ($this->requestParser->isTypoCorrectedSearch()) {
+                    $this->logger->debug('[search plugin] Is typo corrected search, setting search id');
                     $this->session->setSearchId($searchResult->getSearchId());
                 }
 
                 // Automatic typo correction
                 if ($searchResult->getFixedSearchString() !== null && $queryText === $searchResult->getOriginalSearchString()) {
+                    $this->logger->debug('[search plugin] Query text is typo corrected, adding frontend message');
                     $message = __(
                         'Search instead for "<a href="%s">%s</a>"',
                         $this->requestParser->buildSearchUrl($searchResult->getOriginalSearchString(), $searchResult->getSearchId()),
@@ -153,6 +156,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                         $queryText = $searchResult->getFixedSearchString();
                     }
                     $collection->addSearchFilter($queryText);
+                    $this->logger->debug('[search plugin] Executing Magento search fallback');
                     return;
                 }
 
@@ -160,6 +164,8 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                 $products = array_map(function ($product) {
                     return $product['product_id'];
                 }, $this->search->getProducts());
+
+                $this->logger->debug('[search plugin] Filter entity_id with ids: '.implode(',', $products));
 
                 $collection->addAttributeToFilter('entity_id', ['in' => $products]);
                 if($this->requestParser->isSortHandled()){
@@ -171,15 +177,19 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                 }
                 return;
             }
+        }else{
+            $this->logger->debug('[search plugin] Search response not valid');
         }
 
         if ($this->search->isFallbackEnable()) {
             $collection->addSearchFilter($queryText);
+            $this->logger->debug('[search plugin] Executing Magento search fallback');
             return;
         }
 
         // Apply impossible filter to force not result
         // TODO: refactor this
+        $this->logger->debug('[search plugin] No results, forcing result to 0');
         $collection->addAttributeToFilter('entity_id', ['null' => true]);
     }
 }
