@@ -10,6 +10,11 @@ use Magento\Search\Model\QueryFactory;
 class Result extends \Magento\CatalogSearch\Block\Result
 {
     const SEARCH_RESULT_MSG = "Search results for: '%1'";
+    
+    /**
+     * @var QueryFactory
+     */
+    protected $queryFactory;
 
     /**
      * @var SearchInterface
