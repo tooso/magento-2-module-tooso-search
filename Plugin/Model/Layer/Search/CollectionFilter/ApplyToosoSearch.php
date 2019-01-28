@@ -7,7 +7,7 @@ use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\Search\RequestParserInterface;
 use Bitbull\Tooso\Api\Service\SearchInterface;
 use Bitbull\Tooso\Api\Service\SessionInterface;
-use Bitbull\Tooso\Block\SearchMessageFactory;
+use Bitbull\Tooso\Block\Search\SearchMessageFactory;
 use Magento\Catalog\Model\Category;
 use Magento\Search\Model\QueryFactory;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
@@ -122,7 +122,9 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
             // Add similar result alert message
             $similarResultMessage = $searchResult->getSimilarResultsAlert();
             if ($similarResultMessage !== null && $similarResultMessage !== '') {
-                $this->messageManage->addMessage($this->searchMessageFactory->create($similarResultMessage));
+                $this->messageManage->addMessage($this->searchMessageFactory->create([
+                    'text' => $similarResultMessage
+                ]));
             }
 
             if ($searchResult->isSearchAvailable()) {
@@ -140,7 +142,9 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                         $this->requestParser->buildSearchUrl($searchResult->getOriginalSearchString(), $searchResult->getSearchId()),
                         $searchResult->getOriginalSearchString()
                     );
-                    $this->messageManage->addMessage($this->searchMessageFactory->create($message));
+                    $this->messageManage->addMessage($this->searchMessageFactory->create([
+                        'text' => $message
+                    ]));
                 }
 
                 // Check for empty result set

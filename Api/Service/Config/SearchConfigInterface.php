@@ -31,6 +31,13 @@ interface SearchConfigInterface
     public function getParamFilterExclusion();
 
     /**
+     * Get message style
+     *
+     * @return string|null
+     */
+    public function getMessageStyle();
+
+    /**
      * Is search response enriched
      *
      * @return boolean

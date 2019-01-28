@@ -9,5 +9,6 @@ if ($searchData !== null) {
 ?>
 
 <script>
-    console.log('search id: <?=$searchId ?: 'not set'?>');
+    console.debug('search id: <?=$searchId ?: 'not set'?>');
+    console.debug('search data:', <?=json_encode($searchData->getResponse())?>);
 </script>

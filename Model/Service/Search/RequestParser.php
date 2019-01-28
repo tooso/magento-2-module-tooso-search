@@ -17,6 +17,7 @@ class RequestParser implements RequestParserInterface
 
     const ORDER_PARAM_SEPARATOR = '-';
     const ORDER_PARAM_DEFAULT = 'relevance';
+    const ORDER_PARAM_DIRECTION_DEFAULT = 'desc';
     const FILTER_PARAM_SEPARATOR = ':';
     const FILTER_PARAM_PREFIX = 'magento_';
 
@@ -118,7 +119,9 @@ class RequestParser implements RequestParserInterface
         $orderValue = $orderType;
         $orderDirection = $this->request->getParam(self::PARAM_ORDER_DIRECTION);
         if ($orderDirection !== null) {
-            $orderValue .= self::ORDER_PARAM_SEPARATOR.$orderDirection;
+            $orderValue .= self::ORDER_PARAM_SEPARATOR . $orderDirection;
+        }else if($orderType !== 'relevance'){
+            $orderValue .= self::ORDER_PARAM_SEPARATOR . self::ORDER_PARAM_DIRECTION_DEFAULT;
         }
         if (!in_array($orderValue, $this->searchConfig->getSupportedOrderTypes(), true)) {
             return null;

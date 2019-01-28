@@ -16,6 +16,18 @@
             <search>
                 <fallback_enable>0</fallback_enable>
                 <default_limit>250</default_limit>
+                <message_style><![CDATA[
+                .message.tooso{
+                    margin: 0 0 10px;
+                    padding: 12px 20px 12px 25px;
+                    padding-left: 25px;
+                    display: block;
+                    font-size: 1.3rem;
+                    background: #f0f0f0;
+                    padding-left: 45px;
+                    position: relative;
+                }
+                ]]></message_style>
             </search>
         </tooso>
     </default>

@@ -1,0 +1,12 @@
+<?php
+
+/** @var Bitbull\Tooso\Api\Service\Config\SearchConfigInterface $searchConfig */
+$searchConfig = $block->searchConfig;
+$style = $searchConfig->getMessageStyle();
+?>
+
+<?php if ($style !== null): ?>
+<style id="<?=$block->getId()?>">
+    <?=$style?>
+</style>
+<?php endif; ?>

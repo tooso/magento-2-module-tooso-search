@@ -59,6 +59,9 @@
                     <label>Parameters to exclude as filter</label>
                     <comment><![CDATA[query and order parameters will be automatically excluded, for additional parameters separate value with comma.]]></comment>
                 </field>
+                <field id="message_style" translate="label" type="textarea" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Frontend message style</label>
+                </field>
             </group>
             <group id="analytics" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Analytics</label>
