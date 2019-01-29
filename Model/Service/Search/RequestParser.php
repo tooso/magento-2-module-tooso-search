@@ -102,7 +102,14 @@ class RequestParser implements RequestParserInterface
         });
         $filterValue = '';
         foreach ($requestParamsKeys as $requestParamKey) {
-            $filterValue .= self::FILTER_PARAM_PREFIX . $requestParamKey . self::FILTER_PARAM_SEPARATOR.$requestParams[$requestParamKey];
+            $filterParamValue = $requestParams[$requestParamKey];
+            if ($requestParamKey === 'price') {
+                $priceParts = explode('-', $filterParamValue);
+                $priceParts[0] = $priceParts[0] !== '' ? $priceParts[0] : '0';
+                $priceParts[1] = $priceParts[1] !== '' ? $priceParts[1] : '0';
+                $filterParamValue = implode(self::FILTER_PARAM_SEPARATOR, $priceParts);
+            }
+            $filterValue .= self::FILTER_PARAM_PREFIX . $requestParamKey . self::FILTER_PARAM_SEPARATOR . $filterParamValue;
         }
         return $filterValue === '' ? null : $filterValue;
     }

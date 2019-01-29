@@ -53,8 +53,7 @@ class AnalyticsConfig implements AnalyticsConfigInterface
         if ($cookieDomain === null || trim($cookieDomain) === '') {
             if ($default === null) {
                 $url = $this->storeManager->getStore()->getBaseUrl();
-                #$domainPart = explode('.', parse_url($url, PHP_URL_HOST));
-                $domainPart = explode('.', $this->httpUriHandler->parse($url));
+                $domainPart = explode('.', $this->httpUriHandler->parse($url)->getHost());
                 $cookieDomain = '.'.$domainPart[count($domainPart) - 2].'.'.$domainPart[count($domainPart) - 1];
             } else {
                 $cookieDomain = $default;

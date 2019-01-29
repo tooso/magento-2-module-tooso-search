@@ -137,7 +137,6 @@ class Tracking implements TrackingInterface
         $params = [
             'uip' => $this->getRemoteAddr(),
             'ua' => $this->getUserAgent(),
-            'sessionId' => $this->session->getSessionId(),
             'cid' => $this->session->getClientId(),
             'dr' => $this->getLastPage(),
             'dl' => $this->getCurrentPage(),

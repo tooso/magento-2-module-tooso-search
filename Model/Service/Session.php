@@ -115,7 +115,7 @@ class Session implements SessionInterface
     public function getClientId()
     {
         $cid = $this->cookieManager->getCookie(self::COOKIE_USERID);
-        if ($cid === false || $cid === '') {
+        if ($cid === null || $cid === false || $cid === '') {
             $cid = $this->generateClientId();
             $domain = $this->analyticsConfig->getCookieDomain();
             $this->cookieManager->setPublicCookie(

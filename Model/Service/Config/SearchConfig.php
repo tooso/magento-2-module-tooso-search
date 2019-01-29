@@ -12,7 +12,7 @@ class SearchConfig implements SearchConfigInterface
     const XML_PATH_SEARCH_DEFAULT_LIMIT = 'tooso/search/default_limit';
     const XML_PATH_SEARCH_FILTER_EXCLUSION_PARAMS = 'tooso/search/exclude_params';
     const XML_PATH_MESSAGE_STYLE = 'tooso/search/message_style';
-    const SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT = 'q,product_list_order,product_list_dir';
+    const SEARCH_FILTER_EXCLUSION_PARAMS_DEFAULT = 'q,product_list_order,product_list_dir,parentSearchId,utm_source,utm_medium,utm_campaign,gclid,gclsrc';
     const SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR = ',';
     const XML_PATH_SEARCH_SUPPORTED_ORDER_TYPES = 'tooso/search/supported_order_types';
     const SEARCH_SUPPORTED_ORDER_TYPES_SEPARATOR = ',';
