@@ -1,20 +1,23 @@
 <?php
-namespace Bitbull\Tooso\Block\Search;
+namespace Bitbull\Tooso\Plugin\Block;
 
 use Bitbull\Tooso\Api\Service\SearchInterface;
-use Magento\Catalog\Model\Layer\Resolver as LayerResolver;
 use Magento\CatalogSearch\Helper\Data;
-use Magento\Framework\View\Element\Template\Context;
 use Magento\Search\Model\QueryFactory;
 
-class Result extends \Magento\CatalogSearch\Block\Result
+class Result
 {
     const SEARCH_RESULT_MSG = "Search results for: '%1'";
-    
+
     /**
      * @var QueryFactory
      */
     protected $queryFactory;
+
+    /**
+     * @var Data
+     */
+    protected $catalogSearchData;
 
     /**
      * @var SearchInterface
@@ -22,23 +25,20 @@ class Result extends \Magento\CatalogSearch\Block\Result
     protected $search;
 
     /**
-     * @param Context $context
-     * @param LayerResolver $layerResolver
-     * @param Data $catalogSearchData
-     * @param QueryFactory $queryFactory
      * @param SearchInterface $search
-     * @param array $data
+     * @param Data $catalogSearchData
      */
-    public function __construct(Context $context, LayerResolver $layerResolver, Data $catalogSearchData, QueryFactory $queryFactory, SearchInterface $search, array $data = [])
+    public function __construct(Data $catalogSearchData, SearchInterface $search)
     {
-        parent::__construct($context, $layerResolver, $catalogSearchData, $queryFactory, $data);
+        $this->catalogSearchData = $catalogSearchData;
         $this->search = $search;
     }
 
     /**
-     * @inheritdoc
+     * @param \Magento\CatalogSearch\Block\Result $subject
+     * @return \Magento\Framework\Phrase
      */
-    public function getSearchQueryText()
+    public function afterGetSearchQueryText(\Magento\CatalogSearch\Block\Result $subject)
     {
         $searchResult = $this->search->getResult();
         $searchQuery = $this->catalogSearchData->getEscapedQueryText();

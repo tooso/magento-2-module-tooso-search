@@ -4,7 +4,6 @@ namespace Bitbull\Tooso\Observer\Search;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Framework\App\ActionFlag;
 use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;

@@ -20,8 +20,9 @@
         <plugin name="searchQueryTooso" type="Bitbull\Tooso\Plugin\Model\Layer\Search\CollectionFilter\ApplyToosoSearch" />
     </type>
 
-    <preference for="Magento\CatalogSearch\Block\Result"
-                type="Bitbull\Tooso\Block\Search\Result" />
+    <type name="Magento\CatalogSearch\Block\Result">
+        <plugin name="overrideQueryTooso" type="Bitbull\Tooso\Plugin\Block\Result" />
+    </type>
 
     <preference for="Bitbull\Tooso\Api\Service\Config\SearchConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config\SearchConfig" />
