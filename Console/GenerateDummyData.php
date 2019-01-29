@@ -143,7 +143,7 @@ class GenerateDummyData extends Command
                 continue;
             }catch (\Magento\Framework\Exception\NoSuchEntityException $exception){
 
-                $output->writeln("SKU '$sku' not exist, creating product..");
+                $output->write("SKU '$sku' not exist, creating product..");
                 $product = $this->productFactory->create();
                 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE);
                 $product->setVisibility(4);
@@ -160,7 +160,7 @@ class GenerateDummyData extends Command
                 $stockItem->setIsInStock(true);
                 $stockItem->setQty(100);
                 $this->stockRegistry->updateStockItemBySku($product->getSku(), $stockItem);
-                $output->writeln("Product with SKU '$sku' created!");
+                $output->writeln(' OK!');
             }
         }
 
