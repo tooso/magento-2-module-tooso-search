@@ -136,17 +136,22 @@ class Session implements SessionInterface
     /**
      * @inheritdoc
      */
-    public function isLoggedIn()
+    public function getCustomerId()
     {
-        return $this->session->isLoggedIn();
+        $customer = $this->session->getCustomer();
+        if ($customer === null){
+            return null;
+        }
+
+        return $customer->getId();
     }
 
     /**
      * @inheritdoc
      */
-    public function getSessionId()
+    public function isLoggedIn()
     {
-        return $this->session->getId();
+        return $this->session->isLoggedIn();
     }
 
     /**
