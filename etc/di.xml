@@ -47,4 +47,12 @@
     <preference for="Bitbull\Tooso\Api\Service\TrackingInterface"
                 type="Bitbull\Tooso\Model\Service\Tracking" />
 
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="toosoGenerateDummyData" xsi:type="object">Bitbull\Tooso\Console\GenerateDummyData</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>
