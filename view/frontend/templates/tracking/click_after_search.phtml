@@ -1,14 +1,18 @@
 <?php
 
 /** @var \Tooso\SDK\Search\Result $searchData */
-$searchData = $block->search->getResult();
+$searchResult = $block->search->getResult();
 $searchId = null;
-if ($searchData !== null) {
-    $searchId = $searchData->getSearchId();
+$searchData = null;
+if ($searchResult !== null) {
+    $searchId = $searchResult->getSearchId();
+    $searchData = $searchResult->getResponse();
 }
 ?>
 
-<script>
+<?php if ($block->config->isDebugModeEnabled()): ?>
+<script id="tooso-search-debug">
     console.debug('search id: <?=$searchId ?: 'not set'?>');
-    console.debug('search data:', <?=json_encode($searchData->getResponse())?>);
+    console.debug('search data:', <?=$searchData ? json_encode($searchData) : "'not set'"?>);
 </script>
+<?php endif; ?>
