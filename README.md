@@ -61,3 +61,52 @@ Send an email to info@tooso.ai to request your APIKEY
 * __Send report__: __YES__ to send a report to Tooso when an API error occourred	
 * __Debug mode__:  __Yes__ to enable more verbose logging for debug purpose
 2. Save configuration
+
+## Programmatically use Tooso service
+
+If you would like to call Tooso service that currently are not supported with the plugin we suggest this configuration.
+
+Include in your class a dependency from `Bitbull\Tooso\Api\Service\ClientInterface` and let DI system do the rest:
+```php
+<?php
+
+use \Bitbull\Tooso\Api\Service\ClientInterface as ToosoClientInterface;
+
+class MyServiceClass
+{
+
+   /**
+     * @var ToosoClientInterface
+     */
+    protected $toosoClient;
+
+    /**
+     * Search constructor.
+     *
+     * @param ToosoClientInterface $toosoClient
+     */
+    public function __construct(
+        ToosoClientInterface $toosoClient
+    )
+    {
+        $this->toosoClient = $toosoClient;
+    }
+
+}
+
+```
+this allow you to made any HTTP call to Tooso API with the pre-configured required parameters:
+```php
+<?php
+
+$result = $client->doRequest('/path/to/service', \Tooso\SDK\Client::HTTP_METHOD_GET, [
+    'param1' => 'value1',
+    'param2' => 'value2'
+]);
+```
+access response data from the object of type `Tooso\SDK\Response` returned by `doRequest` method:
+```php
+<?php
+
+$responseData = $result->getResponse();
+```

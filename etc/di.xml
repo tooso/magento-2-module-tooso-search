@@ -41,6 +41,9 @@
     <preference for="Bitbull\Tooso\Api\Service\ConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config" />
 
+    <preference for="Bitbull\Tooso\Api\Service\ClientInterface"
+                type="Bitbull\Tooso\Model\Service\Client" />
+
     <preference for="Bitbull\Tooso\Api\Service\LoggerInterface"
                 type="Bitbull\Tooso\Model\Service\Logger" />
 
