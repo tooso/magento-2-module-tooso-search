@@ -20,6 +20,14 @@
         <plugin name="searchQueryTooso" type="Bitbull\Tooso\Plugin\Model\Layer\Search\CollectionFilter\ApplyToosoSearch" />
     </type>
 
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="toosoGenerateDummyData" xsi:type="object">Bitbull\Tooso\Console\GenerateDummyData</item>
+            </argument>
+        </arguments>
+    </type>
+
     <preference for="Magento\CatalogSearch\Block\Result"
                 type="Bitbull\Tooso\Block\Search\Result" />
 
@@ -47,12 +55,5 @@
     <preference for="Bitbull\Tooso\Api\Service\TrackingInterface"
                 type="Bitbull\Tooso\Model\Service\Tracking" />
 
-    <type name="Magento\Framework\Console\CommandList">
-        <arguments>
-            <argument name="commands" xsi:type="array">
-                <item name="toosoGenerateDummyData" xsi:type="object">Bitbull\Tooso\Console\GenerateDummyData</item>
-            </argument>
-        </arguments>
-    </type>
 
 </config>
