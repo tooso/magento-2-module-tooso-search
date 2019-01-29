@@ -10,6 +10,7 @@ use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\HTTP\Header;
 use Magento\Framework\UrlInterface;
+use Magento\Framework\App\Request\Http as RequestHttp;
 
 class Tracking implements TrackingInterface
 {
@@ -29,9 +30,9 @@ class Tracking implements TrackingInterface
     protected $session;
 
     /**
-     * @var RemoteAddress
+     * @var RequestHttp
      */
-    protected $remoteAddress;
+    protected $request;
 
     /**
      * @var Header
@@ -54,7 +55,7 @@ class Tracking implements TrackingInterface
      * @param LoggerInterface $logger
      * @param ProductMetadataInterface $productMetadata
      * @param SessionInterface $session
-     * @param RemoteAddress $remoteAddress
+     * @param RequestHttp $request
      * @param Header $httpHeader
      * @param UrlInterface $url
      * @param AnalyticsConfigInterface $analyticsConfig
@@ -63,7 +64,7 @@ class Tracking implements TrackingInterface
         LoggerInterface $logger,
         ProductMetadataInterface $productMetadata,
         SessionInterface $session,
-        RemoteAddress $remoteAddress,
+        RequestHttp $request,
         Header $httpHeader,
         UrlInterface $url,
         AnalyticsConfigInterface $analyticsConfig
@@ -71,7 +72,7 @@ class Tracking implements TrackingInterface
         $this->logger = $logger;
         $this->productMetadata = $productMetadata;
         $this->session = $session;
-        $this->remoteAddress = $remoteAddress;
+        $this->request = $request;
         $this->httpHeader = $httpHeader;
         $this->url = $url;
         $this->analyticsConfig = $analyticsConfig;
@@ -161,7 +162,7 @@ class Tracking implements TrackingInterface
      */
     public function getRemoteAddr()
     {
-        return $this->remoteAddress->getRemoteAddress();
+        return $this->request->getClientIp(true);
     }
 
     /**

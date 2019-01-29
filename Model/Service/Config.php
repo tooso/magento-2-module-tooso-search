@@ -8,8 +8,8 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class Config implements ConfigInterface
 {
+    const XML_PATH_GENERAL_LOCALE_CODE = 'general/locale/code';
     const XML_PATH_SEARCH_ACTIVE = 'tooso/active/frontend';
-
     const XML_PATH_API_KEY = 'tooso/server/api_key';
     const XML_PATH_API_VERSION = 'tooso/server/api_version';
     const XML_PATH_API_BASE_URL = 'tooso/server/api_base_url';
@@ -42,7 +42,12 @@ class Config implements ConfigInterface
      */
     public function getLanguage()
     {
-        return $this->storeManager->getStore()->getLocaleCode();
+        $currentLocaleCode = $this->storeManager->getStore()->getLocaleCode();
+        if ($currentLocaleCode !== null) {
+            return $currentLocaleCode;
+        }
+
+        return $this->scopeConfig->getValue(self::XML_PATH_GENERAL_LOCALE_CODE);
     }
 
     /**
