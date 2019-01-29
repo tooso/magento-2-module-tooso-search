@@ -2,7 +2,7 @@
 
 namespace Bitbull\Tooso\Console;
 
-use Bitbull\Tooso\Api\Service\SearchInterfaceFactory;
+use Bitbull\Tooso\Api\Service\SearchInterface\Proxy as SearchInterfaceProxy;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,9 +20,11 @@ class GenerateDummyData extends Command
     const SEARCH_ARGUMENT = 'search';
 
     /**
-     * @var SearchInterface
+     * @var SearchInterfaceProxy
+     *
+     * Use a proxy class to delay instantiation of session which in turn needs area code which is set only after.
      */
-    protected $searchFactory;
+    protected $search;
 
     /**
      * @var ProductInterfaceFactory
@@ -44,22 +46,23 @@ class GenerateDummyData extends Command
      */
     protected $state;
 
+
     /**
-     * @param SearchInterfaceFactory $searchFactory
+     * GenerateDummyData constructor.
      * @param ProductInterfaceFactory $productFactory
      * @param ProductRepositoryInterface $productRepository
      * @param StockRegistryInterface $stockRegistry
      * @param State $state
+     * @param SearchInterfaceProxy $search
      */
     public function __construct(
         ProductInterfaceFactory $productFactory,
         ProductRepositoryInterface $productRepository,
         StockRegistryInterface $stockRegistry,
         State $state,
-        SearchInterfaceFactory $searchFactory
-    )
-    {
-        $this->searchFactory = $searchFactory;
+        SearchInterfaceProxy $search
+    ) {
+        $this->search = $search;
         $this->state = $state;
         $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
@@ -74,13 +77,15 @@ class GenerateDummyData extends Command
     {
         $this->setName('tooso:dummy-data')
             ->setDescription('Generate dummy data based on Tooso search response')
-            ->setDefinition([
-                new InputArgument(
-                    self::SEARCH_ARGUMENT,
-                    InputArgument::REQUIRED,
-                    'Search Query'
-                ),
-            ]);
+            ->setDefinition(
+                [
+                    new InputArgument(
+                        self::SEARCH_ARGUMENT,
+                        InputArgument::REQUIRED,
+                        'Search Query'
+                    ),
+                ]
+            );
 
         parent::configure();
     }
@@ -91,20 +96,19 @@ class GenerateDummyData extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_FRONTEND);
-        $search = $this->searchFactory->create();
 
         $name = $input->getArgument(self::SEARCH_ARGUMENT);
         $output->writeln("<info>Searching for '$name'...</info>");
 
         /** @var \Tooso\SDK\Search\Result $result */
-        $result = $search->execute($name);
+        $result = $this->search->execute($name);
 
         foreach ($result->getResults() as $key => $sku) {
-            try{
+            try {
                 $this->productRepository->get($sku);
                 $output->writeln("<debug>SKU '$sku' already exist, skipping</debug>");
                 continue;
-            }catch (\Magento\Framework\Exception\NoSuchEntityException $exception){
+            } catch (\Magento\Framework\Exception\NoSuchEntityException $exception) {
 
                 $output->writeln("<debug>SKU '$sku' not exist, creating product..</debug>");
                 $product = $this->productFactory->create();
