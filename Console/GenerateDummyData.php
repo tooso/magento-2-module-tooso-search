@@ -2,7 +2,7 @@
 
 namespace Bitbull\Tooso\Console;
 
-use Bitbull\Tooso\Api\Service\SearchInterface;
+use Bitbull\Tooso\Api\Service\SearchInterfaceFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Catalog\Api\Data\ProductInterfaceFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
+use Magento\Framework\App\State;
 
 class GenerateDummyData extends Command
 {
@@ -21,7 +22,7 @@ class GenerateDummyData extends Command
     /**
      * @var SearchInterface
      */
-    protected $search;
+    protected $searchFactory;
 
     /**
      * @var ProductInterfaceFactory
@@ -39,19 +40,27 @@ class GenerateDummyData extends Command
     protected $stockRegistry;
 
     /**
-     * @param SearchInterface $search
+     * @var State
+     */
+    protected $state;
+
+    /**
+     * @param SearchInterfaceFactory $searchFactory
      * @param ProductInterfaceFactory $productFactory
      * @param ProductRepositoryInterface $productRepository
      * @param StockRegistryInterface $stockRegistry
+     * @param State $state
      */
     public function __construct(
         ProductInterfaceFactory $productFactory,
         ProductRepositoryInterface $productRepository,
         StockRegistryInterface $stockRegistry,
-        SearchInterface $search
+        State $state,
+        SearchInterfaceFactory $searchFactory
     )
     {
-        $this->search = $search;
+        $this->searchFactory = $searchFactory;
+        $this->state = $state;
         $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
         $this->stockRegistry = $stockRegistry;
@@ -81,33 +90,40 @@ class GenerateDummyData extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_FRONTEND);
+        $search = $this->searchFactory->create();
+
         $name = $input->getArgument(self::SEARCH_ARGUMENT);
         $output->writeln("<info>Searching for '$name'...</info>");
 
         /** @var \Tooso\SDK\Search\Result $result */
-        $result = null;
+        $result = $search->execute($name);
 
-        foreach ($result->getResults() as $sku) {
-            if ($this->productRepository->get($sku)->getId() === null) {
+        foreach ($result->getResults() as $key => $sku) {
+            try{
+                $this->productRepository->get($sku);
                 $output->writeln("<debug>SKU '$sku' already exist, skipping</debug>");
                 continue;
-            }
-            $output->writeln("<debug>SKU '$sku' not exist, creating product..</debug>");
-            $product = $this->productFactory->create();
-            $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE);
-            $product->setVisibility(4);
-            $product->setSku($sku);
-            $product->setName('Test');
-            $product->setPrice(100);
-            $product->setAttributeSetId(4);
-            $product->save();
-            $this->productRepository->save($product);
+            }catch (\Magento\Framework\Exception\NoSuchEntityException $exception){
 
-            $stockItem = $this->stockRegistry->getStockItemBySku($product->getSku());
-            $stockItem->setIsInStock(true);
-            $stockItem->setQty(100);
-            $this->stockRegistry->updateStockItemBySku($product->getSku(), $stockItem);
-            $output->writeln("<debug>Product with SKU '$sku' created!</debug>");
+                $output->writeln("<debug>SKU '$sku' not exist, creating product..</debug>");
+                $product = $this->productFactory->create();
+                $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE);
+                $product->setVisibility(4);
+                $product->setSku($sku);
+                $product->setName($name . ' ' . $key);
+                $product->setPrice(100);
+                $product->setAttributeSetId(4);
+                $product->setWebsiteId(1);
+                $product->save();
+                $this->productRepository->save($product);
+
+                $stockItem = $this->stockRegistry->getStockItemBySku($product->getSku());
+                $stockItem->setIsInStock(true);
+                $stockItem->setQty(100);
+                $this->stockRegistry->updateStockItemBySku($product->getSku(), $stockItem);
+                $output->writeln("<debug>Product with SKU '$sku' created!</debug>");
+            }
         }
 
         $output->writeln('<info>Done!</info>');

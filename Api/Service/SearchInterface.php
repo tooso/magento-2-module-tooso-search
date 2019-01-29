@@ -14,9 +14,10 @@ interface SearchInterface
     /**
      * Execute Tooso search
      *
+     * @param string $queryText
      * @return Result
      */
-    public function execute();
+    public function execute($queryText = null);
 
     /**
      * Get last result

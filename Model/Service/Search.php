@@ -112,7 +112,7 @@ class Search implements SearchInterface
     /**
      * @inheritdoc
      */
-    public function execute()
+    public function execute($queryText = null)
     {
         $result = $this->getResult();
 
@@ -121,7 +121,9 @@ class Search implements SearchInterface
             return $result;
         }
 
-        $queryText = $this->requestParser->getQueryText();
+        if ($queryText === null) {
+            $queryText = $this->requestParser->getQueryText();
+        }
 
         $this->logger->debug("[search] Searching for '$queryText'..");
 
