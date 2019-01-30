@@ -168,7 +168,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                     }, $this->search->getProducts());
 
                     $this->logger->debug('[search plugin] Filter entity_id with ids: '.implode(',', $products));
-                    $collection->addAttributeToFilter('entity_id', ['in' => $products]);
+                    $collection->addFieldToFilter('entity_id', $products);
 
                     if($this->requestParser->isSortHandled()){
                         $this->logger->debug('[search plugin] Forcing sort from search response');
