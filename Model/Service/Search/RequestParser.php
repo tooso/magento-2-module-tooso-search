@@ -21,6 +21,8 @@ class RequestParser implements RequestParserInterface
     const FILTER_PARAM_SEPARATOR = ':';
     const FILTER_PARAM_PREFIX = 'magento_';
 
+    const FILTER_PARAM_PRICE = 'rangePriceFilter';
+
     /**
      * @var SearchConfigInterface
      */
@@ -100,16 +102,25 @@ class RequestParser implements RequestParserInterface
         $requestParamsKeys = array_filter(array_keys($requestParams),function ($param) use ($excludeParams){
             return !in_array($param, $excludeParams, true);
         });
+
         $filterValue = '';
+        $priceParam = $this->searchConfig->getFilterPriceParam(); // limit multiple access in foreach loop
+
         foreach ($requestParamsKeys as $requestParamKey) {
             $filterParamValue = $requestParams[$requestParamKey];
-            if ($requestParamKey === 'price') {
-                $priceParts = explode('-', $filterParamValue);
-                $priceParts[0] = $priceParts[0] !== '' ? $priceParts[0] : '0';
-                $priceParts[1] = $priceParts[1] !== '' ? $priceParts[1] : '0';
-                $filterParamValue = implode(self::FILTER_PARAM_SEPARATOR, $priceParts);
+            if ($filterValue !== '') {
+                $filterValue .= self::FILTER_PARAM_SEPARATOR;
             }
-            $filterValue .= self::FILTER_PARAM_PREFIX . $requestParamKey . self::FILTER_PARAM_SEPARATOR . $filterParamValue;
+            switch ($requestParamKey){
+                case $priceParam:
+                    $priceParts = explode('-', $filterParamValue);
+                    $priceParts[0] = $priceParts[0] !== '' ? number_format((float) $priceParts[0], 1) : '0.0';
+                    $priceParts[1] = $priceParts[1] !== '' ? number_format((float) $priceParts[1], 1) : '10000.0';
+                    $filterValue .= self::FILTER_PARAM_PRICE . self::FILTER_PARAM_SEPARATOR . $priceParts[0] . self::FILTER_PARAM_SEPARATOR . self::FILTER_PARAM_PRICE . self::FILTER_PARAM_SEPARATOR . $priceParts[1];
+                    break;
+                default:
+                    $filterValue .= self::FILTER_PARAM_PREFIX . $requestParamKey . self::FILTER_PARAM_SEPARATOR . $filterParamValue;
+            }
         }
         return $filterValue === '' ? null : $filterValue;
     }

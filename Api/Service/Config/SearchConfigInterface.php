@@ -31,6 +31,13 @@ interface SearchConfigInterface
     public function getParamFilterExclusion();
 
     /**
+     * Override filter price param, default is 'price'
+     *
+     * @return string
+     */
+    public function getFilterPriceParam();
+
+    /**
      * Get message style
      *
      * @return string|null

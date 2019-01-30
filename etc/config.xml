@@ -27,6 +27,7 @@
         position: relative;
     }
                 ]]></message_style>
+                <filter_price_override>price</filter_price_override>
             </search>
             <analytics>
                 <track_userid>1</track_userid>

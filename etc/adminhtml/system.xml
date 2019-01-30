@@ -59,7 +59,11 @@
                     <label>Parameters to exclude as filter</label>
                     <comment><![CDATA[query and order parameters will be automatically excluded, for additional parameters separate value with comma.]]></comment>
                 </field>
-                <field id="message_style" translate="label" type="textarea" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="filter_price_override" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Parameter to thread as price range</label>
+                    <comment><![CDATA[leave empty for 'price'.]]></comment>
+                </field>
+                <field id="message_style" translate="label" type="textarea" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Frontend message style</label>
                 </field>
             </group>

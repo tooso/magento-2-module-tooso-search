@@ -17,6 +17,8 @@ class SearchConfig implements SearchConfigInterface
     const XML_PATH_SEARCH_SUPPORTED_ORDER_TYPES = 'tooso/search/supported_order_types';
     const SEARCH_SUPPORTED_ORDER_TYPES_SEPARATOR = ',';
     const SEARCH_SUPPORTED_ORDER_TYPES_DEFAULT = 'relevance,price-desc,price-asc,name-asc,name-desc';
+    const XML_PATH_FILTER_PRICE_PARAM = 'tooso/search/filter_price_override';
+    const FILTER_PRICE_PARAM_DEFAULT = 'price';
 
     /**
      * @var ScopeConfigInterface
@@ -70,6 +72,19 @@ class SearchConfig implements SearchConfigInterface
         $params = explode(self:: SEARCH_FILTER_EXCLUSION_PARAMS_SEPARATOR,$value);
 
         return array_map('trim', array_unique(array_merge($defaultParams, $params)));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilterPriceParam()
+    {
+        $value =  $this->scopeConfig->getValue(self::XML_PATH_FILTER_PRICE_PARAM);
+        if ($value === null) {
+            return self::FILTER_PRICE_PARAM_DEFAULT;
+        }
+
+        return $value;
     }
 
     /**
