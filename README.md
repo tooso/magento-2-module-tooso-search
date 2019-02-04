@@ -61,3 +61,112 @@ Send an email to info@tooso.ai to request your APIKEY
 * __Send report__: __YES__ to send a report to Tooso when an API error occourred	
 * __Debug mode__:  __Yes__ to enable more verbose logging for debug purpose
 2. Save configuration
+
+
+## Programmatically use Tooso service
+
+If you would like to call Tooso service that currently are not supported with the plugin we suggest this configuration.
+
+Include in your class a dependency from `Bitbull\Tooso\Api\Service\ClientInterface` and let DI system do the rest:
+```php
+<?php
+
+use Tooso\SDK\ClientBuilder;
+use Bitbull\Tooso\Api\Service\ConfigInterface;
+use Bitbull\Tooso\Api\Service\TrackingInterface;
+use Bitbull\Tooso\Api\Service\LoggerInterface;
+
+class MyServiceClass
+{
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
+    /**
+     * @var TrackingInterface
+     */
+    protected $tracking;
+
+    /**
+     * @var ClientBuilder
+     */
+    protected $clientBuilder;
+    
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * Search constructor.
+     *
+     * @param ConfigInterface $config
+     * @param TrackingInterface $tracking
+     * @param ClientBuilder $clientBuilder
+     * @param LoggerInterface $logger
+     */
+    public function __construct(
+        ConfigInterface $config,
+        TrackingInterface $tracking,
+        ClientBuilder $clientBuilder,
+        LoggerInterface $logger
+    )
+    {
+        $this->config = $config;
+        $this->tracking = $tracking;
+        $this->clientBuilder = $clientBuilder;
+        $this->logger = $logger;
+    }
+
+}
+
+```
+build the client instance using a `Tooso\SDK\ClientBuilder` instance
+```php
+<?php
+    
+    /**
+     * Get Client
+     *
+     * @return \Tooso\SDK\Client
+     */
+    protected function getClient()
+    {
+        return $this->clientBuilder
+            ->withApiKey($this->config->getApiKey())
+            ->withApiVersion($this->config->getApiVersion())
+            ->withApiBaseUrl($this->config->getApiBaseUrl())
+            ->withLanguage($this->config->getLanguage())
+            ->withStoreCode($this->config->getStoreCode())
+            ->withAgent($this->tracking->getApiAgent()) //optional
+            ->withLogger($this->logger) //optional
+            ->build();
+    }
+``` 
+
+this allow you to create a `Tooso\SDK\Client` instance to made any HTTP call to Tooso API with the pre-configured required parameters:
+```php
+<?php
+
+    /**
+     * Execute service
+     */
+    protected function execute()
+    {
+        $client = $this->getClient();
+        $result = $client->doRequest('/path/to/service', \Tooso\SDK\Client::HTTP_METHOD_GET, [
+            'param1' => 'value1',
+            'param2' => 'value2'
+        ]);
+    }
+```
+access response data from the object of type `Tooso\SDK\Response` returned by `doRequest` method:
+```php
+<?php
+$result = $client->doRequest('/path/to/service', \Tooso\SDK\Client::HTTP_METHOD_GET, [
+    'param1' => 'value1',
+    'param2' => 'value2'
+]);
+$responseData = $result->getResponse();
+```
