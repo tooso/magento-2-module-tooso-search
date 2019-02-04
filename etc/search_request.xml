@@ -19,5 +19,19 @@
         <filters>
             <filter xsi:type="termFilter" name="entity_id" field="entity_id" value="$entity_id$"/>
         </filters>
+        <aggregations>
+            <bucket name="price_bucket" field="price" xsi:type="dynamicBucket" method="$price_dynamic_algorithm$">
+                <metrics>
+                    <metric type="count"/>
+                </metrics>
+            </bucket>
+            <bucket name="category_bucket" field="category_ids" xsi:type="termBucket">
+                <metrics>
+                    <metric type="count"/>
+                </metrics>
+            </bucket>
+        </aggregations>
+        <from>0</from>
+        <size>10000</size>
     </request>
 </requests>
