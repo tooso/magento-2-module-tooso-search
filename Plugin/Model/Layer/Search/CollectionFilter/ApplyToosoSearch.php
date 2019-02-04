@@ -11,8 +11,10 @@ use Bitbull\Tooso\Block\Search\SearchMessageFactory;
 use Magento\Catalog\Model\Category;
 use Magento\Search\Model\QueryFactory;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Framework\Api\FilterBuilderFactory;
 use Tooso\SDK\Search\Result;
 use Zend_Db_ExprFactory;
+
 
 class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter
 {
@@ -57,6 +59,11 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
     protected $requestParser;
 
     /**
+     * @var FilterBuilderFactory
+     */
+    private $filterBuilderFactory;
+
+    /**
      * @param QueryFactory $queryFactory
      * @param LoggerInterface $logger
      * @param ConfigInterface $config
@@ -66,6 +73,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
      * @param RequestParserInterface $requestParser
      * @param SearchMessageFactory $searchMessageFactory
      * @param Zend_Db_ExprFactory $dbExpressionFactory
+     * @param FilterBuilderFactory $filterBuilderFactory
      */
     public function __construct(
         QueryFactory $queryFactory,
@@ -76,7 +84,8 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         MessageManagerInterface $messageManage,
         RequestParserInterface $requestParser,
         SearchMessageFactory $searchMessageFactory,
-        Zend_Db_ExprFactory $dbExpressionFactory
+        Zend_Db_ExprFactory $dbExpressionFactory,
+        FilterBuilderFactory $filterBuilderFactory
     )
     {
         parent::__construct($queryFactory);
@@ -88,6 +97,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
         $this->requestParser = $requestParser;
         $this->searchMessageFactory = $searchMessageFactory;
         $this->dbExpressionFactory = $dbExpressionFactory;
+        $this->filterBuilderFactory = $filterBuilderFactory;
     }
 
     /**
@@ -101,9 +111,11 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
     ) {
         if ($this->config->isSearchEnabled() !== true) {
             $this->logger->debug('[search plugin] Tooso search is disable, using default Magento search');
-            parent::afterFilter($subject, $result, $collection, $category);
             return;
         }
+
+        // Hard clean filters
+        $collection->setFilterBuilder($this->filterBuilderFactory->create());
 
         /** @var \Magento\Search\Model\Query $query */
         $query = $this->queryFactory->get();
