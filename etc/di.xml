@@ -16,7 +16,7 @@
     </type>
 
     <type name="Magento\Catalog\Model\Layer\Search\CollectionFilter">
-        <plugin name="searchQuery" type="Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter" disabled="false" />
+        <plugin name="searchQuery" type="Magento\CatalogSearch\Model\Layer\Search\Plugin\CollectionFilter" disabled="true" />
         <plugin name="searchQueryTooso" type="Bitbull\Tooso\Plugin\Model\Layer\Search\CollectionFilter\ApplyToosoSearch" />
     </type>
 
