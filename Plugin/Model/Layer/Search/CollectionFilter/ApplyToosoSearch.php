@@ -167,6 +167,17 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                         return $product['product_id'];
                     }, $this->search->getProducts());
 
+
+                    if (sizeof($products) === 0) {
+                        $this->logger->error('[search plugin] No product found with SKU response, check products with SKUs: '.implode(',', $searchResult->getResults()));
+                        if ($this->search->isFallbackEnable()) {
+                            $collection->addSearchFilter($queryText);
+                            $this->logger->debug('[search plugin] Executing Magento search fallback');
+                            return;
+                        }
+                        return;
+                    }
+
                     $this->logger->debug('[search plugin] Filter entity_id with ids: '.implode(',', $products));
                     $collection->addFieldToFilter('entity_id', $products);
 
