@@ -60,4 +60,14 @@ class Logger implements LoggerInterface
             $this->log($message, Monolog::DEBUG);
         }
     }
+
+    /**
+     * @param string $message
+     */
+    public function error($message)
+    {
+        if ($this->config->isDebugModeEnabled()) {
+            $this->log($message, Monolog::ERROR);
+        }
+    }
 }
