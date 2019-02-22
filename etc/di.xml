@@ -56,5 +56,4 @@
     <preference for="Bitbull\Tooso\Api\Service\TrackingInterface"
                 type="Bitbull\Tooso\Model\Service\Tracking" />
 
-
 </config>

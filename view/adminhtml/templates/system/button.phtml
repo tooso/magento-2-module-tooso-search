@@ -1,0 +1,55 @@
+<?php /* @var $block \Bitbull\Tooso\Block\Adminhtml\System */ ?>
+
+<script>
+    require([
+        'jquery',
+        'prototype'
+    ], function($){
+        
+        var buttonId = "<?php echo $block->getButtonId() ?>";
+        var collectSpan = $('#'+buttonId+'_span');
+
+        $('#'+buttonId).click(function () {
+            new Ajax.Request('<?php echo $block->getAjaxUrl() ?>', {
+                parameters:     {},
+                loaderArea:     true,
+                asynchronous:   true,
+                onCreate: function() {
+                    collectSpan.find('.done').hide();
+                    collectSpan.find('.processing').show();
+                    collectSpan.find('.message_span').text('');
+                },
+                onSuccess: function(response) {
+                    collectSpan.find('.processing').hide();
+
+                    var resultText = '';
+                    if (response.status != 200) {
+                        resultText = response.statusText;
+                    } else {
+                        resultText = 'Success';
+                        collectSpan.find('#'+buttonId+'> .done').show();
+                    }
+                    collectSpan.find('.message_span').text(resultText);
+                    setTimeout(function () {
+                        collectSpan.find('.message_span').text('');    
+                    }, 3000)
+                },
+                onFailure: function(response, status, errMsg) {
+                    collectSpan.find('.processing').hide();
+                    collectSpan.find('.message_span').text(response.statusText);
+                    setTimeout(function () {
+                        collectSpan.find('.message_span').text('');    
+                    }, 3000)
+                }
+            });
+        });
+
+    });
+</script>
+
+<?php echo $block->getButtonHtml() ?>
+<span id="<?php echo $block->getButtonId() ?>_span">
+    <img class="processing" alt="Loading" style="margin:0 5px; display: none;" src="<?php echo $block->getViewFileUrl('images/process_spinner.gif') ?>"/>
+    <img class="done" alt="Done" style="margin:-3px 5px; display: none;" src="<?php echo $block->getViewFileUrl('images/rule_component_apply.gif') ?>"/>
+    <span class="message_span"></span>
+</span>
