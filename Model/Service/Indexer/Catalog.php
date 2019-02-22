@@ -4,7 +4,7 @@ namespace Bitbull\Tooso\Model\Service\Indexer;
 use Bitbull\Tooso\Api\Service\Indexer\EnricherInterface;
 use Bitbull\Tooso\Api\Service\Indexer\CatalogInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
-
+use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
 
 class Catalog implements CatalogInterface
 {
@@ -17,14 +17,21 @@ class Catalog implements CatalogInterface
      * @var array
      */
     protected $enrichers;
+    
+    /**
+     * @var IndexerConfigInterface
+     */
+    protected $indexerConfig;
 
     /**
      * @var LoggerInterface $logger
+     * @var IndexerConfigInterface $indexerConfig
      * @var EnricherInterface[] $enrichers
      */
-    public function __construct(LoggerInterface $logger, array $enrichers)
+    public function __construct(LoggerInterface $logger, IndexerConfigInterface $indexerConfig, array $enrichers)
     {
         $this->logger = $logger;
+        $this->indexerConfig = $indexerConfig;
         $this->enrichers = $enrichers;
     }
     
@@ -43,10 +50,15 @@ class Catalog implements CatalogInterface
         
         // Run enrichers
         
-        array_walk($this->enrichers, function ($enricher) use (&$data) {
+        $attributes = $this->indexerConfig->getAttributes();
+        array_walk($this->enrichers, function ($enricher) use (&$data, $attributes) {
             
             if (sizeof($data) === 0) {
                 throw new Exception('No data provided to enricher');
+            }
+            
+            if (sizeof(array_intersect($enricher->getEnrichedKeys(), $attributes)) === 0) {
+                return;
             }
             
             $currentKeys = array_keys($data[0]);
@@ -60,6 +72,8 @@ class Catalog implements CatalogInterface
         });
         
         // Now $data is enriched
+        
+        
         
     }
 }

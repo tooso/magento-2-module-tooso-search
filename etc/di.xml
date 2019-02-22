@@ -37,6 +37,9 @@
 
     <preference for="Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config\AnalyticsConfig" />
+                
+    <preference for="Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface"
+                type="Bitbull\Tooso\Model\Service\Config\IndexerConfig" />
 
     <preference for="Bitbull\Tooso\Api\Service\ConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config" />
@@ -63,6 +66,7 @@
         <arguments>
             <argument name="enrichers" xsi:type="array">
                 <item name="attributes" xsi:type="object">Bitbull\Tooso\Model\Service\Indexer\Enricher\AttributesEnricher</item>
+                <item name="categories" xsi:type="object">Bitbull\Tooso\Model\Service\Indexer\Enricher\CategoriesEnricher</item>
                 <item name="variants" xsi:type="object">Bitbull\Tooso\Model\Service\Indexer\Enricher\VariantsEnricher</item>
             </argument>
         </arguments>

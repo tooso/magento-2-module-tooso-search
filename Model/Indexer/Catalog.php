@@ -15,27 +15,13 @@ class Catalog implements \Magento\Framework\Indexer\ActionInterface, \Magento\Fr
     protected $logger;
     
     /**
-     * @var OperationFactory
-     */
-    protected $operationFactory;
-    
-    /**
-     * @var CatalogDecoratorFactory
-     */
-    protected $catalogDecoratorFactory;
-    
-    /**
      * @param LoggerInterface $logger
      */
     public function __construct(
-        LoggerInterface $logger,
-        OperationFactory $operationFactory,
-        CatalogDecoratorFactory $catalogDecoratorFactory
+        LoggerInterface $logger
     )
     {
         $this->logger = $logger;
-        $this->operationFactory = $operationFactory;
-        $this->catalogDecoratorFactory = $catalogDecoratorFactory;
     }
     
     /*
@@ -53,12 +39,6 @@ class Catalog implements \Magento\Framework\Indexer\ActionInterface, \Magento\Fr
     public function executeFull(){
         //Should take into account all placed orders in the system
         $this->logger->debug('[indexer catalog] asked to execute a full reindex');
-        
-        $operation = $this->operationFactory->create();
-        $catalogDecorator = $this->catalogDecoratorFactory->create();
-        $catalogDecorator->setOperation($operation);
-        
-        $data = $catalogDecorator->getData();
     }
 
 

@@ -4,7 +4,7 @@ namespace Bitbull\Tooso\Model\Service\Indexer\Enricher;
 use Bitbull\Tooso\Api\Service\Indexer\EnricherInterface;
 use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
 
-class VariantsEnricher implements EnricherInterface
+class StockEnricher implements EnricherInterface
 {
     
     /**
@@ -19,14 +19,14 @@ class VariantsEnricher implements EnricherInterface
     {
         $this->indexerConfig = $indexerConfig;
     }
-
+    
     /**
      * @inheritdoc
      */
     public function execute($data)
     {
         array_walk($data, function(&$d) {
-           $d['variants'] = [
+            $d['categories'] = [
                 [
                     'sku' => 'var1',
                     'name' => 'test'
@@ -42,6 +42,6 @@ class VariantsEnricher implements EnricherInterface
      */
     public function getEnrichedKeys()
     {
-        return ['variants'];
+        return ['is_in_stock', 'qty'];
     }
 }
