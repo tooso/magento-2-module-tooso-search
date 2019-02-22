@@ -28,6 +28,8 @@ class Attributes implements \Magento\Framework\Option\ArrayInterface
      */
     protected $filterGroupBuilder;
     
+    //TODO: is this the right place to store custom attributes?
+    
     /**
      * @var FilterGroupBuilder
      */
@@ -104,5 +106,15 @@ class Attributes implements \Magento\Framework\Option\ArrayInterface
         }
         
         return $attributes;
+    }
+    
+    /**
+     * Get custom attributes
+     * 
+     * @return array
+     */
+    public function getCustomAttributes()
+    {
+        return $this->customAttributes;
     }
 }

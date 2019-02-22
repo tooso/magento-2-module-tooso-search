@@ -25,6 +25,8 @@ class StockEnricher implements EnricherInterface
      */
     public function execute($data)
     {
+        //TODO: implement me
+        
         array_walk($data, function(&$d) {
             $d['categories'] = [
                 [
@@ -42,6 +44,6 @@ class StockEnricher implements EnricherInterface
      */
     public function getEnrichedKeys()
     {
-        return ['is_in_stock', 'qty'];
+        return ['is_in_stock', 'qty']; //TODO: is 'qty' required?
     }
 }

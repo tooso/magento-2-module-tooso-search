@@ -25,6 +25,8 @@ class VariantsEnricher implements EnricherInterface
      */
     public function execute($data)
     {
+        //TODO: implement me
+        
         array_walk($data, function(&$d) {
            $d['variants'] = [
                 [

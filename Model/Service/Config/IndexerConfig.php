@@ -4,6 +4,7 @@ namespace Bitbull\Tooso\Model\Service\Config;
 
 use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Bitbull\Tooso\Model\Adminhtml\System\Config\Source\Attributes as SourceAttributes;
 
 class IndexerConfig implements IndexerConfigInterface
 {
@@ -14,15 +15,22 @@ class IndexerConfig implements IndexerConfigInterface
      * @var ScopeConfigInterface
      */
     protected $scopeConfig;
+    
+    /**
+     * @var SourceAttributes
+     */
+    protected $sourceAttributes;
 
     /**
      * Config constructor.
      *
      * @param ScopeConfigInterface $scopeConfig
+     * @param SourceAttributes $sourceAttributes
      */
-    public function __construct(ScopeConfigInterface $scopeConfig)
+    public function __construct(ScopeConfigInterface $scopeConfig, SourceAttributes $sourceAttributes)
     {
         $this->scopeConfig = $scopeConfig;
+        $this->sourceAttributes = $sourceAttributes;
     }
 
     /**
@@ -47,6 +55,16 @@ class IndexerConfig implements IndexerConfigInterface
             $value = [];
         }
         return explode(',', $value);
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getAttributesWithoutCustoms()
+    {
+        $attributes = $this->getAttributes();
+        $customAttributes = $this->sourceAttributes->getCustomAttributes();
+        return array_diff($attributes, $customAttributes);
     }
 
 }

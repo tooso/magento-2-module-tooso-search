@@ -22,5 +22,12 @@ interface IndexerConfigInterface
      * @return array
      */
     public function getAttributes();
+    
+    /**
+     * Get attributes to export, exclude custom attributes
+     *
+     * @return array
+     */
+    public function getAttributesWithoutCustoms();
 
 }
