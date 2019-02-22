@@ -27,11 +27,10 @@
                         resultText = response.statusText;
                     } else {
                         resultText = 'Success';
-                        collectSpan.find('#'+buttonId+'> .done').show();
+                        collectSpan.find('.done').show();
                     }
-                    collectSpan.find('.message_span').text(resultText);
                     setTimeout(function () {
-                        collectSpan.find('.message_span').text('');    
+                        collectSpan.find('.done').hide();
                     }, 3000)
                 },
                 onFailure: function(response, status, errMsg) {

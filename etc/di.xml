@@ -55,5 +55,17 @@
 
     <preference for="Bitbull\Tooso\Api\Service\TrackingInterface"
                 type="Bitbull\Tooso\Model\Service\Tracking" />
+                
+    <preference for="Bitbull\Tooso\Api\Service\Indexer\CatalogInterface"
+                type="Bitbull\Tooso\Model\Service\Indexer\Catalog" />
+
+    <type name="Bitbull\Tooso\Api\Service\Indexer\CatalogInterface">
+        <arguments>
+            <argument name="enrichers" xsi:type="array">
+                <item name="attributes" xsi:type="object">Bitbull\Tooso\Model\Service\Indexer\Enricher\AttributesEnricher</item>
+                <item name="variants" xsi:type="object">Bitbull\Tooso\Model\Service\Indexer\Enricher\VariantsEnricher</item>
+            </argument>
+        </arguments>
+    </type>
 
 </config>

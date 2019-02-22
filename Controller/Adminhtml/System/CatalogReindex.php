@@ -5,6 +5,7 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
+use Bitbull\Tooso\Api\Service\Indexer\CatalogInterface;
 
 class CatalogReindex extends Action
 {
@@ -17,20 +18,28 @@ class CatalogReindex extends Action
      * @var LoggerInterface
      */
     private $logger;
+    
+    /**
+     * @var CatalogInterface
+     */
+    private $catalog;
 
     /**
      * @param Context $context
      * @param JsonFactory $resultJsonFactory
      * @param LoggerInterface $logger
+     * @param CatalogInterface $catalog
      */
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CatalogInterface $catalog
     )
     {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->logger = $logger;
+        $this->catalog = $catalog;
         parent::__construct($context);
     }
 
@@ -42,6 +51,8 @@ class CatalogReindex extends Action
     public function execute()
     {
         $this->logger->debug('[Reindex Catalog] Request catalog reindex..');
+        
+        $this->catalog->execute([1, 2]);
         
         /** @var \Magento\Framework\Controller\Result\Json $result */
         $result = $this->resultJsonFactory->create();
