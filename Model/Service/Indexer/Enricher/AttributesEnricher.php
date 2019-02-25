@@ -10,42 +10,46 @@ use Magento\Framework\Api\Search\FilterGroupBuilder;
 
 class AttributesEnricher implements EnricherInterface
 {
-        
+
     /**
      * @var ProductRepositoryInterface
      */
     protected $productRepository;
-    
+
     /**
      * @var IndexerConfigInterface
      */
     protected $indexerConfig;
-    
+
     /**
      * @var SearchCriteriaBuilder
      */
     protected $searchCriteriaBuilder;
-    
+
     /**
      * @var FilterBuilder
      */
     protected $filterBuilder;
-    
+
     /**
      * @var FilterGroupBuilder
      */
     protected $filterGroupBuilder;
 
     /**
-     * @var ProductCollectionFactory $productCollectionFactory
-     * @var IndexerConfigInterface $indexerConfig
+     * AttributesEnricher constructor.
+     * @param ProductRepositoryInterface $productRepository
+     * @param IndexerConfigInterface $indexerConfig
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param FilterBuilder $filterBuilder
+     * @param FilterGroupBuilder $filterGroupBuilder
      */
     public function __construct(
-        ProductRepositoryInterface $productRepository,  
+        ProductRepositoryInterface $productRepository,
         IndexerConfigInterface $indexerConfig,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         FilterBuilder $filterBuilder,
-        FilterGroupBuilder $filterGroupBuilder 
+        FilterGroupBuilder $filterGroupBuilder
     ) {
         $this->productRepository = $productRepository;
         $this->indexerConfig = $indexerConfig;
@@ -62,7 +66,7 @@ class AttributesEnricher implements EnricherInterface
         $ids = array_map(function($d) {
             return $d['id'];
         }, $data);
-        
+
         $searchCriteria = $this->searchCriteriaBuilder->create();
         $searchCriteria->setFilterGroups([
              $this->filterGroupBuilder
@@ -74,35 +78,31 @@ class AttributesEnricher implements EnricherInterface
                 )
                 ->create()
         ]);
-        
-        //TODO: select only attributes present in configurations
-        
-        $productRepository = $this->productRepository->getList($searchCriteria);
-        $products = $productRepository->getItems();
-        
+
         $attributes = $this->indexerConfig->getAttributesWithoutCustoms();
-        
-        array_walk($products, function($product) use ($productRepository, $ids, &$data) {
-           $dataIndex = array_search($product->getId(), $ids);
+
+        $productRepository = $this->productRepository->getList($searchCriteria); //TODO: select only attributes present in configurations
+        $products = $productRepository->getItems();
+
+        array_walk($products, function($product) use ($attributes, $ids, &$data) {
+           $dataIndex = array_search($product->getId(), $ids, true);
            if ($dataIndex === -1) {
                return; // this shouldn't happen
            }
-           
-           //TODO: dinamically load attributes based on configurations
-           
-           $data[$dataIndex]['name'] = $product->getName();
-           $data[$dataIndex]['description'] = $product->getDescription();
+           array_walk($attributes, function ($attribute) use($dataIndex, $product, &$data) {
+               $data[$dataIndex][$attribute] = $product->getData($attribute);
+           });
         });
-        
+
         return $data;
     }
-    
+
     /**
      * @inheritdoc
      */
     public function getEnrichedKeys()
     {
-        return ['name', 'description']; //TODO: these values are not static, get them from config
+        return $this->indexerConfig->getAttributesWithoutCustoms();
     }
-    
+
 }

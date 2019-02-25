@@ -12,26 +12,26 @@ class Attributes implements \Magento\Framework\Option\ArrayInterface
      * @var AttributeRepository
      */
     protected $attributeRepository;
-    
+
     /**
      * @var SearchCriteriaBuilder
      */
     protected $searchCriteriaBuilder;
-    
+
     /**
      * @var FilterBuilder
      */
     protected $filterBuilder;
-    
+
     /**
      * @var FilterGroupBuilder
      */
     protected $filterGroupBuilder;
-    
+
     //TODO: is this the right place to store custom attributes?
-    
+
     /**
-     * @var FilterGroupBuilder
+     * @var array
      */
     protected $customAttributes = [
         'is_in_stock' => 'Is in stock',
@@ -43,20 +43,24 @@ class Attributes implements \Magento\Framework\Option\ArrayInterface
     ];
 
     /**
-     * @param SystemStore $systemStore
+     * Attributes constructor.
+     * @param AttributeRepository $attributeRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param FilterBuilder $filterBuilder
+     * @param FilterGroupBuilder $filterGroupBuilder
      */
     public function __construct(
         AttributeRepository $attributeRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         FilterBuilder $filterBuilder,
-        FilterGroupBuilder $filterGroupBuilder 
+        FilterGroupBuilder $filterGroupBuilder
     ) {
         $this->attributeRepository = $attributeRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->filterBuilder = $filterBuilder;
         $this->filterGroupBuilder = $filterGroupBuilder;
     }
-    
+
     /**
      * Return stores for backend multiselect options
      */
@@ -89,7 +93,7 @@ class Attributes implements \Magento\Framework\Option\ArrayInterface
                       ->create())
                 ->create()
         ]);
-        
+
         $attributeRepository = $this->attributeRepository->getList($searchCriteria);
         $attributes = array_map(function($customAttributeLabel, $customAttributeValue) {
             return [
@@ -97,24 +101,24 @@ class Attributes implements \Magento\Framework\Option\ArrayInterface
                 'value' => $customAttributeValue,
             ];
         }, $this->customAttributes,  array_keys($this->customAttributes));
-    
+
         foreach ($attributeRepository->getItems() as $attribute) {
             $attributes[] = [
                 'label' => $attribute->getFrontendLabel(),
                 'value' => $attribute->getAttributeCode(),
             ];
         }
-        
+
         return $attributes;
     }
-    
+
     /**
      * Get custom attributes
-     * 
+     *
      * @return array
      */
     public function getCustomAttributes()
     {
-        return $this->customAttributes;
+        return array_keys($this->customAttributes);
     }
 }

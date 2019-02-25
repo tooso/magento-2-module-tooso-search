@@ -11,6 +11,10 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
      */
     private $stateFactory;
 
+    /**
+     * InstallSchema constructor.
+     * @param StateFactory $stateFactory
+     */
     public function __construct(StateFactory $stateFactory)
     {
         $this->stateFactory = $stateFactory;
@@ -30,7 +34,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
         $state->loadByIndexer('tooso_catalog');
         $state->setHashConfig('');
         $state->setStatus(StateInterface::STATUS_INVALID);
-        $state->save();
+        $state->save(); //TODO: fix deprecation
 
         $installer->endSetup();
     }

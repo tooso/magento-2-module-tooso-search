@@ -15,7 +15,7 @@ class IndexerConfig implements IndexerConfigInterface
      * @var ScopeConfigInterface
      */
     protected $scopeConfig;
-    
+
     /**
      * @var SourceAttributes
      */
@@ -44,7 +44,7 @@ class IndexerConfig implements IndexerConfigInterface
         }
         return explode(',', $value);
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -52,11 +52,11 @@ class IndexerConfig implements IndexerConfigInterface
     {
         $value = $this->scopeConfig->getValue(self::XML_PATH_INDEXER_ATTRIBUTES);
         if ($value === null) {
-            $value = [];
+            return [];
         }
         return explode(',', $value);
     }
-    
+
     /**
      * @inheritdoc
      */
