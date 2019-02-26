@@ -2,48 +2,41 @@
 namespace Bitbull\Tooso\Model\Service\Indexer\Enricher;
 
 use Bitbull\Tooso\Api\Service\Indexer\EnricherInterface;
-use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
+use Magento\CatalogInventory\Api\StockStateInterface;
 
 class StockEnricher implements EnricherInterface
 {
-    
     /**
-     * @var IndexerConfigInterface
+     * @var StockStateInterface
      */
-    protected $indexerConfig;
+    protected $stockState;
 
     /**
-     * @var IndexerConfigInterface $indexerConfig
+     * @var StockStateInterface $indexerConfig
      */
-    public function __construct(IndexerConfigInterface $indexerConfig)
+    public function __construct(StockStateInterface $stockState)
     {
-        $this->indexerConfig = $indexerConfig;
+        $this->stockState = $stockState;
     }
-    
+
     /**
      * @inheritdoc
      */
     public function execute($data)
     {
-        //TODO: implement me
-        
         array_walk($data, function(&$d) {
-            $d['categories'] = [
-                [
-                    'sku' => 'var1',
-                    'name' => 'test'
-                ]
-            ];
+            $d['is_in_stock'] = $this->stockState->verifyStock($d['id']);
+            $d['qty'] = $this->stockState->getStockQty($d['id']);
         });
-        
+
         return $data;
     }
-    
+
     /**
      * @inheritdoc
      */
     public function getEnrichedKeys()
     {
-        return ['is_in_stock', 'qty']; //TODO: is 'qty' required?
+        return ['is_in_stock', 'qty'];
     }
 }
