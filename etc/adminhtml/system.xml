@@ -85,15 +85,19 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
-            <group id="indexer" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="indexer" translate="label" type="text" sortOrder="6" showInDefault="1">
                 <label>Indexer Configuration</label>
-                <field id="stores_to_index" translate="label" type="multiselect" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="stores_to_index" translate="label" type="multiselect" sortOrder="1" showInDefault="1">
                     <label>Store Views</label>
                     <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\Stores</source_model>
                 </field>
-                <field id="attributes_to_index" translate="label" type="multiselect" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="attributes_to_index" translate="label" type="multiselect" sortOrder="2" showInDefault="1">
                     <label>Attributes - Configurable Product</label>
                     <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\Attributes</source_model>
+                </field>
+                <field id="attributes_simple_to_index" translate="label" type="multiselect" sortOrder="3" showInDefault="1">
+                    <label>Attributes - Simple Product</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SimpleAttributes</source_model>
                 </field>
             </group>
         </section>

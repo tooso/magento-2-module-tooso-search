@@ -99,7 +99,7 @@ class CategoriesEnricher implements EnricherInterface
     /**
      * Return product categories as array of path
      *
-     * @param $product
+     * @param \Magento\Catalog\Model\Product $product
      * @return array
      */
     protected function getProductCategories($product)

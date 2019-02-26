@@ -18,7 +18,7 @@ class CatalogReindex extends Action
      * @var LoggerInterface
      */
     private $logger;
-    
+
     /**
      * @var CatalogInterface
      */
@@ -51,9 +51,9 @@ class CatalogReindex extends Action
     public function execute()
     {
         $this->logger->debug('[Reindex Catalog] Request catalog reindex..');
-        
-        $this->catalog->execute([1, 2]);
-        
+
+        $this->catalog->execute([27]);
+
         /** @var \Magento\Framework\Controller\Result\Json $result */
         $result = $this->resultJsonFactory->create();
         return $result->setData(['status' => 'ok']);

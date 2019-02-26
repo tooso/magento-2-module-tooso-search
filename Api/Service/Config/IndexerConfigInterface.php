@@ -15,19 +15,26 @@ interface IndexerConfigInterface
      * @return array
      */
     public function getStores();
-    
+
     /**
      * Get attributes to export
      *
      * @return array
      */
     public function getAttributes();
-    
+
     /**
      * Get attributes to export, exclude custom attributes
      *
      * @return array
      */
     public function getAttributesWithoutCustoms();
+
+    /**
+     * Get attributes for simple to export
+     *
+     * @return array
+     */
+    public function getSimpleAttributes();
 
 }

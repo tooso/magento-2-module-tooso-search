@@ -10,6 +10,7 @@ class IndexerConfig implements IndexerConfigInterface
 {
     const XML_PATH_INDEXER_STORES = 'tooso/indexer/stores_to_index';
     const XML_PATH_INDEXER_ATTRIBUTES = 'tooso/indexer/attributes_to_index';
+    const XML_PATH_INDEXER_ATTRIBUTES_SIMPLE = 'tooso/indexer/attributes_simple_to_index';
 
     /**
      * @var ScopeConfigInterface
@@ -65,6 +66,18 @@ class IndexerConfig implements IndexerConfigInterface
         $attributes = $this->getAttributes();
         $customAttributes = $this->sourceAttributes->getCustomAttributes();
         return array_diff($attributes, $customAttributes);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSimpleAttributes()
+    {
+        $value = $this->scopeConfig->getValue(self::XML_PATH_INDEXER_ATTRIBUTES_SIMPLE);
+        if ($value === null) {
+            return [];
+        }
+        return explode(',', $value);
     }
 
 }
