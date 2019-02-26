@@ -9,11 +9,13 @@ use Bitbull\Tooso\Model\Indexer\Decorator\VariantsDecoratorFactory;
 
 class Catalog implements \Magento\Framework\Indexer\ActionInterface, \Magento\Framework\Mview\ActionInterface
 {
+    const INDEX_NAME = 'tooso_catalog';
+
     /**
      * @var LoggerInterface
      */
     protected $logger;
-    
+
     /**
      * @param LoggerInterface $logger
      */
@@ -23,7 +25,7 @@ class Catalog implements \Magento\Framework\Indexer\ActionInterface, \Magento\Fr
     {
         $this->logger = $logger;
     }
-    
+
     /*
      * Used by mview, allows process indexer in the "Update on schedule" mode
      */
