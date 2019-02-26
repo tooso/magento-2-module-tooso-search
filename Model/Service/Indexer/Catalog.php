@@ -5,6 +5,7 @@ use Bitbull\Tooso\Api\Service\Indexer\EnricherInterface;
 use Bitbull\Tooso\Api\Service\Indexer\CatalogInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
+use Bitbull\Tooso\Model\Service\Indexer\Db\CatalogIndexFlat;
 
 class Catalog implements CatalogInterface
 {
@@ -12,6 +13,11 @@ class Catalog implements CatalogInterface
      * @var LoggerInterface
      */
     protected $logger;
+
+    /**
+     * @var CatalogIndexFlat
+     */
+    protected $catalogIndexFlat;
 
     /**
      * @var array
@@ -26,12 +32,14 @@ class Catalog implements CatalogInterface
     /**
      * @var LoggerInterface $logger
      * @var IndexerConfigInterface $indexerConfig
+     * @var CatalogIndexFlat $catalogIndexFlat
      * @var EnricherInterface[] $enrichers
      */
-    public function __construct(LoggerInterface $logger, IndexerConfigInterface $indexerConfig, array $enrichers)
+    public function __construct(LoggerInterface $logger, IndexerConfigInterface $indexerConfig, CatalogIndexFlat $catalogIndexFlat, array $enrichers)
     {
         $this->logger = $logger;
         $this->indexerConfig = $indexerConfig;
+        $this->catalogIndexFlat = $catalogIndexFlat;
         $this->enrichers = $enrichers;
     }
 
@@ -40,39 +48,44 @@ class Catalog implements CatalogInterface
      */
     public function execute($ids = null)
     {
-        // Init data
+        $stores = $this->indexerConfig->getStores();
 
-        $data = array_map(function($elem){
-            return [
-                'id' => $elem
-            ];
-        }, $ids);
+        foreach ($stores as $storeId) {
+            // Init data
 
-        // Run enrichers
+            $data = array_map(function($elem){
+                return [
+                    'id' => $elem
+                ];
+            }, $ids);
 
-        $attributes = $this->indexerConfig->getAttributes();
-        array_walk($this->enrichers, function ($enricher) use (&$data, $attributes) {
+            // Run enrichers
 
-            if (sizeof($data) === 0) {
-                throw new \UnexpectedValueException('No data provided to enricher');  //TODO: use a proper exception
-            }
+            $attributes = $this->indexerConfig->getAttributes();
+            array_walk($this->enrichers, function ($enricher) use (&$data, $attributes) {
 
-            if (sizeof(array_intersect($enricher->getEnrichedKeys(), $attributes)) === 0) {
-                return;
-            }
+                if (sizeof($data) === 0) {
+                    throw new \UnexpectedValueException('No data provided to enricher');  //TODO: use a proper exception
+                }
 
-            $currentKeys = array_keys($data[0]);
-            $collisionKeys = array_intersect($currentKeys, $enricher->getEnrichedKeys());
-            if (sizeof($collisionKeys) !== 0) {
-                throw new \UnexpectedValueException('An other enricher did the same job, collision keys are: '.implode(',', $collisionKeys)); //TODO: use a proper exception
-            }
+                if (sizeof(array_intersect($enricher->getEnrichedKeys(), $attributes)) === 0) {
+                    return;
+                }
 
-            $data = $enricher->execute($data);
+                $currentKeys = array_keys($data[0]);
+                $collisionKeys = array_intersect($currentKeys, $enricher->getEnrichedKeys());
+                if (sizeof($collisionKeys) !== 0) {
+                    throw new \UnexpectedValueException('An other enricher did the same job, collision keys are: '.implode(',', $collisionKeys)); //TODO: use a proper exception
+                }
 
-        });
+                $data = $enricher->execute($data); // TODO: pass store id
 
-        // Now $data is enriched
+            });
 
+            // Now $data is enriched, store it
+
+            $this->catalogIndexFlat->storeData($data, $storeId);
+        }
 
 
     }

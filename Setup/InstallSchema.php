@@ -1,10 +1,13 @@
 <?php
 namespace Bitbull\Tooso\Setup;
 
+use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Indexer\StateInterface;
 use Magento\Indexer\Model\Indexer\StateFactory;
+use Bitbull\Tooso\Model\Indexer\Catalog;
+use Bitbull\Tooso\Model\Service\Indexer\Db\CatalogIndexFlat;
 
-class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
+class InstallSchema implements InstallSchemaInterface
 {
     /**
      * @var StateFactory
@@ -27,16 +30,19 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
      */
     public function install(\Magento\Framework\Setup\SchemaSetupInterface $setup, \Magento\Framework\Setup\ModuleContextInterface $context)
     {
-        $installer = $setup;
-        $installer->startSetup();
+        $setup->startSetup();
+
+        /**
+         * Init index status
+         */
 
         $state = $this->stateFactory->create();
-        $state->loadByIndexer('tooso_catalog');
+        $state->loadByIndexer(Catalog::INDEX_NAME);
         $state->setHashConfig('');
         $state->setStatus(StateInterface::STATUS_INVALID);
         $state->save(); //TODO: fix deprecation
 
-        $installer->endSetup();
+        $setup->endSetup();
     }
 }
 
