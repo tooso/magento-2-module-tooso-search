@@ -36,8 +36,8 @@ class VariantsEnricher implements EnricherInterface
      */
     public function execute($data)
     {
-        $ids = array_map(function($d) {
-            return $d['id'];
+        $ids = array_map(function($elem) {
+            return $elem['id'];
         }, $data);
 
         $productsCollection = $this->productCollectionFactory->create()

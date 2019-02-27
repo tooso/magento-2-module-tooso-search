@@ -24,9 +24,9 @@ class StockEnricher implements EnricherInterface
      */
     public function execute($data)
     {
-        array_walk($data, function(&$d) {
-            $d['is_in_stock'] = $this->stockState->verifyStock($d['id']);
-            $d['qty'] = $this->stockState->getStockQty($d['id']);
+        array_walk($data, function(&$elem) {
+            $elem['is_in_stock'] = $this->stockState->verifyStock($elem['id']);
+            $elem['qty'] = $this->stockState->getStockQty($elem['id']);
         });
 
         return $data;
