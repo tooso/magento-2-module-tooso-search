@@ -6,6 +6,7 @@ use Bitbull\Tooso\Api\Service\Indexer\CatalogInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
 use Bitbull\Tooso\Model\Service\Indexer\Db\CatalogIndexFlat;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 
 class Catalog implements CatalogInterface
 {
@@ -30,16 +31,29 @@ class Catalog implements CatalogInterface
     protected $indexerConfig;
 
     /**
+     * @var ProductCollectionFactory
+     */
+    protected $productCollectionFactory;
+
+    /**
      * @var LoggerInterface $logger
      * @var IndexerConfigInterface $indexerConfig
      * @var CatalogIndexFlat $catalogIndexFlat
+     * @var ProductCollectionFactory $productCollectionFactory
      * @var EnricherInterface[] $enrichers
      */
-    public function __construct(LoggerInterface $logger, IndexerConfigInterface $indexerConfig, CatalogIndexFlat $catalogIndexFlat, array $enrichers)
+    public function __construct(
+        LoggerInterface $logger,
+        IndexerConfigInterface $indexerConfig,
+        CatalogIndexFlat $catalogIndexFlat,
+        ProductCollectionFactory $productCollectionFactory,
+        array $enrichers
+    )
     {
         $this->logger = $logger;
         $this->indexerConfig = $indexerConfig;
         $this->catalogIndexFlat = $catalogIndexFlat;
+        $this->productCollectionFactory = $productCollectionFactory;
         $this->enrichers = $enrichers;
     }
 
@@ -48,6 +62,18 @@ class Catalog implements CatalogInterface
      */
     public function execute($ids = null)
     {
+        if ($ids === null) {
+            $ids = [];
+            $productsCollection = $this->productCollectionFactory->create()
+                ->addAttributeToSelect('entity_id')
+                ->addFieldToFilter('visibility', 4);
+
+            //TODO: array_map? toArray()? need something more "clean"
+            foreach ($productsCollection as $product) {
+                $ids[] = $product->getId();
+            }
+        }
+
         $stores = $this->indexerConfig->getStores();
 
         foreach ($stores as $storeId) {
