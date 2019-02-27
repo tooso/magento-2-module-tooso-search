@@ -14,9 +14,13 @@
             </group>
             <group id="tools" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Tools</label>
-                <field id="reindex_catalog_btn" translate="label comment" type="button" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="reindex_catalog_btn" translate="label comment" type="button" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
                     <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\CatalogReindexButton</frontend_model>
                     <label>Catalog reindex</label>
+                </field>
+                <field id="send_catalog_index_Data" translate="label comment" type="button" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendCatalogIndexDataButton</frontend_model>
+                    <label>Send catalog index data</label>
                 </field>
             </group>
             <group id="active" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -85,19 +89,32 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
-            <group id="indexer" translate="label" type="text" sortOrder="6" showInDefault="1">
+            <group id="indexer" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Indexer Configuration</label>
-                <field id="stores_to_index" translate="label" type="multiselect" sortOrder="1" showInDefault="1">
+                <field id="stores_to_index" translate="label" type="multiselect" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Store Views</label>
                     <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\Stores</source_model>
                 </field>
-                <field id="attributes_to_index" translate="label" type="multiselect" sortOrder="2" showInDefault="1">
+                <field id="attributes_to_index" translate="label" type="multiselect" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Attributes - Configurable Product</label>
                     <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\Attributes</source_model>
                 </field>
-                <field id="attributes_simple_to_index" translate="label" type="multiselect" sortOrder="3" showInDefault="1">
+                <field id="attributes_simple_to_index" translate="label" type="multiselect" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Attributes - Simple Product</label>
                     <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SimpleAttributes</source_model>
+                </field>
+                <field id="access_key" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>AWS Access key id</label>
+                </field>
+                <field id="secret_key" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>AWS Secret key</label>
+                </field>
+                <field id="bucket" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>AWS Bucket name</label>
+                </field>
+                <field id="path" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>AWS Object path</label>
+                    <comment><![CDATA[Must end with a slash]]></comment>
                 </field>
             </group>
         </section>

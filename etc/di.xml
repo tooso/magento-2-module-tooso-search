@@ -24,6 +24,7 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="toosoGenerateDummyData" xsi:type="object">Bitbull\Tooso\Console\GenerateDummyData</item>
+                <item name="toosoSendCatalogIndexData" xsi:type="object">Bitbull\Tooso\Console\SendCatalogIndexData</item>
             </argument>
         </arguments>
     </type>
@@ -61,6 +62,9 @@
 
     <preference for="Bitbull\Tooso\Api\Service\Indexer\CatalogInterface"
                 type="Bitbull\Tooso\Model\Service\Indexer\Catalog" />
+
+    <preference for="Bitbull\Tooso\Api\Service\Indexer\DataSenderInterface"
+                type="Bitbull\Tooso\Model\Service\Indexer\DataSender" />
 
     <type name="Bitbull\Tooso\Api\Service\Indexer\CatalogInterface">
         <arguments>

@@ -1,13 +1,13 @@
 <?php
 namespace Bitbull\Tooso\Controller\Adminhtml\System;
 
+use Bitbull\Tooso\Api\Service\Indexer\DataSenderInterface;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
-use Bitbull\Tooso\Api\Service\Indexer\CatalogInterface;
 
-class CatalogReindex extends Action
+class SendCatalogIndexData extends Action
 {
     /**
      * @var JsonFactory
@@ -20,26 +20,26 @@ class CatalogReindex extends Action
     private $logger;
 
     /**
-     * @var CatalogInterface
+     * @var DataSenderInterface
      */
-    private $catalog;
+    private $dataSender;
 
     /**
      * @param Context $context
      * @param JsonFactory $resultJsonFactory
      * @param LoggerInterface $logger
-     * @param CatalogInterface $catalog
+     * @param DataSenderInterface $dataSender
      */
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
         LoggerInterface $logger,
-        CatalogInterface $catalog
+        DataSenderInterface $dataSender
     )
     {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->logger = $logger;
-        $this->catalog = $catalog;
+        $this->dataSender = $dataSender;
         parent::__construct($context);
     }
 
@@ -50,9 +50,9 @@ class CatalogReindex extends Action
      */
     public function execute()
     {
-        $this->logger->debug('[Reindex Catalog] Request catalog reindex..');
-        $this->catalog->execute();
-        $this->logger->debug('[Reindex Catalog] Done!');
+        $this->logger->debug('[DataSender Catalog] Request catalog data send..');
+        $this->dataSender->sendCatalog();
+        $this->logger->debug('[DataSender Catalog] Done!');
 
         /** @var \Magento\Framework\Controller\Result\Json $result */
         $result = $this->resultJsonFactory->create();

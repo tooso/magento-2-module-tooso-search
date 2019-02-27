@@ -41,10 +41,11 @@ class CatalogIndexFlat
     }
 
     /**
-     * Insert multiple
+     * Store data into database flat table
      *
      * @param array $data
      * @param integer $storeId
+     * @return boolean
      */
     public function storeData($data, $storeId)
     {
@@ -67,6 +68,32 @@ class CatalogIndexFlat
         } catch (\Exception $e) {
             $this->connection->rollBack();
             $this->logger->error($e->getMessage());
+            return false;
         }
+
+        return true;
+    }
+
+    /**
+     * Extract data from database flat table
+     *
+     * @param integer $storeId
+     * @return array|null
+     * @throws \Exception
+     */
+    public function extractData($storeId)
+    {
+        try {
+            $tableName = $this->resource->getTableName(self::TABLE_NAME);
+            $select = $this->connection->select()->from($tableName)->where('store_id = ?', $storeId);
+            $data = $this->connection->query($select)->fetchAll();
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+            return null;
+        }
+
+        return array_map(function ($item){
+            return unserialize($item['data']);
+        }, $data);;
     }
 }

@@ -37,4 +37,32 @@ interface IndexerConfigInterface
      */
     public function getSimpleAttributes();
 
+    /**
+     * Get AWS access key
+     *
+     * @return string|null
+     */
+    public function getAwsAccessKey();
+
+    /**
+     * Get AWS secret key
+     *
+     * @return string|null
+     */
+    public function getAwsSecretKey();
+
+    /**
+     * Get AWS bucket name
+     *
+     * @return string|null
+     */
+    public function getAwsBucketName();
+
+    /**
+     * Get AWS bucket path
+     *
+     * @return string|null
+     */
+    public function getAwsBucketPath();
+
 }
