@@ -2,14 +2,21 @@
 namespace Bitbull\Tooso\Model\Service\Indexer;
 
 use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
+use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Bitbull\Tooso\Api\Service\Indexer\DataSenderInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Model\Service\Indexer\Db\CatalogIndexFlat;
+use Bitbull\Tooso\Model\Service\Indexer\Db\StockIndexFlat;
 use Tooso\SDK\ClientBuilder;
 
 class DataSender implements DataSenderInterface
 {
     const CSV_SEPARATOR = ';';
+
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
 
     /**
      * @var IndexerConfigInterface
@@ -32,22 +39,33 @@ class DataSender implements DataSenderInterface
     protected $catalogIndexFlat;
 
     /**
+     * @var StockIndexFlat
+     */
+    protected $stockIndexFlat;
+
+    /**
+     * @param ConfigInterface $config
      * @param IndexerConfigInterface $indexerConfig
      * @param LoggerInterface $logger
      * @param ClientBuilder $clientBuilder
      * @param CatalogIndexFlat $catalogIndexFlat
+     * @param StockIndexFlat $stockIndexFlat
      */
     public function __construct(
+        ConfigInterface $config,
         IndexerConfigInterface $indexerConfig,
         LoggerInterface $logger,
         ClientBuilder $clientBuilder,
-        CatalogIndexFlat $catalogIndexFlat
+        CatalogIndexFlat $catalogIndexFlat,
+        StockIndexFlat $stockIndexFlat
     )
     {
+        $this->config = $config;
         $this->indexerConfig = $indexerConfig;
         $this->logger = $logger;
         $this->clientBuilder = $clientBuilder;
         $this->catalogIndexFlat = $catalogIndexFlat;
+        $this->stockIndexFlat = $stockIndexFlat;
     }
 
     /**
@@ -89,7 +107,33 @@ class DataSender implements DataSenderInterface
      */
     public function sendStock()
     {
-        // TODO: Implement sendStock() method.
+        $storeIds = $this->indexerConfig->getStores();
+
+        foreach ($storeIds as $storeId) {
+            $data = $this->stockIndexFlat->extractData($storeId);
+            if ($data === null) {
+                return false;
+            }
+            $csvContent = $this->arrayToCsv($data);
+
+            $client = $this->getClient();
+            try{
+                $indexResult = $client->index($csvContent, [
+                    'ACCESS_KEY_ID' => $this->indexerConfig->getAwsAccessKey(),
+                    'SECRET_KEY' => $this->indexerConfig->getAwsSecretKey(),
+                    'BUCKET' => $this->indexerConfig->getAwsBucketName(),
+                    'PATH' => $this->indexerConfig->getAwsBucketPath(),
+                ]);
+                if ($indexResult->isValid() === false) {
+                    return false;
+                }
+            }catch (\Tooso\SDK\Exception $e){
+                $this->logger->error($e->getMessage());
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -100,6 +144,7 @@ class DataSender implements DataSenderInterface
     protected function getClient()
     {
         return $this->clientBuilder
+            ->withApiKey($this->config->getApiKey())
             ->withLogger($this->logger)
             ->build();
     }
