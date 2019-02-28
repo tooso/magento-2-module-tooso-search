@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Indexer/etc/indexer.xsd">
+    <indexer id="tooso_catalog" view_id="tooso_catalog_flat" class="Bitbull\Tooso\Model\Indexer\Catalog">
+        <title translate="true">Tooso Catalog</title>
+        <description translate="true">Catalog syncronization with Tooso service</description>
+    </indexer>
+</config>
