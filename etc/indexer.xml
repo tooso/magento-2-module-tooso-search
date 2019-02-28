@@ -4,4 +4,8 @@
         <title translate="true">Tooso Catalog</title>
         <description translate="true">Catalog syncronization with Tooso service</description>
     </indexer>
+    <indexer id="tooso_stock" view_id="tooso_stock_flat" class="Bitbull\Tooso\Model\Indexer\Stock">
+        <title translate="true">Tooso Stock</title>
+        <description translate="true">Stock syncronization with Tooso service</description>
+    </indexer>
 </config>
