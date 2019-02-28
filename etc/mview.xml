@@ -9,6 +9,7 @@
     <view id="tooso_catalog_flat" class="Bitbull\Tooso\Model\Indexer\Catalog" group="indexer">
         <subscriptions>
             <table name="catalog_product_entity" entity_column="entity_id" />
+            <table name="catalog_product_entity_datetime" entity_column="entity_id" />
             <table name="catalog_product_entity_decimal" entity_column="entity_id" />
             <table name="catalog_product_entity_gallery" entity_column="entity_id" />
             <table name="catalog_product_entity_int" entity_column="entity_id" />
