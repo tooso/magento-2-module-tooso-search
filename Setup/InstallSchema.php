@@ -5,7 +5,7 @@ use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Indexer\StateInterface;
 use Magento\Indexer\Model\Indexer\StateFactory;
 use Bitbull\Tooso\Model\Indexer\Catalog;
-use Bitbull\Tooso\Model\Service\Indexer\Db\CatalogIndexFlat;
+use Bitbull\Tooso\Model\Indexer\Stock;
 
 class InstallSchema implements InstallSchemaInterface
 {
@@ -33,11 +33,21 @@ class InstallSchema implements InstallSchemaInterface
         $setup->startSetup();
 
         /**
-         * Init index status
+         * Init catalog index status
          */
 
         $state = $this->stateFactory->create();
         $state->loadByIndexer(Catalog::INDEX_NAME);
+        $state->setHashConfig('');
+        $state->setStatus(StateInterface::STATUS_INVALID);
+        $state->save(); //TODO: fix deprecation
+
+        /**
+         * Init stock index status
+         */
+
+        $state = $this->stateFactory->create();
+        $state->loadByIndexer(Stock::INDEX_NAME);
         $state->setHashConfig('');
         $state->setStatus(StateInterface::STATUS_INVALID);
         $state->save(); //TODO: fix deprecation

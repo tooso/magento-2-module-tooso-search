@@ -63,6 +63,9 @@
     <preference for="Bitbull\Tooso\Api\Service\Indexer\CatalogInterface"
                 type="Bitbull\Tooso\Model\Service\Indexer\Catalog" />
 
+    <preference for="Bitbull\Tooso\Api\Service\Indexer\StockInterface"
+                type="Bitbull\Tooso\Model\Service\Indexer\Stock" />
+
     <preference for="Bitbull\Tooso\Api\Service\Indexer\DataSenderInterface"
                 type="Bitbull\Tooso\Model\Service\Indexer\DataSender" />
 
