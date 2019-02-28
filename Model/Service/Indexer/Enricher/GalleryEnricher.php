@@ -4,30 +4,41 @@ namespace Bitbull\Tooso\Model\Service\Indexer\Enricher;
 use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
 use Bitbull\Tooso\Api\Service\Indexer\EnricherInterface;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
+use Magento\Catalog\Model\Product\Gallery\ReadHandler as GalleryReadHandler;
 
-class VariantsEnricher implements EnricherInterface
+class GalleryEnricher implements EnricherInterface
 {
-    const VARIANTS_ATTRIBUTE = 'variants';
+    const GALLERY_ATTRIBUTE = 'gallery';
+    const GALLERY_ATTRIBUTE_SEPARATOR = '|';
 
     /**
      * @var ProductCollectionFactory
      */
     protected $productCollectionFactory;
+
     /**
      * @var IndexerConfigInterface
      */
     protected $indexerConfig;
 
     /**
+     * @var GalleryReadHandler
+     */
+    protected $galleryReadHandler;
+
+    /**
      * @param ProductCollectionFactory $productCollectionFactory
+     * @param GalleryReadHandler $galleryReadHandler
      * @param IndexerConfigInterface $indexerConfig
      */
     public function __construct(
         ProductCollectionFactory $productCollectionFactory,
+        GalleryReadHandler $galleryReadHandler,
         IndexerConfigInterface $indexerConfig
     )
     {
         $this->productCollectionFactory = $productCollectionFactory;
+        $this->galleryReadHandler = $galleryReadHandler;
         $this->indexerConfig = $indexerConfig;
     }
 
@@ -41,6 +52,7 @@ class VariantsEnricher implements EnricherInterface
         }, $data);
 
         $productsCollection = $this->productCollectionFactory->create()
+            ->addAttributeToSelect('*')
             ->addFieldToFilter('entity_id', $ids);
 
         foreach ($productsCollection as $product) {
@@ -49,13 +61,24 @@ class VariantsEnricher implements EnricherInterface
                 return; // this shouldn't happen
             }
 
-            $variants = $this->getProductVariants($product);
-            if(sizeof($variants) === 0){
-                $data[$dataIndex][self::VARIANTS_ATTRIBUTE] = null;
+            $this->galleryReadHandler->execute($product);
+            /** @var \Magento\Framework\Data\Collection $mediaGallery */
+            $mediaGallery = $product->getMediaGalleryImages();
+            if($mediaGallery === null){
+                $data[$dataIndex][self::GALLERY_ATTRIBUTE] = null;
                 continue;
             }
 
-            $data[$dataIndex][self::VARIANTS_ATTRIBUTE] = json_encode($variants);
+            $imagesItems = $mediaGallery->getItems();
+            if (is_array($imagesItems) === false || sizeof($imagesItems) === 0) {
+                $data[$dataIndex][self::GALLERY_ATTRIBUTE] = null;
+                continue;
+            }
+
+            $images = array_map(function ($imageItem) {
+                return $imageItem->getUrl();
+            }, $imagesItems);
+            $data[$dataIndex][self::GALLERY_ATTRIBUTE] = implode(self::GALLERY_ATTRIBUTE_SEPARATOR, $images);
         }
 
         return $data;
@@ -66,39 +89,6 @@ class VariantsEnricher implements EnricherInterface
      */
     public function getEnrichedKeys()
     {
-        return [self::VARIANTS_ATTRIBUTE];
-    }
-
-    /**
-     * Get product variants
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     * @return array
-     */
-    protected function getProductVariants($product)
-    {
-        if ($product->getTypeId() !== 'configurable') {
-            return [];
-        }
-
-        $variantsIds = $product->getTypeInstance()->getUsedProductIds($product);
-        $variantsCollection = $this->productCollectionFactory->create()
-            ->addFieldToFilter('entity_id', $variantsIds);
-
-        $attributes = $this->indexerConfig->getSimpleAttributes();
-        foreach ($attributes as $attribute) {
-            $variantsCollection->addAttributeToSelect($attribute);
-        }
-
-        $variants = [];
-        foreach ($variantsCollection as $variant) {
-            $variantData = [];
-            foreach ($attributes as $attribute) {
-                $variantData[$attribute] = $variant->getData($attribute);
-            }
-            $variants[] = $variantData;
-        }
-
-        return $variants;
+        return [self::GALLERY_ATTRIBUTE];
     }
 }
