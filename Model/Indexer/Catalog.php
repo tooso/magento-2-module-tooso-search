@@ -1,11 +1,8 @@
 <?php declare(strict_types=1);
 namespace Bitbull\Tooso\Model\Indexer;
 
+use Bitbull\Tooso\Api\Service\Indexer\CatalogInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
-use Bitbull\Tooso\Model\Indexer\Operation\OperationFactory;
-use Bitbull\Tooso\Model\Indexer\Decorator\CatalogDecoratorFactory;
-use Bitbull\Tooso\Model\Indexer\Decorator\CategoriesDecoratorFactory;
-use Bitbull\Tooso\Model\Indexer\Decorator\VariantsDecoratorFactory;
 
 class Catalog implements \Magento\Framework\Indexer\ActionInterface, \Magento\Framework\Mview\ActionInterface
 {
@@ -17,13 +14,21 @@ class Catalog implements \Magento\Framework\Indexer\ActionInterface, \Magento\Fr
     protected $logger;
 
     /**
+     * @var CatalogInterface
+     */
+    protected $catalog;
+
+    /**
      * @param LoggerInterface $logger
+     * @param CatalogInterface $catalog
      */
     public function __construct(
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CatalogInterface $catalog
     )
     {
         $this->logger = $logger;
+        $this->catalog = $catalog;
     }
 
     /*
@@ -32,6 +37,8 @@ class Catalog implements \Magento\Framework\Indexer\ActionInterface, \Magento\Fr
     public function execute($ids){
         //Used by mview, allows you to process multiple placed orders in the "Update on schedule" mode
         $this->logger->debug('[indexer catalog] asked to execute reindex for: '.implode(',', $ids));
+        $this->catalog->execute($ids);
+        $this->logger->debug('[indexer catalog] done!');
     }
 
     /*
@@ -41,6 +48,8 @@ class Catalog implements \Magento\Framework\Indexer\ActionInterface, \Magento\Fr
     public function executeFull(){
         //Should take into account all placed orders in the system
         $this->logger->debug('[indexer catalog] asked to execute a full reindex');
+        $this->catalog->execute();
+        $this->logger->debug('[indexer catalog] done!');
     }
 
 
@@ -50,6 +59,8 @@ class Catalog implements \Magento\Framework\Indexer\ActionInterface, \Magento\Fr
     public function executeList(array $ids){
         //Works with a set of placed orders (mass actions and so on)
         $this->logger->debug('[indexer catalog] asked to execute reindex on specific entity: '.implode(',', $ids));
+        $this->catalog->execute($ids);
+        $this->logger->debug('[indexer catalog] done!');
     }
 
 
@@ -59,5 +70,7 @@ class Catalog implements \Magento\Framework\Indexer\ActionInterface, \Magento\Fr
     public function executeRow($id){
         //Works in runtime for a single order using plugins
         $this->logger->debug('[indexer catalog] asked to execute a reindex for single entity: '.$id);
+        $this->catalog->execute();
+        $this->logger->debug('[indexer catalog] done!');
     }
 }
