@@ -63,7 +63,7 @@ class Config implements ConfigInterface
      */
     public function getApiKey()
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_API_KEY);
+        return $this->scopeConfig->getValue(self::XML_PATH_API_KEY, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStoreCode());
     }
 
     /**

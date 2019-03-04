@@ -8,6 +8,7 @@ use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Model\Service\Indexer\Db\CatalogIndexFlat;
 use Bitbull\Tooso\Model\Service\Indexer\Db\StockIndexFlat;
 use Tooso\SDK\ClientBuilder;
+use Magento\Store\Model\StoreManagerInterface;
 
 class DataSender implements DataSenderInterface
 {
@@ -44,12 +45,18 @@ class DataSender implements DataSenderInterface
     protected $stockIndexFlat;
 
     /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
      * @param ConfigInterface $config
      * @param IndexerConfigInterface $indexerConfig
      * @param LoggerInterface $logger
      * @param ClientBuilder $clientBuilder
      * @param CatalogIndexFlat $catalogIndexFlat
      * @param StockIndexFlat $stockIndexFlat
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         ConfigInterface $config,
@@ -57,7 +64,8 @@ class DataSender implements DataSenderInterface
         LoggerInterface $logger,
         ClientBuilder $clientBuilder,
         CatalogIndexFlat $catalogIndexFlat,
-        StockIndexFlat $stockIndexFlat
+        StockIndexFlat $stockIndexFlat,
+        StoreManagerInterface $storeManager
     )
     {
         $this->config = $config;
@@ -66,6 +74,7 @@ class DataSender implements DataSenderInterface
         $this->clientBuilder = $clientBuilder;
         $this->catalogIndexFlat = $catalogIndexFlat;
         $this->stockIndexFlat = $stockIndexFlat;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -76,6 +85,8 @@ class DataSender implements DataSenderInterface
         $storeIds = $this->indexerConfig->getStores();
 
         foreach ($storeIds as $storeId) {
+            $this->storeManager->setCurrentStore($storeId);
+
             $data = $this->catalogIndexFlat->extractData($storeId);
             if ($data === null) {
                 return false;
@@ -83,6 +94,7 @@ class DataSender implements DataSenderInterface
             $csvContent = $this->arrayToCsv($data);
 
             $client = $this->getClient();
+
             try{
                 $indexResult = $client->index($csvContent, [
                     'ACCESS_KEY_ID' => $this->indexerConfig->getAwsAccessKey(),
@@ -110,13 +122,16 @@ class DataSender implements DataSenderInterface
         $storeIds = $this->indexerConfig->getStores();
 
         foreach ($storeIds as $storeId) {
+            $this->storeManager->setCurrentStore($storeId);
+
             $data = $this->stockIndexFlat->extractData($storeId);
             if ($data === null) {
                 return false;
             }
             $csvContent = $this->arrayToCsv($data);
 
-            $client = $this->getClient();
+            $client = $this->getClient($storeId);
+
             try{
                 $indexResult = $client->index($csvContent, [
                     'ACCESS_KEY_ID' => $this->indexerConfig->getAwsAccessKey(),
