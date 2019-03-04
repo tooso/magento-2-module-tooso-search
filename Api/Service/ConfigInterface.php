@@ -65,5 +65,5 @@ interface ConfigInterface
      *
      * @return boolean
      */
-    public function isConfigEnabled();
+    public function isTrackingEnabled();
 }

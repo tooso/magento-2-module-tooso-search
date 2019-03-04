@@ -11,6 +11,8 @@ use Magento\Framework\HTTP\Header;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Api\CategoryRepositoryInterface;
 
 class Tracking implements TrackingInterface
 {
@@ -55,6 +57,16 @@ class Tracking implements TrackingInterface
     protected $storeManager;
 
     /**
+     * @var ProductRepositoryInterface
+     */
+    protected $productRepository;
+
+    /**
+     * @var CategoryRepositoryInterface
+     */
+    protected $categoryProductRepository;
+
+    /**
      * Config constructor.
      *
      * @param LoggerInterface $logger
@@ -65,6 +77,8 @@ class Tracking implements TrackingInterface
      * @param UrlInterface $url
      * @param AnalyticsConfigInterface $analyticsConfig
      * @param StoreManagerInterface $storeManager
+     * @param ProductRepositoryInterface $productRepository
+     * @param CategoryRepositoryInterface $categoryProductRepository
      */
     public function __construct(
         LoggerInterface $logger,
@@ -74,7 +88,9 @@ class Tracking implements TrackingInterface
         Header $httpHeader,
         UrlInterface $url,
         AnalyticsConfigInterface $analyticsConfig,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        ProductRepositoryInterface $productRepository,
+        CategoryRepositoryInterface $categoryProductRepository
     ) {
         $this->logger = $logger;
         $this->productMetadata = $productMetadata;
@@ -84,6 +100,8 @@ class Tracking implements TrackingInterface
         $this->url = $url;
         $this->analyticsConfig = $analyticsConfig;
         $this->storeManager = $storeManager;
+        $this->productRepository = $productRepository;
+        $this->categoryProductRepository = $categoryProductRepository;
     }
 
     /**
@@ -141,8 +159,6 @@ class Tracking implements TrackingInterface
      */
     public function getProfilingParams($override = null)
     {
-        $this->session->isLoggedIn();
-
         $params = [
             'uip' => $this->getRemoteAddr(),
             'ua' => $this->getUserAgent(),
@@ -161,6 +177,31 @@ class Tracking implements TrackingInterface
         }
 
         return $params;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getProductTrackingParams($product){
+
+        $trackingProductParams = [
+            'id' => $product->getSku(),
+            'name' => $product->getName(),
+            'brand' => $product->getManufacturer(),
+            'price' => $product->getFinalPrice(),
+            'quantity' => 1,
+            'position' => 0,
+        ];
+
+        $categoryIds = $product->getCategoryIds();
+        if(count($categoryIds) > 0){
+            $currentProductCategory = $this->categoryProductRepository->get($categoryIds[0]);
+            $trackingProductParams['category'] = $currentProductCategory->getName();
+        }else{
+            $trackingProductParams['category'] = null;
+        }
+
+        return $trackingProductParams;
     }
 
     /**

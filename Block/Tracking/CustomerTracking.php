@@ -4,12 +4,12 @@ namespace Bitbull\Tooso\Block\Tracking;
 use Bitbull\Tooso\Api\Block\ScriptInterface;
 use Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface;
 use Bitbull\Tooso\Api\Service\ConfigInterface;
-use Bitbull\Tooso\Api\Service\TrackingInterface;
+use Bitbull\Tooso\Api\Service\SessionInterface;
 use Magento\Framework\View\Element\Template\Context;
 
-class LibraryInit extends \Magento\Framework\View\Element\Template implements ScriptInterface
+class CustomerTracking extends \Magento\Framework\View\Element\Template implements ScriptInterface
 {
-    const SCRIPT_ID = 'tooso-tracking-library-init';
+    const SCRIPT_ID = 'tooso-tracking-customer';
 
     /**
      * @var AnalyticsConfigInterface
@@ -22,9 +22,9 @@ class LibraryInit extends \Magento\Framework\View\Element\Template implements Sc
     protected $config;
 
     /**
-     * @var TrackingInterface
+     * @var SessionInterface
      */
-    protected $tracking;
+    protected $session;
 
     /**
      * LibraryInit constructor.
@@ -32,18 +32,21 @@ class LibraryInit extends \Magento\Framework\View\Element\Template implements Sc
      * @param Context $context
      * @param AnalyticsConfigInterface $analyticsConfig
      * @param ConfigInterface $config
-     * @param TrackingInterface $tracking
+     * @param SessionInterface $session
      */
     public function __construct(
         Context $context,
         AnalyticsConfigInterface $analyticsConfig,
         ConfigInterface $config,
-        TrackingInterface $tracking
+        SessionInterface $session
     ) {
         parent::__construct($context);
         $this->analyticsConfig = $analyticsConfig;
         $this->config = $config;
-        $this->tracking = $tracking;
+        $this->session = $session;
+
+        // Cache based on customer session
+        $this->_isScopePrivate = true;
     }
 
     /**
@@ -55,43 +58,33 @@ class LibraryInit extends \Magento\Framework\View\Element\Template implements Sc
     }
 
     /**
-     * Is in debug mode
+     * Check if user is logged in
      *
      * @return boolean
      */
-    public function isDebugMode()
+    public function isLoggedIn()
     {
-        return $this->analyticsConfig->isDebugMode();
+        return $this->session->isLoggedIn();
     }
 
     /**
-     * Get Analytics key
+     * Get Magento customer ID
      *
-     * @return string|null
+     * @return integer
      */
-    public function getKey()
+    public function getCustomerId()
     {
-        return $this->analyticsConfig->getKey();
+        return $this->session->getCustomerId();
     }
 
     /**
-     * Get cookie domain
-     *
-     * @param string $default
-     * @return array
+     * @inheritdoc
      */
-    public function getCookieDomain($default = null)
+    public function _toHtml()
     {
-        return $this->analyticsConfig->getCookieDomain($default);
-    }
-
-    /**
-     * Get currency code
-     *
-     * @return string
-     */
-    public function getCurrencyCode()
-    {
-        return $this->tracking->getCurrencyCode();
+        if ($this->analyticsConfig->isUserIdTrackingEnable() === false) {
+            return '';
+        }
+        return parent::_toHtml();
     }
 }

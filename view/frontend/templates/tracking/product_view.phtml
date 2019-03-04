@@ -1,0 +1,8 @@
+<?php
+$trackingParameters = $block->getProductTrackingParams();
+?>
+
+<script id='<?=$block->getScriptId()?>'>
+    ta('ec:addProduct', <?=json_encode($trackingParameters);?>);
+    ta('ec:setAction', 'detail');
+</script>

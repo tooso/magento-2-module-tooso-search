@@ -73,30 +73,33 @@
             </group>
             <group id="analytics" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Analytics</label>
-                <field id="include_library" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="include_library" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Include library</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Disable if you are using a tag manager]]></comment>
                 </field>
-                <field id="api_endpoint" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Tracking API endpoint</label>
+                <field id="library_endpoint" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Javascript library endpoint</label>
                 </field>
-                <field id="api_version" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="api_endpoint" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API endpoint</label>
+                </field>
+                <field id="api_version" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>API Version</label>
                     <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\AnalyticsApiVersions</source_model>
                 </field>
-                <field id="key" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="key" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Analytics Key</label>
                 </field>
-                <field id="debug_mode" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="debug_mode" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Debug mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="cookie_domain" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="cookie_domain" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Cookie domain</label>
                     <comment><![CDATA[Leave empty for all subdomains]]></comment>
                 </field>
-                <field id="track_userid" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="track_userid" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Track user with their customer ID</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>

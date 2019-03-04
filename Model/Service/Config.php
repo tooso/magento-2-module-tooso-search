@@ -102,7 +102,7 @@ class Config implements ConfigInterface
     /**
      * @inheritdoc
      */
-    public function isConfigEnabled()
+    public function isTrackingEnabled()
     {
         return $this->scopeConfig->isSetFlag(self::XML_PATH_TRACKING_ACTIVE);
     }

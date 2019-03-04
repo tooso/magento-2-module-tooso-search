@@ -21,7 +21,7 @@ interface SessionInterface extends SDKSessionInterface
     /**
      * Get Magento customer ID
      *
-     * @return string
+     * @return integer
      */
     public function getCustomerId();
 

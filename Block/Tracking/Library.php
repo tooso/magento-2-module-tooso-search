@@ -13,12 +13,12 @@ class Library extends \Magento\Framework\View\Element\Template implements Script
     /**
      * @var AnalyticsConfigInterface
      */
-    public $analyticsConfig;
+    protected $analyticsConfig;
 
     /**
      * @var ConfigInterface
      */
-    public $config;
+    protected $config;
 
     /**
      * Library constructor.
@@ -43,5 +43,15 @@ class Library extends \Magento\Framework\View\Element\Template implements Script
     public function getScriptId()
     {
         return self::SCRIPT_ID;
+    }
+
+    /**
+     * Get library endpoint
+     *
+     * @return string|null
+     */
+    public function getLibraryEndpoint()
+    {
+        return $this->analyticsConfig->getLibraryEndpoint();
     }
 }

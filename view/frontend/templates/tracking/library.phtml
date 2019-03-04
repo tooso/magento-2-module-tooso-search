@@ -1,8 +1,5 @@
 <?php
-/** @var \Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface $analyticsConfig */
-$analyticsConfig = $block->analyticsConfig;
-
-$libraryEndpoint = $analyticsConfig->getLibraryEndpoint();
+$libraryEndpoint = $block->getLibraryEndpoint();
 ?>
 
 <script id='<?=$block->getScriptId()?>' async type='text/javascript' src='<?=$libraryEndpoint?>'></script>

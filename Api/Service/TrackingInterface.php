@@ -46,6 +46,14 @@ interface TrackingInterface
     public function getProfilingParams($override = null);
 
     /**
+     * Get product tracking params
+     *
+     * @param \Magento\Catalog\Api\Data\ProductInterface $product
+     * @return null|array
+     */
+    public function getProductTrackingParams($product);
+
+    /**
      * Get client IP
      *
      * @return string

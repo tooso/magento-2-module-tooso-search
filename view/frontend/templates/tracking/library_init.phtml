@@ -1,13 +1,8 @@
 <?php
-/** @var \Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface $analyticsConfig */
-$analyticsConfig = $block->analyticsConfig;
-/** @var \Bitbull\Tooso\Api\Service\TrackingInterface $tracking */
-$tracking = $block->tracking;
-
-$debugMode = $analyticsConfig->isDebugMode();
-$trackingKey = $analyticsConfig->getKey();
-$cookieDomain = $analyticsConfig->getCookieDomain('auto');
-$currency = $tracking->getCurrencyCode();
+$debugMode = $block->isDebugMode();
+$trackingKey = $block->getKey();
+$cookieDomain = $block->getCookieDomain('auto');
+$currency = $block->getCurrencyCode();
 ?>
 
 <script id="<?=$block->getScriptId()?>">
