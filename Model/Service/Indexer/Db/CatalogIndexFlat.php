@@ -63,7 +63,7 @@ class CatalogIndexFlat
         $data = array_map(function($item) use ($storeId, $updateTimeStr) {
             return [
                 'store_id' => $storeId,
-                'product_id' => $item['id'],
+                'sku' => $item['sku'],
                 'data' => $this->serializerJson->serialize($item),
                 'update_time' => $updateTimeStr
             ];
@@ -101,8 +101,15 @@ class CatalogIndexFlat
             return null;
         }
 
-        return array_map(function ($item){
+        if (sizeof($data) === 0) {
+            $this->logger->error('No data into '.self::TABLE_NAME.', reindex is required');
+            return null;
+        }
+
+        $headers = array_keys($this->serializerJson->unserialize($data[0]['data']));
+
+        return array_merge([$headers], array_map(function ($item){
             return $this->serializerJson->unserialize($item['data']);
-        }, $data);
+        }, $data));
     }
 }

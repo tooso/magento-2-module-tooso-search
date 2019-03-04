@@ -43,6 +43,7 @@ class AttributesEnricher implements EnricherInterface
         $attributes = $this->indexerConfig->getAttributesWithoutCustoms();
 
         $productsCollection = $this->productCollectionFactory->create()
+            ->addAttributeToSelect('sku')
             ->addFieldToFilter('entity_id', $ids);
 
         foreach ($attributes as $attribute) {
@@ -69,5 +70,4 @@ class AttributesEnricher implements EnricherInterface
     {
         return $this->indexerConfig->getAttributesWithoutCustoms();
     }
-
 }

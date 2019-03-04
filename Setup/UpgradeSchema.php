@@ -21,21 +21,21 @@ class UpgradeSchema implements UpgradeSchemaInterface
             )->addColumn(
                 'store_id',
                 \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                255,
+                null,
                 array (
                     'nullable' => false,
                     'primary'   => true,
                 ),
                 'Store ID'
             )->addColumn(
-                'product_id',
-                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                'sku',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 255,
                 array (
                     'nullable' => false,
                     'primary'   => true,
                 ),
-                'Product entity ID'
+                'Product SKU'
             )->addColumn(
                 'data',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,

@@ -49,15 +49,26 @@ class StockIndexFlat
      */
     public function extractData($storeId)
     {
+        $headers = ['sku', 'qty', 'is_in_stock'];
         try {
             $tableName = $this->resource->getTableName(self::TABLE_NAME);
-            $select = $this->connection->select()->from($tableName, ['product_id', 'qty', 'is_in_stock' => 'stock_status'])->where('store_id = ?', $storeId);
+            $select = $this->connection
+                ->select()
+                ->from($tableName, ['catalog_product_entity.sku', 'qty', 'is_in_stock' => 'stock_status'])
+                ->distinct('catalog_product_entity.sku')
+                ->join(
+                    ['catalog_product_entity'], self::TABLE_NAME.'.product_id = catalog_product_entity.entity_id', ['sku']
+                )
+                ->join(
+                    ['store'], self::TABLE_NAME.'.website_id = store.website_id', []
+                )
+                ->where('store.store_id = ?', $storeId);
             $data = $this->connection->query($select)->fetchAll();
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
             return null;
         }
 
-        return $data;
+        return array_merge([$headers], $data);
     }
 }
