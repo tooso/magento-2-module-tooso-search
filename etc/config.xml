@@ -30,6 +30,9 @@
                 <filter_price_override>price</filter_price_override>
             </search>
             <analytics>
+                <api_version>1</api_version>
+                <include_library>1</include_library>
+                <library_endpoint>https://analyticsdev.tooso.ai/ta.js</library_endpoint>
                 <track_userid>1</track_userid>
             </analytics>
         </tooso>

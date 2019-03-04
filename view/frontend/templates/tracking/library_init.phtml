@@ -1,0 +1,22 @@
+<?php
+/** @var \Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface $analyticsConfig */
+$analyticsConfig = $block->analyticsConfig;
+/** @var \Bitbull\Tooso\Api\Service\TrackingInterface $tracking */
+$tracking = $block->tracking;
+
+$debugMode = $analyticsConfig->isDebugMode();
+$trackingKey = $analyticsConfig->getKey();
+$cookieDomain = $analyticsConfig->getCookieDomain('auto');
+$currency = $tracking->getCurrencyCode();
+?>
+
+<script id="<?=$block->getScriptId()?>">
+    window.ta=window.ta||function(){(ta.q=ta.q||[]).push(arguments)};ta.l=+new Date;
+    ta('create', '<?=$trackingKey?>', '<?=$cookieDomain?>');
+    <?php if($currency): ?>
+    ta('set','currencyCode','<?=$currency?>');
+    <?php endif; ?>
+    <?php if($debugMode): ?>
+    ta('set','debug','true');
+    <?php endif; ?>
+</script>

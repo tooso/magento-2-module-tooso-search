@@ -7,10 +7,10 @@ use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\SessionInterface;
 use Bitbull\Tooso\Api\Service\TrackingInterface;
 use Magento\Framework\App\ProductMetadataInterface;
-use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\HTTP\Header;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\App\Request\Http as RequestHttp;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Tracking implements TrackingInterface
 {
@@ -50,6 +50,11 @@ class Tracking implements TrackingInterface
     private $analyticsConfig;
 
     /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
      * Config constructor.
      *
      * @param LoggerInterface $logger
@@ -59,6 +64,7 @@ class Tracking implements TrackingInterface
      * @param Header $httpHeader
      * @param UrlInterface $url
      * @param AnalyticsConfigInterface $analyticsConfig
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         LoggerInterface $logger,
@@ -67,7 +73,8 @@ class Tracking implements TrackingInterface
         RequestHttp $request,
         Header $httpHeader,
         UrlInterface $url,
-        AnalyticsConfigInterface $analyticsConfig
+        AnalyticsConfigInterface $analyticsConfig,
+        StoreManagerInterface $storeManager
     ) {
         $this->logger = $logger;
         $this->productMetadata = $productMetadata;
@@ -76,6 +83,7 @@ class Tracking implements TrackingInterface
         $this->httpHeader = $httpHeader;
         $this->url = $url;
         $this->analyticsConfig = $analyticsConfig;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -156,9 +164,7 @@ class Tracking implements TrackingInterface
     }
 
     /**
-     * Get remote address
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getRemoteAddr()
     {
@@ -166,9 +172,7 @@ class Tracking implements TrackingInterface
     }
 
     /**
-     * Get client user agent
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getUserAgent()
     {
@@ -176,9 +180,7 @@ class Tracking implements TrackingInterface
     }
 
     /**
-     * Get last page
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getLastPage()
     {
@@ -186,12 +188,18 @@ class Tracking implements TrackingInterface
     }
 
     /**
-     * Get current page
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getCurrentPage()
     {
         return $this->url->getCurrentUrl();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCurrencyCode()
+    {
+        return $this->storeManager->getStore()->getCurrentCurrency()->getCode();
     }
 }

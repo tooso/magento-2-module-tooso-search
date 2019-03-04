@@ -72,4 +72,11 @@ interface TrackingInterface
      * @return string
      */
     public function getCurrentPage();
+
+    /**
+     * Get currency code
+     *
+     * @return string
+     */
+    public function getCurrencyCode();
 }
