@@ -5,39 +5,42 @@
         'jquery',
         'prototype'
     ], function($){
-        
+
         var buttonId = "<?php echo $block->getButtonId() ?>";
         var collectSpan = $('#'+buttonId+'_span');
 
         $('#'+buttonId).click(function () {
+            var button = $(this);
+
             new Ajax.Request('<?php echo $block->getAjaxUrl() ?>', {
                 parameters:     {},
-                loaderArea:     true,
+                loaderArea:     false,
                 asynchronous:   true,
                 onCreate: function() {
                     collectSpan.find('.done').hide();
+                    collectSpan.find('.error').hide();
                     collectSpan.find('.processing').show();
                     collectSpan.find('.message_span').text('');
+                    button.prop("disabled",true);
                 },
                 onSuccess: function(response) {
                     collectSpan.find('.processing').hide();
-
-                    var resultText = '';
-                    if (response.status != 200) {
-                        resultText = response.statusText;
-                    } else {
-                        resultText = 'Success';
+                    button.prop("disabled",false);
+                    if (response.status === 200) {
                         collectSpan.find('.done').show();
                     }
                     setTimeout(function () {
                         collectSpan.find('.done').hide();
                     }, 3000)
                 },
-                onFailure: function(response, status, errMsg) {
+                onFailure: function(response) {
+                    button.prop("disabled",false);
                     collectSpan.find('.processing').hide();
+                    collectSpan.find('.error').show();
                     collectSpan.find('.message_span').text(response.statusText);
                     setTimeout(function () {
-                        collectSpan.find('.message_span').text('');    
+                        collectSpan.find('.message_span').text('');
+                        collectSpan.find('.error').hide();
                     }, 3000)
                 }
             });
@@ -50,5 +53,6 @@
 <span id="<?php echo $block->getButtonId() ?>_span">
     <img class="processing" alt="Loading" style="margin:0 5px; display: none;" src="<?php echo $block->getViewFileUrl('images/process_spinner.gif') ?>"/>
     <img class="done" alt="Done" style="margin:-3px 5px; display: none;" src="<?php echo $block->getViewFileUrl('images/rule_component_apply.gif') ?>"/>
+    <img class="error" alt="Error" style="margin:-3px 5px; display: none;" src="<?php echo $block->getViewFileUrl('images/rule_component_remove.gif') ?>"/>
     <span class="message_span"></span>
 </span>
