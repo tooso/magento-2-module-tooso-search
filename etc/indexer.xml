@@ -3,9 +3,14 @@
     <indexer id="tooso_catalog" view_id="tooso_catalog_flat" class="Bitbull\Tooso\Model\Indexer\Catalog">
         <title translate="true">Tooso Catalog</title>
         <description translate="true">Catalog syncronization with Tooso service</description>
-    </indexer>
-    <indexer id="tooso_stock" view_id="tooso_stock_flat" class="Bitbull\Tooso\Model\Indexer\Stock">
-        <title translate="true">Tooso Stock</title>
-        <description translate="true">Stock syncronization with Tooso service</description>
+        <dependencies>
+            <indexer id="catalog_product_flat" />
+            <indexer id="catalog_category_flat" />
+            <indexer id="catalog_category_product" />
+            <indexer id="catalog_product_category" />
+            <indexer id="catalog_product_price" />
+            <indexer id="catalog_product_attribute" />
+            <indexer id="cataloginventory_stock" />
+        </dependencies>
     </indexer>
 </config>

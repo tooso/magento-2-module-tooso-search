@@ -157,14 +157,13 @@ class DataSender implements DataSenderInterface
      */
     protected function arrayToCsv($array)
     {
-        $dataString = '';
-        foreach ($array as $row) {
-            $dataStringRow = '';
-            foreach ($row as $column) {
-                $dataStringRow .= '"'.$column.'"'.self::CSV_SEPARATOR;
-            }
-            $dataString .= $dataStringRow.PHP_EOL;
+        $f = fopen('php://memory', 'rb+');
+        foreach ($array as $fields) {
+            fputcsv($f, $fields, self::CSV_SEPARATOR);
         }
-        return $dataString;
+        rewind($f);
+        $csvContent = stream_get_contents($f);
+        fclose($f);
+        return rtrim($csvContent);
     }
 }

@@ -22,10 +22,6 @@
                     <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendCatalogIndexDataButton</frontend_model>
                     <label>Send catalog index data</label>
                 </field>
-                <field id="reindex_stock_btn" translate="label comment" type="button" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\StockReindexButton</frontend_model>
-                    <label>Stock reindex</label>
-                </field>
                 <field id="send_stock_index_Data" translate="label comment" type="button" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
                     <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendStockIndexDataButton</frontend_model>
                     <label>Send stock index data</label>

@@ -36,20 +36,13 @@ class InstallSchema implements InstallSchemaInterface
          * Init catalog index status
          */
 
+        $updateTime = new \DateTime();
+        $updateTimeStr = $updateTime->format('Y-m-d H:i:s');
+
         $state = $this->stateFactory->create();
         $state->loadByIndexer(Catalog::INDEX_NAME);
-        $state->setHashConfig('');
         $state->setStatus(StateInterface::STATUS_INVALID);
-        $state->save(); //TODO: fix deprecation
-
-        /**
-         * Init stock index status
-         */
-
-        $state = $this->stateFactory->create();
-        $state->loadByIndexer(Stock::INDEX_NAME);
-        $state->setHashConfig('');
-        $state->setStatus(StateInterface::STATUS_INVALID);
+        $state->setUpdated($updateTimeStr);
         $state->save(); //TODO: fix deprecation
 
         $setup->endSetup();

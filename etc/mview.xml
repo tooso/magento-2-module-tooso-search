@@ -22,9 +22,4 @@
             <table name="catalog_category_product" entity_column="product_id" />
         </subscriptions>
     </view>
-    <view id="tooso_stock_flat" class="Bitbull\Tooso\Model\Indexer\Stock" group="indexer">
-        <subscriptions>
-            <table name="cataloginventory_stock_item" entity_column="product_id" />
-        </subscriptions>
-    </view>
 </config>

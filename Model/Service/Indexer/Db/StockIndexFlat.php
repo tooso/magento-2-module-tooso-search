@@ -10,7 +10,7 @@ class StockIndexFlat
     /**
      * Table name
      */
-    const TABLE_NAME = 'tooso_stock_flat';
+    const TABLE_NAME = 'cataloginventory_stock_status';
 
     /**
      * @var AdapterInterface
@@ -41,41 +41,6 @@ class StockIndexFlat
     }
 
     /**
-     * Store data into database flat table
-     *
-     * @param array $data
-     * @param integer $storeId
-     * @return boolean
-     */
-    public function storeData($data, $storeId)
-    {
-        $updateTime = new \DateTime();
-        $updateTimeStr = $updateTime->format('Y-m-d H:i:s');
-        $data = array_map(function($item) use ($storeId, $updateTimeStr) {
-            return [
-                'store_id' => $storeId,
-                'product_id' => $item['id'],
-                'qty' => $item['qty'],
-                'is_in_stock' => $item['is_in_stock'] === 1 || $item['is_in_stock'] === true, //avoid format error
-                'update_time' => $updateTimeStr
-            ];
-        }, $data);
-
-        $this->connection->beginTransaction();
-        try {
-            $tableName = $this->resource->getTableName(self::TABLE_NAME);
-            $this->connection->insertOnDuplicate($tableName, $data);
-            $this->connection->commit();
-        } catch (\Exception $e) {
-            $this->connection->rollBack();
-            $this->logger->error($e->getMessage());
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Extract data from database flat table
      *
      * @param integer $storeId
@@ -86,7 +51,7 @@ class StockIndexFlat
     {
         try {
             $tableName = $this->resource->getTableName(self::TABLE_NAME);
-            $select = $this->connection->select()->from($tableName)->where('store_id = ?', $storeId);
+            $select = $this->connection->select()->from($tableName, ['product_id', 'qty', 'is_in_stock' => 'stock_status'])->where('store_id = ?', $storeId);
             $data = $this->connection->query($select)->fetchAll();
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());

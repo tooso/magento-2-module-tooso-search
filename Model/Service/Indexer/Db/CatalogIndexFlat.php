@@ -4,6 +4,7 @@ namespace Bitbull\Tooso\Model\Service\Indexer\Db;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\App\ResourceConnection;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
+use Magento\Framework\Serialize\Serializer\Json as SerializerJson;
 
 class CatalogIndexFlat
 {
@@ -28,16 +29,24 @@ class CatalogIndexFlat
     protected $logger;
 
     /**
+     * @var SerializerJson
+     */
+    protected $serializerJson;
+
+    /**
      * @param ResourceConnection $resource
      * @param LoggerInterface $logger
+     * @param SerializerJson $serializerJson
      */
     public function __construct(
         ResourceConnection $resource,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        SerializerJson $serializerJson
     ) {
         $this->connection = $resource->getConnection();
         $this->resource = $resource;
         $this->logger = $logger;
+        $this->serializerJson = $serializerJson;
     }
 
     /**
@@ -51,11 +60,11 @@ class CatalogIndexFlat
     {
         $updateTime = new \DateTime();
         $updateTimeStr = $updateTime->format('Y-m-d H:i:s');
-        $data = array_map(function($d) use ($storeId, $updateTimeStr) {
+        $data = array_map(function($item) use ($storeId, $updateTimeStr) {
             return [
                 'store_id' => $storeId,
-                'product_id' => $d['id'],
-                'data' => serialize($d),
+                'product_id' => $item['id'],
+                'data' => $this->serializerJson->serialize($item),
                 'update_time' => $updateTimeStr
             ];
         }, $data);
@@ -93,7 +102,7 @@ class CatalogIndexFlat
         }
 
         return array_map(function ($item){
-            return unserialize($item['data']);
-        }, $data);;
+            return $this->serializerJson->unserialize($item['data']);
+        }, $data);
     }
 }
