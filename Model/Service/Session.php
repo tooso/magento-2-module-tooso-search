@@ -24,6 +24,16 @@ class Session implements SessionInterface
     const COOKIE_USERID = '_ta';
 
     /**
+     * @var string
+     */
+    const CLIENT_ID_PREFIX = 'TA.';
+
+    /**
+     * @var string
+     */
+    const SEARCH_ID_PREFIX = 'magento_';
+
+    /**
      * CookieManager
      *
      * @var CookieManagerInterface
@@ -106,7 +116,12 @@ class Session implements SessionInterface
      */
     public function getSearchId()
     {
-        return $this->cookieManager->getCookie(self::COOKIE_SEARCHID);
+        $searchId = $this->cookieManager->getCookie(self::COOKIE_SEARCHID);
+        if($searchId === null || trim($searchId) === ''){
+            $uuid = $this->clientBuilder->build()->getUuid();
+            $searchId = substr(self::SEARCH_ID_PREFIX.$uuid, 0, 36);
+        }
+        return $searchId;
     }
 
     /**
@@ -162,6 +177,6 @@ class Session implements SessionInterface
     private function generateClientId()
     {
         $uuid = $this->clientBuilder->build()->getUuid();
-        return 'TA.'.$uuid; //TODO: use constant
+        return self::CLIENT_ID_PREFIX.$uuid; //TODO: use constant
     }
 }

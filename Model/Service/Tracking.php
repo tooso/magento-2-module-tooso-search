@@ -182,8 +182,8 @@ class Tracking implements TrackingInterface
     /**
      * @inheritdoc
      */
-    public function getProductTrackingParams($product){
-
+    public function getProductTrackingParams($product)
+    {
         $trackingProductParams = [
             'id' => $product->getSku(),
             'name' => $product->getName(),
@@ -202,6 +202,20 @@ class Tracking implements TrackingInterface
         }
 
         return $trackingProductParams;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOrderTrackingParams($order)
+    {
+        return [
+            'id' => $order->getId(),
+            'shipping' => $order->getShippingAmount(),
+            'coupon' => $order->getCouponCode(),
+            'tax' => $order->getTaxAmount(),
+            'revenue' => $order->getGrandTotal(),
+        ];
     }
 
     /**

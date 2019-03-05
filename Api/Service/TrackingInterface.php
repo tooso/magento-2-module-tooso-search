@@ -54,6 +54,14 @@ interface TrackingInterface
     public function getProductTrackingParams($product);
 
     /**
+     * Get order tracking params
+     *
+     * @param \Magento\Sales\Api\Data\OrderInterface $order
+     * @return null|array
+     */
+    public function getOrderTrackingParams($order);
+
+    /**
      * Get client IP
      *
      * @return string

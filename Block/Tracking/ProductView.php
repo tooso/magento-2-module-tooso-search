@@ -5,6 +5,7 @@ use Bitbull\Tooso\Api\Block\ScriptInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template\Context;
 use Bitbull\Tooso\Api\Service\TrackingInterface;
+use Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface;
 
 class ProductView extends \Magento\Framework\View\Element\Template implements ScriptInterface
 {
@@ -21,20 +22,28 @@ class ProductView extends \Magento\Framework\View\Element\Template implements Sc
     protected $tracking;
 
     /**
+     * @var AnalyticsConfigInterface
+     */
+    protected $analyticsConfig;
+
+    /**
      * ProductView constructor.
      *
      * @param Context $context
      * @param Registry $registry
      * @param TrackingInterface $tracking
+     * @param AnalyticsConfigInterface $analyticsConfig
      */
     public function __construct(
         Context $context,
         Registry $registry,
-        TrackingInterface $tracking
+        TrackingInterface $tracking,
+        AnalyticsConfigInterface $analyticsConfig
     ) {
         parent::__construct($context);
         $this->registry = $registry;
         $this->tracking = $tracking;
+        $this->analyticsConfig = $analyticsConfig;
     }
 
     /**
@@ -68,6 +77,16 @@ class ProductView extends \Magento\Framework\View\Element\Template implements Sc
         }
 
         return $this->tracking->getProductTrackingParams($product);
+    }
+
+    /**
+     * Check if Javascript library is included
+     *
+     * @return boolean
+     */
+    public function isLibraryIncluded()
+    {
+        return $this->analyticsConfig->isLibraryIncluded();
     }
 
     /**

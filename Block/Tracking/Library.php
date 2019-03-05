@@ -54,4 +54,15 @@ class Library extends \Magento\Framework\View\Element\Template implements Script
     {
         return $this->analyticsConfig->getLibraryEndpoint();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function _toHtml()
+    {
+        if ($this->analyticsConfig->isLibraryIncluded() === false) {
+            return '';
+        }
+        return parent::_toHtml();
+    }
 }

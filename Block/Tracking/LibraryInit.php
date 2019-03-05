@@ -94,4 +94,15 @@ class LibraryInit extends \Magento\Framework\View\Element\Template implements Sc
     {
         return $this->tracking->getCurrencyCode();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function _toHtml()
+    {
+        if ($this->analyticsConfig->isLibraryIncluded() === false) {
+            return '';
+        }
+        return parent::_toHtml();
+    }
 }

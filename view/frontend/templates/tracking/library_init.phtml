@@ -8,10 +8,10 @@ $currency = $block->getCurrencyCode();
 <script id="<?=$block->getScriptId()?>">
     window.ta=window.ta||function(){(ta.q=ta.q||[]).push(arguments)};ta.l=+new Date;
     ta('create', '<?=$trackingKey?>', '<?=$cookieDomain?>');
-    <?php if($currency): ?>
+<?php if($currency): ?>
     ta('set','currencyCode','<?=$currency?>');
-    <?php endif; ?>
-    <?php if($debugMode): ?>
+<?php endif; ?>
+<?php if($debugMode): ?>
     ta('set','debug','true');
-    <?php endif; ?>
+<?php endif; ?>
 </script>

@@ -2,7 +2,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="before.body.end">
-            <block class="Bitbull\Tooso\Block\Tracking\ProductView" cacheable="true" name="tooso_tracking_product_view" template="Bitbull_Tooso::tracking/product_view.phtml" ifconfig="tooso/active/tracking" />
+            <block class="Bitbull\Tooso\Block\Tracking\Checkout" cacheable="false" name="tooso_tracking_checkout" template="Bitbull_Tooso::tracking/checkout.phtml" ifconfig="tooso/active/tracking" />
         </referenceContainer>
     </body>
 </page>
