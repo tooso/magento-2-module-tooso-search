@@ -35,6 +35,21 @@
                 <library_endpoint>https://analyticsdev.tooso.ai/ta.js</library_endpoint>
                 <track_userid>1</track_userid>
             </analytics>
+            <suggestion>
+                <include_library>0</include_library>
+                <library_endpoint>https://cdndev.tooso.ai/jquery.ts-dev.js</library_endpoint>
+                <input_selector>#search</input_selector>
+                <buckets>relevance,trending</buckets>
+                <limit>20</limit>
+                <groupby>1</groupby>
+                <nocache>1</nocache>
+                <onselect_behaviour>submit</onselect_behaviour>
+                <onselect_callback>function() { this.form.submit(); }</onselect_callback>
+                <minchars>1</minchars>
+                <width>auto</width>
+                <width_custom>300</width_custom>
+                <zindex>100000</zindex>
+            </suggestion>
         </tooso>
     </default>
 </config>

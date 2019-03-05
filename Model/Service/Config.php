@@ -11,6 +11,7 @@ class Config implements ConfigInterface
     const XML_PATH_GENERAL_LOCALE_CODE = 'general/locale/code';
     const XML_PATH_SEARCH_ACTIVE = 'tooso/active/frontend';
     const XML_PATH_TRACKING_ACTIVE = 'tooso/active/tracking';
+    const XML_PATH_SUGGESTION_ACTIVE = 'tooso/active/suggestion';
     const XML_PATH_API_KEY = 'tooso/server/api_key';
     const XML_PATH_API_VERSION = 'tooso/server/api_version';
     const XML_PATH_API_BASE_URL = 'tooso/server/api_base_url';
@@ -105,5 +106,13 @@ class Config implements ConfigInterface
     public function isTrackingEnabled()
     {
         return $this->scopeConfig->isSetFlag(self::XML_PATH_TRACKING_ACTIVE);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isSuggestionEnabled()
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_SUGGESTION_ACTIVE);
     }
 }

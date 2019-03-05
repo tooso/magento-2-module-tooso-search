@@ -66,4 +66,11 @@ interface ConfigInterface
      * @return boolean
      */
     public function isTrackingEnabled();
+
+    /**
+     * Is suggestion client side active
+     *
+     * @return boolean
+     */
+    public function isSuggestionEnabled();
 }
