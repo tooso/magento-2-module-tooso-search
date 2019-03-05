@@ -7,10 +7,12 @@ use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\SessionInterface;
 use Bitbull\Tooso\Api\Service\TrackingInterface;
 use Magento\Framework\App\ProductMetadataInterface;
-use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\HTTP\Header;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\App\Request\Http as RequestHttp;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Api\CategoryRepositoryInterface;
 
 class Tracking implements TrackingInterface
 {
@@ -50,6 +52,21 @@ class Tracking implements TrackingInterface
     private $analyticsConfig;
 
     /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
+     * @var ProductRepositoryInterface
+     */
+    protected $productRepository;
+
+    /**
+     * @var CategoryRepositoryInterface
+     */
+    protected $categoryProductRepository;
+
+    /**
      * Config constructor.
      *
      * @param LoggerInterface $logger
@@ -59,6 +76,9 @@ class Tracking implements TrackingInterface
      * @param Header $httpHeader
      * @param UrlInterface $url
      * @param AnalyticsConfigInterface $analyticsConfig
+     * @param StoreManagerInterface $storeManager
+     * @param ProductRepositoryInterface $productRepository
+     * @param CategoryRepositoryInterface $categoryProductRepository
      */
     public function __construct(
         LoggerInterface $logger,
@@ -67,7 +87,10 @@ class Tracking implements TrackingInterface
         RequestHttp $request,
         Header $httpHeader,
         UrlInterface $url,
-        AnalyticsConfigInterface $analyticsConfig
+        AnalyticsConfigInterface $analyticsConfig,
+        StoreManagerInterface $storeManager,
+        ProductRepositoryInterface $productRepository,
+        CategoryRepositoryInterface $categoryProductRepository
     ) {
         $this->logger = $logger;
         $this->productMetadata = $productMetadata;
@@ -76,6 +99,9 @@ class Tracking implements TrackingInterface
         $this->httpHeader = $httpHeader;
         $this->url = $url;
         $this->analyticsConfig = $analyticsConfig;
+        $this->storeManager = $storeManager;
+        $this->productRepository = $productRepository;
+        $this->categoryProductRepository = $categoryProductRepository;
     }
 
     /**
@@ -133,8 +159,6 @@ class Tracking implements TrackingInterface
      */
     public function getProfilingParams($override = null)
     {
-        $this->session->isLoggedIn();
-
         $params = [
             'uip' => $this->getRemoteAddr(),
             'ua' => $this->getUserAgent(),
@@ -156,9 +180,46 @@ class Tracking implements TrackingInterface
     }
 
     /**
-     * Get remote address
-     *
-     * @return string
+     * @inheritdoc
+     */
+    public function getProductTrackingParams($product)
+    {
+        $trackingProductParams = [
+            'id' => $product->getSku(),
+            'name' => $product->getName(),
+            'brand' => $product->getManufacturer(),
+            'price' => $product->getFinalPrice(),
+            'quantity' => 1,
+            'position' => 0,
+        ];
+
+        $categoryIds = $product->getCategoryIds();
+        if(count($categoryIds) > 0){
+            $currentProductCategory = $this->categoryProductRepository->get($categoryIds[0]);
+            $trackingProductParams['category'] = $currentProductCategory->getName();
+        }else{
+            $trackingProductParams['category'] = null;
+        }
+
+        return $trackingProductParams;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOrderTrackingParams($order)
+    {
+        return [
+            'id' => $order->getId(),
+            'shipping' => $order->getShippingAmount(),
+            'coupon' => $order->getCouponCode(),
+            'tax' => $order->getTaxAmount(),
+            'revenue' => $order->getGrandTotal(),
+        ];
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getRemoteAddr()
     {
@@ -166,9 +227,7 @@ class Tracking implements TrackingInterface
     }
 
     /**
-     * Get client user agent
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getUserAgent()
     {
@@ -176,9 +235,7 @@ class Tracking implements TrackingInterface
     }
 
     /**
-     * Get last page
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getLastPage()
     {
@@ -186,12 +243,18 @@ class Tracking implements TrackingInterface
     }
 
     /**
-     * Get current page
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getCurrentPage()
     {
         return $this->url->getCurrentUrl();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCurrencyCode()
+    {
+        return $this->storeManager->getStore()->getCurrentCurrency()->getCode();
     }
 }

@@ -1,0 +1,10 @@
+<?php
+$isLoggedIn = $block->isLoggedIn();
+$customerId = $block->getCustomerId();
+?>
+
+<?php if ($isLoggedIn === true): ?>
+<script id='<?=$block->getScriptId()?>' type='text/javascript'>
+    ta('set', 'userId', '<?=$customerId?>');
+</script>
+<?php endif ?>

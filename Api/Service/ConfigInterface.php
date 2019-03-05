@@ -59,4 +59,11 @@ interface ConfigInterface
      * @return boolean
      */
     public function isSearchEnabled();
+
+    /**
+     * Is tracking service active
+     *
+     * @return boolean
+     */
+    public function isTrackingEnabled();
 }

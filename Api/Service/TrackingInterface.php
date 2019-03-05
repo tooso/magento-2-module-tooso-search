@@ -46,6 +46,22 @@ interface TrackingInterface
     public function getProfilingParams($override = null);
 
     /**
+     * Get product tracking params
+     *
+     * @param \Magento\Catalog\Api\Data\ProductInterface $product
+     * @return null|array
+     */
+    public function getProductTrackingParams($product);
+
+    /**
+     * Get order tracking params
+     *
+     * @param \Magento\Sales\Api\Data\OrderInterface $order
+     * @return null|array
+     */
+    public function getOrderTrackingParams($order);
+
+    /**
      * Get client IP
      *
      * @return string
@@ -72,4 +88,11 @@ interface TrackingInterface
      * @return string
      */
     public function getCurrentPage();
+
+    /**
+     * Get currency code
+     *
+     * @return string
+     */
+    public function getCurrencyCode();
 }
