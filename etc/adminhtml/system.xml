@@ -78,6 +78,56 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
+            <group id="suggestion" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Suggest client side</label>
+                <field id="include_library" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include Tooso suggest javascript library</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="library_endpoint" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Tooso suggest javascript library endpoint</label>
+                </field>
+                <field id="input_selector" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Input selector</label>
+                </field>
+                <field id="buckets" translate="label" type="multiselect" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Buckets</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SuggestionBuckets</source_model>
+                </field>
+                <field id="limit" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Limit results</label>
+                </field>
+                <field id="groupby" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Group by</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="onselect_behaviour" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>On-select behaviour</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SuggestionOnSelectBehaviour</source_model>
+                </field>
+                <field id="onselect_callback" translate="label" type="textarea" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom on-select callback</label>
+                    <depends>
+                        <field id="tooso/suggestion/onselect_behaviour">custom</field>
+                    </depends>
+                </field>
+                <field id="minchars" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Minimum number of chars</label>
+                </field>
+                <field id="width" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Width</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SuggestionWidth</source_model>
+                </field>
+                <field id="width_custom" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom width in pixel</label>
+                    <depends>
+                        <field id="tooso/suggestion/width">custom</field>
+                    </depends>
+                </field>
+                <field id="zindex" translate="label" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Z-Index</label>
+                </field>
+            </group>
         </section>
     </system>
 </config>
