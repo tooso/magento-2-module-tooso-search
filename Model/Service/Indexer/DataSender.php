@@ -12,7 +12,7 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class DataSender implements DataSenderInterface
 {
-    const CSV_SEPARATOR = ';';
+    const CSV_SEPARATOR = ',';
 
     /**
      * @var ConfigInterface
@@ -179,6 +179,7 @@ class DataSender implements DataSenderInterface
         rewind($f);
         $csvContent = stream_get_contents($f);
         fclose($f);
-        return rtrim($csvContent);
+        $csvContent = rtrim($csvContent);
+        return mb_convert_encoding($csvContent, 'UTF-8', mb_detect_encoding($csvContent, 'UTF-8, ISO-8859-1', true));
     }
 }
