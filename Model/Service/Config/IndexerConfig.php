@@ -15,6 +15,7 @@ class IndexerConfig implements IndexerConfigInterface
     const XML_PATH_INDEXER_SECRET_KEY = 'tooso/indexer/secret_key';
     const XML_PATH_INDEXER_BUCKET_NAME = 'tooso/indexer/bucket';
     const XML_PATH_INDEXER_BUCKET_PATH = 'tooso/indexer/path';
+    const XML_PATH_INDEXER_DRYRUN = 'tooso/indexer/dry_run_mode';
 
     /**
      * @var ScopeConfigInterface
@@ -114,6 +115,14 @@ class IndexerConfig implements IndexerConfigInterface
     public function getAwsBucketPath()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_INDEXER_BUCKET_PATH);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isDryRunModeEnabled()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_INDEXER_DRYRUN);
     }
 
 }

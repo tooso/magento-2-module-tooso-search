@@ -120,6 +120,11 @@
                     <label>AWS Object path</label>
                     <comment><![CDATA[Must end with a slash]]></comment>
                 </field>
+                <field id="dry_run_mode" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Dry run mode</label>
+                    <comment><![CDATA[Use a local file (var/tooso/tooso_index_%store id%.csv) instead to send it]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
         </section>
     </system>

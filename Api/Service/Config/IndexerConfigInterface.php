@@ -65,4 +65,11 @@ interface IndexerConfigInterface
      */
     public function getAwsBucketPath();
 
+    /**
+     * Check if dry run mode is enabled
+     *
+     * @return boolean
+     */
+    public function isDryRunModeEnabled();
+
 }

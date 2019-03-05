@@ -9,6 +9,8 @@ use Bitbull\Tooso\Model\Service\Indexer\Db\CatalogIndexFlat;
 use Bitbull\Tooso\Model\Service\Indexer\Db\StockIndexFlat;
 use Tooso\SDK\ClientBuilder;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem;
 
 class DataSender implements DataSenderInterface
 {
@@ -50,6 +52,11 @@ class DataSender implements DataSenderInterface
     protected $storeManager;
 
     /**
+     * @var Filesystem
+     */
+    protected $filesystem;
+
+    /**
      * @param ConfigInterface $config
      * @param IndexerConfigInterface $indexerConfig
      * @param LoggerInterface $logger
@@ -57,6 +64,7 @@ class DataSender implements DataSenderInterface
      * @param CatalogIndexFlat $catalogIndexFlat
      * @param StockIndexFlat $stockIndexFlat
      * @param StoreManagerInterface $storeManager
+     * @param Filesystem $filesystem
      */
     public function __construct(
         ConfigInterface $config,
@@ -65,7 +73,8 @@ class DataSender implements DataSenderInterface
         ClientBuilder $clientBuilder,
         CatalogIndexFlat $catalogIndexFlat,
         StockIndexFlat $stockIndexFlat,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        Filesystem $filesystem
     )
     {
         $this->config = $config;
@@ -75,6 +84,7 @@ class DataSender implements DataSenderInterface
         $this->catalogIndexFlat = $catalogIndexFlat;
         $this->stockIndexFlat = $stockIndexFlat;
         $this->storeManager = $storeManager;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -93,8 +103,12 @@ class DataSender implements DataSenderInterface
             }
             $csvContent = $this->arrayToCsv($data);
 
-            $client = $this->getClient();
+            if ($this->indexerConfig->isDryRunModeEnabled()) {
+                $this->writeCsvToFile($csvContent, $storeId, 'catalog_');
+                continue;
+            }
 
+            $client = $this->getClient();
             try{
                 $indexResult = $client->index($csvContent, [
                     'ACCESS_KEY_ID' => $this->indexerConfig->getAwsAccessKey(),
@@ -122,16 +136,18 @@ class DataSender implements DataSenderInterface
         $storeIds = $this->indexerConfig->getStores();
 
         foreach ($storeIds as $storeId) {
-            $this->storeManager->setCurrentStore($storeId);
-
-            $data = $this->stockIndexFlat->extractData($storeId);
+            $data = $this->stockIndexFlat->extractData(0); //NOTE: product's stock values are global
             if ($data === null) {
                 return false;
             }
             $csvContent = $this->arrayToCsv($data);
 
-            $client = $this->getClient($storeId);
+            if ($this->indexerConfig->isDryRunModeEnabled()) {
+                $this->writeCsvToFile($csvContent, $storeId, 'stock_');
+                continue;
+            }
 
+            $client = $this->getClient($storeId);
             try{
                 $indexResult = $client->index($csvContent, [
                     'ACCESS_KEY_ID' => $this->indexerConfig->getAwsAccessKey(),
@@ -181,5 +197,19 @@ class DataSender implements DataSenderInterface
         fclose($f);
         $csvContent = rtrim($csvContent);
         return mb_convert_encoding($csvContent, 'UTF-8', mb_detect_encoding($csvContent, 'UTF-8, ISO-8859-1', true));
+    }
+
+    /**
+     * Write CSV file into var directory
+     *
+     * @param string $csvContent
+     * @param integer $storeId
+     * @param string $prefix
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
+    protected function writeCsvToFile($csvContent, $storeId, $prefix = '')
+    {
+        $varDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
+        $varDirectory->writeFile("tooso/${prefix}${storeId}.csv", $csvContent);
     }
 }

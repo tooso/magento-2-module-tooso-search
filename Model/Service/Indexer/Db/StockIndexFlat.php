@@ -43,11 +43,10 @@ class StockIndexFlat
     /**
      * Extract data from database flat table
      *
-     * @param integer $storeId
      * @return array|null
      * @throws \Exception
      */
-    public function extractData($storeId)
+    public function extractData()
     {
         $headers = ['sku', 'qty', 'is_in_stock'];
         try {
@@ -58,11 +57,7 @@ class StockIndexFlat
                 ->distinct('catalog_product_entity.sku')
                 ->join(
                     ['catalog_product_entity'], self::TABLE_NAME.'.product_id = catalog_product_entity.entity_id', ['sku']
-                )
-                ->join(
-                    ['store'], self::TABLE_NAME.'.website_id = store.website_id', []
-                )
-                ->where('store.store_id = ?', $storeId);
+                );
             $data = $this->connection->query($select)->fetchAll();
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
