@@ -24,6 +24,7 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="toosoGenerateDummyData" xsi:type="object">Bitbull\Tooso\Console\GenerateDummyData</item>
+                <item name="toosoSendCatalogIndexData" xsi:type="object">Bitbull\Tooso\Console\SendCatalogIndexData</item>
             </argument>
         </arguments>
     </type>
@@ -37,6 +38,9 @@
 
     <preference for="Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config\AnalyticsConfig" />
+
+    <preference for="Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface"
+                type="Bitbull\Tooso\Model\Service\Config\IndexerConfig" />
 
     <preference for="Bitbull\Tooso\Api\Service\ConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config" />
@@ -56,5 +60,25 @@
     <preference for="Bitbull\Tooso\Api\Service\TrackingInterface"
                 type="Bitbull\Tooso\Model\Service\Tracking" />
 
+    <preference for="Bitbull\Tooso\Api\Service\Indexer\CatalogInterface"
+                type="Bitbull\Tooso\Model\Service\Indexer\Catalog" />
+
+    <preference for="Bitbull\Tooso\Api\Service\Indexer\StockInterface"
+                type="Bitbull\Tooso\Model\Service\Indexer\Stock" />
+
+    <preference for="Bitbull\Tooso\Api\Service\Indexer\DataSenderInterface"
+                type="Bitbull\Tooso\Model\Service\Indexer\DataSender" />
+
+    <type name="Bitbull\Tooso\Api\Service\Indexer\CatalogInterface">
+        <arguments>
+            <argument name="enrichers" xsi:type="array">
+                <item name="attributes" xsi:type="object">Bitbull\Tooso\Model\Service\Indexer\Enricher\AttributesEnricher</item>
+                <item name="categories" xsi:type="object">Bitbull\Tooso\Model\Service\Indexer\Enricher\CategoriesEnricher</item>
+                <item name="gallery" xsi:type="object">Bitbull\Tooso\Model\Service\Indexer\Enricher\GalleryEnricher</item>
+                <item name="variants" xsi:type="object">Bitbull\Tooso\Model\Service\Indexer\Enricher\VariantsEnricher</item>
+                <item name="stock" xsi:type="object">Bitbull\Tooso\Model\Service\Indexer\Enricher\StockEnricher</item>
+            </argument>
+        </arguments>
+    </type>
 
 </config>

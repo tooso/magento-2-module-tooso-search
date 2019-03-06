@@ -83,7 +83,7 @@ class Search implements SearchInterface
      * @param ResourceConnection $resourceConnection
      * @param Registry $registry
      * @param RequestParserInterface $requestParser
-     * @param ClientBuilder $clientBuilder,
+     * @param ClientBuilder $clientBuilder
      * @param ResultFactory $resultFactory
      */
     public function __construct(
