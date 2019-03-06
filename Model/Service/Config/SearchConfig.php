@@ -47,6 +47,9 @@ class SearchConfig implements SearchConfigInterface
         return $value;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getSupportedOrderTypes()
     {
         $defaultParams = explode(self:: SEARCH_SUPPORTED_ORDER_TYPES_SEPARATOR,self::SEARCH_SUPPORTED_ORDER_TYPES_DEFAULT);

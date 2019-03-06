@@ -42,6 +42,9 @@
     <preference for="Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config\IndexerConfig" />
 
+    <preference for="Bitbull\Tooso\Api\Service\Config\SuggestionConfigInterface"
+                type="Bitbull\Tooso\Model\Service\Config\SuggestionConfig" />
+
     <preference for="Bitbull\Tooso\Api\Service\ConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config" />
 

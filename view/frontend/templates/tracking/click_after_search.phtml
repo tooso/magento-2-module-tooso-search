@@ -16,3 +16,5 @@ if ($searchResult !== null) {
     console.debug('search data:', <?=$searchData ? json_encode($searchData) : "'not set'"?>);
 </script>
 <?php endif; ?>
+
+<script id="<?=$block->getScriptId()?>"></script>

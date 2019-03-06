@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="after.body.start">
+            <block class="Bitbull\Tooso\Block\Tracking\Library" cacheable="true" name="tooso_tracking_library" template="Bitbull_Tooso::tracking/library.phtml" ifconfig="tooso/active/tracking" />
+
+            <block class="Bitbull\Tooso\Block\Suggestion\Library" cacheable="true" name="tooso_suggestion_library" template="Bitbull_Tooso::suggestion/library.phtml" ifconfig="tooso/active/suggestion" />
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Bitbull\Tooso\Block\Tracking\LibraryInit" cacheable="true" name="tooso_tracking_library_init" template="Bitbull_Tooso::tracking/library_init.phtml" ifconfig="tooso/active/tracking" />
+            <block class="Bitbull\Tooso\Block\Tracking\CustomerTracking" cacheable="true" name="tooso_tracking_customer" template="Bitbull_Tooso::tracking/customer_tracking.phtml" ifconfig="tooso/active/tracking" />
+            <block class="Bitbull\Tooso\Block\Tracking\PageView" after="-" cacheable="true" name="tooso_tracking_pageview" template="Bitbull_Tooso::tracking/page_view.phtml" ifconfig="tooso/active/tracking" />
+
+            <block class="Bitbull\Tooso\Block\Suggestion\LibraryInit" cacheable="true" name="tooso_suggestion_library_init" template="Bitbull_Tooso::suggestion/library_init.phtml" ifconfig="tooso/active/suggestion" />
+        </referenceContainer>
+    </body>
+</page>
