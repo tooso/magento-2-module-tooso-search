@@ -34,6 +34,8 @@
                 <include_library>1</include_library>
                 <library_endpoint>https://analyticsdev.tooso.ai/ta.js</library_endpoint>
                 <track_userid>1</track_userid>
+                <product_link_selector>.product-item-info > a.product</product_link_selector>
+                <product_link_attribute>data-product-sku</product_link_attribute>
             </analytics>
             <suggestion>
                 <include_library>0</include_library>

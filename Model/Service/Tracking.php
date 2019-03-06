@@ -182,15 +182,15 @@ class Tracking implements TrackingInterface
     /**
      * @inheritdoc
      */
-    public function getProductTrackingParams($product)
+    public function getProductTrackingParams($product, $position = 0, $quantity = 1)
     {
         $trackingProductParams = [
             'id' => $product->getSku(),
             'name' => $product->getName(),
             'brand' => $product->getManufacturer(),
             'price' => $product->getFinalPrice(),
-            'quantity' => 1,
-            'position' => 0,
+            'quantity' => $quantity,
+            'position' => $position,
         ];
 
         $categoryIds = $product->getCategoryIds();
