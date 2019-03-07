@@ -42,12 +42,16 @@ $productsData = $block->getProducts();
             ta('ec:setAction', 'click', {
                 'list': '<?=$searchId?>'
             });
+            var timeout = setTimeout(function () {
+                document.location.href = linkValue; // fallback in case the library did not respond in time
+            }, 1500);
             ta('send', 'event', 'cart', 'click', {
                 hitCallback: function () {
-                    document.location.href = linkValue;
+                    clearTimeout(timeout);
                     <?php if ($block->config->isDebugModeEnabled()): ?>
                     console.debug('Tooso: redirecting to '+linkValue);
                     <?php endif; ?>
+                    document.location.href = linkValue;
                 },
             });
         });
