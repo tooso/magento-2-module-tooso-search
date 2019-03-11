@@ -2,7 +2,7 @@
 $libraryEndpoint = $block->getLibraryEndpoint();
 ?>
 
-<script>
+<script id='<?=$block->getScriptId()?>'>
     require([
         "jquery"
     ], function(jQuery){
