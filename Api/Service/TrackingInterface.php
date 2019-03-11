@@ -95,4 +95,12 @@ interface TrackingInterface
      * @return string
      */
     public function getCurrencyCode();
+
+    /**
+     * Get currency code
+     *
+     * @param array $params
+     * @return boolean
+     */
+    public function executeTrackingRequest($params);
 }
