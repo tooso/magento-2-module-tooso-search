@@ -2,6 +2,7 @@
 
 namespace Bitbull\Tooso\Model\Service;
 
+use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\SessionInterface;
@@ -13,9 +14,18 @@ use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Tooso\SDK\ClientBuilder;
+use Tooso\SDK\Client;
+use Tooso\SDK\Exception;
 
 class Tracking implements TrackingInterface
 {
+    /**
+     * Tracking request timeout
+     * @var integer
+     */
+    const TRACKING_REQUEST_TIMEOUT = 1000;
+
     /**
      * @var LoggerInterface
      */
@@ -47,6 +57,11 @@ class Tracking implements TrackingInterface
     protected $url;
 
     /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
+    /**
      * @var AnalyticsConfigInterface
      */
     private $analyticsConfig;
@@ -67,6 +82,11 @@ class Tracking implements TrackingInterface
     protected $categoryProductRepository;
 
     /**
+     * @var ClientBuilder
+     */
+    protected $clientBuilder;
+
+    /**
      * Config constructor.
      *
      * @param LoggerInterface $logger
@@ -75,10 +95,12 @@ class Tracking implements TrackingInterface
      * @param RequestHttp $request
      * @param Header $httpHeader
      * @param UrlInterface $url
+     * @param ConfigInterface $config
      * @param AnalyticsConfigInterface $analyticsConfig
      * @param StoreManagerInterface $storeManager
      * @param ProductRepositoryInterface $productRepository
      * @param CategoryRepositoryInterface $categoryProductRepository
+     * @param ClientBuilder $clientBuilder
      */
     public function __construct(
         LoggerInterface $logger,
@@ -87,10 +109,12 @@ class Tracking implements TrackingInterface
         RequestHttp $request,
         Header $httpHeader,
         UrlInterface $url,
+        ConfigInterface $config,
         AnalyticsConfigInterface $analyticsConfig,
         StoreManagerInterface $storeManager,
         ProductRepositoryInterface $productRepository,
-        CategoryRepositoryInterface $categoryProductRepository
+        CategoryRepositoryInterface $categoryProductRepository,
+        ClientBuilder $clientBuilder
     ) {
         $this->logger = $logger;
         $this->productMetadata = $productMetadata;
@@ -98,10 +122,12 @@ class Tracking implements TrackingInterface
         $this->request = $request;
         $this->httpHeader = $httpHeader;
         $this->url = $url;
+        $this->config = $config;
         $this->analyticsConfig = $analyticsConfig;
         $this->storeManager = $storeManager;
         $this->productRepository = $productRepository;
         $this->categoryProductRepository = $categoryProductRepository;
+        $this->clientBuilder = $clientBuilder;
     }
 
     /**
@@ -256,5 +282,54 @@ class Tracking implements TrackingInterface
     public function getCurrencyCode()
     {
         return $this->storeManager->getStore()->getCurrentCurrency()->getCode();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function executeTrackingRequest($params)
+    {
+        $profilingParams = $this->getProfilingParams();
+        $params = array_merge([
+            'z' => $this->getUuid(),
+            'tid' => $this->analyticsConfig->getKey(),
+            'v' => $this->analyticsConfig->getAPIVersion(),
+        ], $profilingParams, $params);
+
+        $client = $this->getClient();
+        try{
+            $client->doRequest('collect', Client::HTTP_METHOD_GET, $params, self::TRACKING_REQUEST_TIMEOUT, true);
+        }catch (Exception $e){
+            $this->logger->logException($e);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Generate new client ID
+     *
+     * @return string
+     */
+    protected function getUuid()
+    {
+        return $this->clientBuilder->build()->getUuid();
+    }
+
+    /**
+     * Get Client
+     *
+     * @return \Tooso\SDK\Client
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    protected function getClient()
+    {
+        return $this->clientBuilder
+            ->withApiKey($this->config->getApiKey())
+            ->withApiBaseUrl($this->analyticsConfig->getAPIEndpoint())
+            ->withAgent($this->getApiAgent())
+            ->withLogger($this->logger)
+            ->build();
     }
 }
