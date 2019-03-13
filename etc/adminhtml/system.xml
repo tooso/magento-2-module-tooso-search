@@ -22,10 +22,10 @@
                     <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendCatalogIndexDataButton</frontend_model>
                     <label>Send catalog index data</label>
                 </field>
-                <field id="send_stock_index_Data" translate="label comment" type="button" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendStockIndexDataButton</frontend_model>
-                    <label>Send stock index data</label>
-                </field>
+                <!--<field id="send_stock_index_Data" translate="label comment" type="button" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">-->
+                    <!--<frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendStockIndexDataButton</frontend_model>-->
+                    <!--<label>Send stock index data</label>-->
+                <!--</field>-->
             </group>
             <group id="active" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Active Tooso</label>
