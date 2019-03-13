@@ -49,9 +49,11 @@ interface TrackingInterface
      * Get product tracking params
      *
      * @param \Magento\Catalog\Api\Data\ProductInterface $product
+     * @param integer $position
+     * @param integer $quantity
      * @return null|array
      */
-    public function getProductTrackingParams($product);
+    public function getProductTrackingParams($product, $position = 0, $quantity = 1);
 
     /**
      * Get order tracking params

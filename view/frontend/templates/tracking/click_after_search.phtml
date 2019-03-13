@@ -1,20 +1,59 @@
 <?php
-
 /** @var \Tooso\SDK\Search\Result $searchData */
-$searchResult = $block->search->getResult();
+$searchResult = $block->getSearchResult();
 $searchId = null;
 $searchData = null;
 if ($searchResult !== null) {
     $searchId = $searchResult->getSearchId();
     $searchData = $searchResult->getResponse();
 }
+
+$productLinkSelector = $this->getProductLinkSelector();
+$productAttributeName = $this->getProductAttributeName();
+$productsData = $block->getProducts();
 ?>
 
 <?php if ($block->config->isDebugModeEnabled()): ?>
 <script id="tooso-search-debug">
-    console.debug('search id: <?=$searchId ?: 'not set'?>');
-    console.debug('search data:', <?=$searchData ? json_encode($searchData) : "'not set'"?>);
+    console.debug('Tooso: search id is <?=$searchId ?: 'not set'?>');
+    console.debug('Tooso: search data:', <?=$searchData ? json_encode($searchData) : "'not set'"?>);
 </script>
 <?php endif; ?>
 
-<script id="<?=$block->getScriptId()?>"></script>
+<script id="<?=$block->getScriptId()?>">
+    var products = <?=json_encode($productsData)?>;
+    var elements = document.querySelectorAll('<?=$productLinkSelector ?>');
+    if (elements.length === 0) {
+        console.warn('Tooso: no product link found with selector \'<?=$productLinkSelector ?>\', no products click will be tracked')
+    }
+    elements.forEach(function (element) {
+        var linkValue = element.getAttribute('href');
+        var productSku = element.getAttribute('<?=$productAttributeName?>');
+        element.setAttribute('data-href', linkValue);
+        element.setAttribute('href', '#');
+        element.addEventListener('click', function () {
+            <?php if ($block->config->isDebugModeEnabled()): ?>
+            console.debug('Tooso: click after search captured');
+            <?php endif; ?>
+            ta('ec:addProduct', products[productSku]);
+            <?php if ($block->config->isDebugModeEnabled()): ?>
+            console.debug('Tooso: tracked product:', products[productSku]);
+            <?php endif; ?>
+            ta('ec:setAction', 'click', {
+                'list': '<?=$searchId?>'
+            });
+            var timeout = setTimeout(function () {
+                document.location.href = linkValue; // fallback in case the library did not respond in time
+            }, 1500);
+            ta('send', 'event', 'cart', 'click', {
+                hitCallback: function () {
+                    clearTimeout(timeout);
+                    <?php if ($block->config->isDebugModeEnabled()): ?>
+                    console.debug('Tooso: redirecting to '+linkValue);
+                    <?php endif; ?>
+                    document.location.href = linkValue;
+                },
+            });
+        });
+    })
+</script>

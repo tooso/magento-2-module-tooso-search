@@ -14,6 +14,8 @@ class AnalyticsConfig implements AnalyticsConfigInterface
     const XML_PATH_ANALYTICS_API_ENDPOINT = 'tooso/analytics/api_endpoint';
     const XML_PATH_ANALYTICS_API_VERSION = 'tooso/analytics/api_version';
     const XML_PATH_ANALYTICS_KEY = 'tooso/analytics/key';
+    const XML_PATH_ANALYTICS_PRODUCT_SELECTOR = 'tooso/analytics/product_link_selector';
+    const XML_PATH_ANALYTICS_PRODUCT_ATTRIBUTE = 'tooso/analytics/product_link_attribute';
     const XML_PATH_ANALYTICS_DEBUG_MODE = 'tooso/analytics/debug_mode';
     const XML_PATH_ANALYTICS_COOKIE_DOMAIN = 'tooso/analytics/cookie_domain';
     const XML_PATH_ANALYTICS_TRACK_USERID = 'tooso/analytics/track_userid';
@@ -98,6 +100,22 @@ class AnalyticsConfig implements AnalyticsConfigInterface
     public function getKey()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_ANALYTICS_KEY);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getProductLinkSelector()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_ANALYTICS_PRODUCT_SELECTOR);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getProductAttributeName()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_ANALYTICS_PRODUCT_ATTRIBUTE);
     }
 
     /**

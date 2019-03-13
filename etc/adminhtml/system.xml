@@ -122,6 +122,13 @@
                     <label>Track user with their customer ID</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="product_link_selector" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product link selector on search page</label>
+                </field>
+                <field id="product_link_attribute" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product link attribute with product SKU</label>
+                    <comment><![CDATA[This needs a manual change on product list template to print this custom attribute with product's SKU]]></comment>
+                </field>
             </group>
             <group id="indexer" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Indexer Configuration</label>
