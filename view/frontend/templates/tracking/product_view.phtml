@@ -5,14 +5,14 @@ $trackingParameters = $block->getProductTrackingParams();
 
 <?php if ($isLibraryIncluded === true): ?>
 
-<script id='<?=$block->getScriptId()?>'>
+<script id="<?=$block->getScriptId()?>" type="text/javascript">
     ta('ec:addProduct', <?=json_encode($trackingParameters);?>);
     ta('ec:setAction', 'detail');
 </script>
 
 <?php else: ?>
 
-<script id='<?=$block->getScriptId()?>' type='text/javascript'>
+<script id="<?=$block->getScriptId()?>" type="text/javascript">
     window.ToosoTrackingData = {
         product: <?=json_encode($trackingProductParams);?>,
         action: 'detail'

@@ -14,13 +14,13 @@ $productsData = $block->getProducts();
 ?>
 
 <?php if ($block->config->isDebugModeEnabled()): ?>
-<script id="tooso-search-debug">
+<script id="tooso-search-debug" type="text/javascript">
     console.debug('Tooso: search id is <?=$searchId ?: 'not set'?>');
     console.debug('Tooso: search data:', <?=$searchData ? json_encode($searchData) : "'not set'"?>);
 </script>
 <?php endif; ?>
 
-<script id="<?=$block->getScriptId()?>">
+<script id="<?=$block->getScriptId()?>" type="text/javascript">
     var products = <?=json_encode($productsData)?>;
     var elements = document.querySelectorAll('<?=$productLinkSelector ?>');
     if (elements.length === 0) {

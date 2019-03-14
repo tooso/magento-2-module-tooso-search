@@ -6,7 +6,7 @@ $trackingOrderParams = $block->getOrderTrackingParams();
 
 <?php if ($isLibraryIncluded === true): ?>
 
-    <script id='<?=$block->getScriptId()?>' type='text/javascript'>
+    <script id="<?=$block->getScriptId()?>" type='text/javascript'>
         <?php foreach($trackingProductsParams as $productData): ?>
         ta('ec:addProduct', <?=json_encode($productData);?>);
         <?php endforeach ?>
@@ -15,7 +15,7 @@ $trackingOrderParams = $block->getOrderTrackingParams();
 
 <?php else: ?>
 
-    <script id='<?=$block->getScriptId()?>' type='text/javascript'>
+    <script id="<?=$block->getScriptId()?>" type='text/javascript'>
         window.ToosoTrackingData = {
             "products": <?=json_encode($trackingProductParams);?>,
             "checkout": <?=json_encode($trackingOrderParams);?>,
