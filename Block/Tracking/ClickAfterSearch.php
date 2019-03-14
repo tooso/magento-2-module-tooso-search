@@ -117,6 +117,24 @@ class ClickAfterSearch extends \Magento\Framework\View\Element\Template implemen
             ->addAttributeToSelect('name')
             ->addAttributeToFilter('sku', $skus);
         $data = [];
+
+        if ($productCollection->getSize() === 0){
+            return [];
+        }
+
+        $categoriesIds = [];
+        foreach ($productCollection as $product) {
+            $productCategories = $product->getCategoryIds();
+            if (!is_array($productCategories) || sizeof($productCategories) === 0){
+                continue;
+            }
+            $categoriesIds[] = $productCategories[0];
+        }
+
+        if (sizeof($categoriesIds) !== 0){
+            $this->tracking->loadCategories($categoriesIds);
+        }
+
         foreach ($productCollection as $index => $product) {
             $data[$product->getSku()] = $this->tracking->getProductTrackingParams(
                 $product,

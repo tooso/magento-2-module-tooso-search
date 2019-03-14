@@ -24,4 +24,14 @@ class MessageStyle extends \Magento\Framework\View\Element\Template
         parent::__construct($context);
         $this->searchConfig = $searchConfig;
     }
+
+    /**
+     * Get message style
+     *
+     * @return null|string
+     */
+    public function getMessageStyle()
+    {
+        return $this->searchConfig->getMessageStyle();
+    }
 }

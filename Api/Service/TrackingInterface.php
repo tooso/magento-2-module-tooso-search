@@ -46,6 +46,22 @@ interface TrackingInterface
     public function getProfilingParams($override = null);
 
     /**
+     * Load single category
+     *
+     * @param integer $id
+     * @return null|array
+     */
+    public function loadCategory($id);
+
+    /**
+     * Load products categories
+     *
+     * @param array $ids
+     * @return null|array
+     */
+    public function loadCategories($ids);
+
+    /**
      * Get product tracking params
      *
      * @param \Magento\Catalog\Api\Data\ProductInterface $product

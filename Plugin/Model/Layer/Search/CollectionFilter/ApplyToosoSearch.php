@@ -151,12 +151,17 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                 }
 
                 // Check for empty result set
-                if ($searchResult->isResultEmpty() && $this->search->isFallbackEnable()) {
-                    if ($searchResult->getFixedSearchString() && $queryText === $searchResult->getOriginalSearchString()) {
-                        $queryText = $searchResult->getFixedSearchString();
+                if ($searchResult->isResultEmpty()){
+                    if ($this->search->isFallbackEnable()) {
+                        if ($searchResult->getFixedSearchString() && $queryText === $searchResult->getOriginalSearchString()) {
+                            $queryText = $searchResult->getFixedSearchString();
+                        }
+                        $collection->addSearchFilter($queryText);
+                        $this->logger->debug('[search plugin] Executing Magento search fallback');
+                        return;
                     }
-                    $collection->addSearchFilter($queryText);
-                    $this->logger->debug('[search plugin] Executing Magento search fallback');
+
+                    $this->setEmptyFilter($collection);
                     return;
                 }
 
@@ -175,6 +180,7 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                             $this->logger->debug('[search plugin] Executing Magento search fallback');
                             return;
                         }
+                        $this->setEmptyFilter($collection);
                         return;
                     }
 
@@ -202,8 +208,18 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
             return;
         }
 
-        // Apply impossible filter to force not result
+        $this->setEmptyFilter($collection);
+    }
+
+    /**
+     * Force an empty result set
+     *
+     * @param $collection
+     */
+    protected function setEmptyFilter(&$collection)
+    {
         // TODO: refactor this
+
         $this->logger->debug('[search plugin] No results, forcing result to 0');
         $collection->addAttributeToFilter('entity_id', ['null' => true]);
     }
