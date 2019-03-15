@@ -87,7 +87,7 @@ class Catalog implements CatalogInterface
                 return [
                     'id' => $elem
                 ];
-            }, $ids);
+            }, array_values($ids));
 
             // Run enrichers
 

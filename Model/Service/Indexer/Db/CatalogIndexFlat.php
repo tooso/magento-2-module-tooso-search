@@ -61,9 +61,10 @@ class CatalogIndexFlat
         $updateTime = new \DateTime();
         $updateTimeStr = $updateTime->format('Y-m-d H:i:s');
         $data = array_map(function($item) use ($storeId, $updateTimeStr) {
+            $sku = isset($item['sku']) ? $item['sku'] : 'undefined';
             return [
                 'store_id' => $storeId,
-                'sku' => $item['sku'],
+                'sku' => $sku,
                 'data' => $this->serializerJson->serialize($item),
                 'update_time' => $updateTimeStr
             ];
