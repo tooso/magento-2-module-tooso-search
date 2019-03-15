@@ -46,6 +46,10 @@ class TrackRemoveFromCart implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        if ($this->config->isTrackingEnabled() === false) {
+            return;
+        }
+
         /** @var \Magento\Quote\Model\Quote\Item $quoteItem */
         $quoteItem = $observer->getQuoteItem();
 

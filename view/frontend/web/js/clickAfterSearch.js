@@ -28,6 +28,12 @@ define([
         element.setAttribute('data-href', linkValue);
         element.setAttribute('href', '#');
         element.addEventListener('click', function () {
+            if (window.ta === undefined) {
+                console.warn('Tooso: ta is not include but analytics is active');
+                document.location.href = linkValue; // this should never happens
+                return;
+            }
+
             var product = config.products[productSku];
             if (product !== undefined) {
                 product = {

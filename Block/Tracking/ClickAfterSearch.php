@@ -169,4 +169,15 @@ class ClickAfterSearch extends \Magento\Framework\View\Element\Template implemen
         }
         return $productCollection->getPageSize();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function _toHtml()
+    {
+        if ($this->analyticsConfig->isLibraryIncluded() === false) {
+            return '';
+        }
+        return parent::_toHtml();
+    }
 }
