@@ -3,7 +3,7 @@
     <body>
         <referenceContainer name="before.body.end">
             <block class="Bitbull\Tooso\Block\Tracking\ClickAfterSearch" cacheable="false" name="tooso_tracking_click_after_search" template="Bitbull_Tooso::tracking/click_after_search.phtml" ifconfig="tooso/active/tracking"/>
-            <block class="Bitbull\Tooso\Block\Search\MessageStyle" cacheable="false" name="tooso_search_message_style" template="Bitbull_Tooso::search/message_style.phtml" />
+            <block class="Bitbull\Tooso\Block\Search\MessageStyle" cacheable="false" name="tooso_search_message_style" template="Bitbull_Tooso::search/message_style.phtml" ifconfig="tooso/active/frontend" />
         </referenceContainer>
     </body>
 </page>
