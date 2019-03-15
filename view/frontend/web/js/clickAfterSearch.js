@@ -35,7 +35,7 @@ define([
             }
 
             var product = config.products[productSku];
-            if (product !== undefined) {
+            if (product === undefined) {
                 product = {
                     id: productSku,
                     position: elements.indexOf(element) + (config.pageSize * (config.currentPage - 1))
