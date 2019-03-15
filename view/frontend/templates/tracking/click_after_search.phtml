@@ -1,5 +1,5 @@
 <?php
-/** @var \Tooso\SDK\Search\Result $searchData */
+/** @var \Bitbull\Tooso\Block\Tracking\ClickAfterSearch $block */
 $searchResult = $block->getSearchResult();
 $searchId = null;
 $searchData = null;
@@ -43,8 +43,9 @@ $productsData = $block->getProducts();
                 'list': '<?=$searchId?>'
             });
             var timeout = setTimeout(function () {
+                console.warn('Tooso: tracking system does not respond in time');
                 document.location.href = linkValue; // fallback in case the library did not respond in time
-            }, 1500);
+            }, 1000);
             ta('send', 'event', 'cart', 'click', {
                 hitCallback: function () {
                     clearTimeout(timeout);

@@ -1,8 +1,6 @@
 <?php
-
-/** @var Bitbull\Tooso\Api\Service\Config\SearchConfigInterface $searchConfig */
-$searchConfig = $block->searchConfig;
-$style = $searchConfig->getMessageStyle();
+/** @var \Bitbull\Tooso\Block\Search\MessageStyle $block */
+$style = $block->getMessageStyle();
 ?>
 
 <?php if ($style !== null): ?>

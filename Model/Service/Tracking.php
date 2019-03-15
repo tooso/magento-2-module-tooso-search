@@ -13,7 +13,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Tooso\SDK\ClientBuilder;
 use Tooso\SDK\Client;
 use Tooso\SDK\Exception;
@@ -77,9 +77,14 @@ class Tracking implements TrackingInterface
     protected $productRepository;
 
     /**
-     * @var CategoryRepositoryInterface
+     * @var CategoryCollectionFactory
      */
-    protected $categoryProductRepository;
+    protected $categoryCollectionFactory;
+
+    /**
+     * @var array
+     */
+    protected $categories;
 
     /**
      * @var ClientBuilder
@@ -99,7 +104,7 @@ class Tracking implements TrackingInterface
      * @param AnalyticsConfigInterface $analyticsConfig
      * @param StoreManagerInterface $storeManager
      * @param ProductRepositoryInterface $productRepository
-     * @param CategoryRepositoryInterface $categoryProductRepository
+     * @param CategoryCollectionFactory $categoryCollectionFactory
      * @param ClientBuilder $clientBuilder
      */
     public function __construct(
@@ -113,7 +118,7 @@ class Tracking implements TrackingInterface
         AnalyticsConfigInterface $analyticsConfig,
         StoreManagerInterface $storeManager,
         ProductRepositoryInterface $productRepository,
-        CategoryRepositoryInterface $categoryProductRepository,
+        CategoryCollectionFactory $categoryCollectionFactory,
         ClientBuilder $clientBuilder
     ) {
         $this->logger = $logger;
@@ -126,7 +131,7 @@ class Tracking implements TrackingInterface
         $this->analyticsConfig = $analyticsConfig;
         $this->storeManager = $storeManager;
         $this->productRepository = $productRepository;
-        $this->categoryProductRepository = $categoryProductRepository;
+        $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->clientBuilder = $clientBuilder;
     }
 
@@ -221,13 +226,44 @@ class Tracking implements TrackingInterface
 
         $categoryIds = $product->getCategoryIds();
         if(count($categoryIds) > 0){
-            $currentProductCategory = $this->categoryProductRepository->get($categoryIds[0]);
-            $trackingProductParams['category'] = $currentProductCategory->getName();
+            if(!isset($this->categories[$categoryIds[0]])){
+                $this->loadCategory($categoryIds[0]);
+            }
+            $trackingProductParams['category'] = $this->categories[$categoryIds[0]]->getName();
         }else{
             $trackingProductParams['category'] = null;
         }
 
         return $trackingProductParams;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function loadCategory($id)
+    {
+        $categoriesCollection = $this->categoryCollectionFactory->create()
+            ->addAttributeToSelect('name')
+            ->addFieldToFilter('entity_id', $id);
+        $category = $categoriesCollection->getFirstItem();
+        $this->categories[$category->getId()] = $category;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function loadCategories($ids)
+    {
+        $categoriesCollection = $this->categoryCollectionFactory->create()
+            ->addAttributeToSelect('name')
+            ->addFieldToFilter('entity_id', array_map(function($id) {
+                return (string) $id; // fix wrong interpolation with 0
+            }, $ids));
+
+        $this->categories = [];
+        foreach ($categoriesCollection as $category) {
+            $this->categories[$category->getId()] = $category;
+        }
     }
 
     /**
@@ -327,6 +363,7 @@ class Tracking implements TrackingInterface
     {
         return $this->clientBuilder
             ->withApiKey($this->config->getApiKey())
+            ->withLanguage($this->config->getLanguage())
             ->withApiBaseUrl($this->analyticsConfig->getAPIEndpoint())
             ->withAgent($this->getApiAgent())
             ->withLogger($this->logger)
