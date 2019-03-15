@@ -146,6 +146,6 @@ class SuggestionConfig implements SuggestionConfigInterface
      */
     public function isLibraryIncluded()
     {
-        $this->scopeConfig->isSetFlag(self::XML_PATH_SUGGEST_LIBRARY_INCLUDE);
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_SUGGEST_LIBRARY_INCLUDE);
     }
 }

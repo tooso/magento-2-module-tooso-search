@@ -1,10 +1,11 @@
 <?php
+/** @var \Bitbull\Tooso\Block\Suggestion\LibraryInit $block */
 $inputSelector = $block->getInputSelector();
 $initParams = $block->getInitParams();
 $onSelectCallbackValue = $block->getOnSelectCallbackValue();
 ?>
 
-<script id='<?=$block->getScriptId()?>'>
+<script id="<?=$block->getScriptId()?>" type="text/javascript">
     window.ts_suggestion_callback = function() {
         jQuery(document).ready(function ($) {
             var element = $('<?=$inputSelector?>');

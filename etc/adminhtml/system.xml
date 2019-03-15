@@ -14,18 +14,20 @@
             </group>
             <group id="tools" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Tools</label>
-                <field id="reindex_catalog_btn" translate="label comment" type="button" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\CatalogReindexButton</frontend_model>
-                    <label>Catalog reindex</label>
-                </field>
                 <field id="send_catalog_index_Data" translate="label comment" type="button" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
                     <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendCatalogIndexDataButton</frontend_model>
                     <label>Send catalog index data</label>
+                    <comment><![CDATA[This procedure will send catalog index data to Tooso]]></comment>
                 </field>
-                <field id="send_stock_index_Data" translate="label comment" type="button" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendStockIndexDataButton</frontend_model>
-                    <label>Send stock index data</label>
+                <field id="reindex_catalog_btn" translate="label comment" type="button" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\CatalogReindexButton</frontend_model>
+                    <label>Catalog reindex</label>
+                    <comment><![CDATA[This procedure will reindex Tooso catalog index, it is required when you change indexed attribute configuration]]></comment>
                 </field>
+                <!--<field id="send_stock_index_Data" translate="label comment" type="button" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">-->
+                    <!--<frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendStockIndexDataButton</frontend_model>-->
+                    <!--<label>Send stock index data</label>-->
+                <!--</field>-->
             </group>
             <group id="active" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Active Tooso</label>
@@ -122,6 +124,13 @@
                     <label>Track user with their customer ID</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="product_link_selector" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product link selector on search page</label>
+                </field>
+                <field id="product_link_attribute" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product link attribute with product SKU</label>
+                    <comment><![CDATA[This needs a manual change on product list template to print this custom attribute with product's SKU]]></comment>
+                </field>
             </group>
             <group id="indexer" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Indexer Configuration</label>
@@ -156,14 +165,14 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
-            <group id="suggestion" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="suggestion" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Suggest client side</label>
                 <field id="include_library" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Include Tooso suggest javascript library</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="library_endpoint" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Tooso suggest javascript library endpoint</label>
+                    <label>Tooso suggest Javascript library endpoint</label>
                 </field>
                 <field id="input_selector" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Input selector</label>
@@ -208,6 +217,16 @@
                 </field>
                 <field id="zindex" translate="label" type="text" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Z-Index</label>
+                </field>
+            </group>
+            <group id="skin_configuration" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Skin configuration</label>
+                <field id="custom_css_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include custom CSS</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="custom_css" translate="label" type="textarea" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom CSS</label>
                 </field>
             </group>
         </section>

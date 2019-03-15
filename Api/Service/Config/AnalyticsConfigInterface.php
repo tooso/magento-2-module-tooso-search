@@ -46,6 +46,20 @@ interface AnalyticsConfigInterface
     public function getKey();
 
     /**
+     * Get product link selector in search page
+     *
+     * @return string|null
+     */
+    public function getProductLinkSelector();
+
+    /**
+     * Get product attribute name
+     *
+     * @return string|null
+     */
+    public function getProductAttributeName();
+
+    /**
      * Is library included
      *
      * @return boolean

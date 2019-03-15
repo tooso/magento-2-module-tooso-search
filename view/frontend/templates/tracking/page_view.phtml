@@ -1,3 +1,6 @@
-<script id='<?=$block->getScriptId()?>'>
+<?php
+/** @var \Bitbull\Tooso\Block\Tracking\PageView $block */
+?>
+<script id="<?=$block->getScriptId()?>" type="text/javascript">
     ta('send', 'pageview');
 </script>

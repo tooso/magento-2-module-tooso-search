@@ -1,11 +1,12 @@
 <?php
+/** @var \Bitbull\Tooso\Block\Tracking\LibraryInit $block */
 $debugMode = $block->isDebugMode();
 $trackingKey = $block->getKey();
 $cookieDomain = $block->getCookieDomain('auto');
 $currency = $block->getCurrencyCode();
 ?>
 
-<script id="<?=$block->getScriptId()?>">
+<script id="<?=$block->getScriptId()?>" type="text/javascript">
     window.ta=window.ta||function(){(ta.q=ta.q||[]).push(arguments)};ta.l=+new Date;
     ta('create', '<?=$trackingKey?>', '<?=$cookieDomain?>');
 <?php if($currency): ?>

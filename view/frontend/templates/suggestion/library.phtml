@@ -1,8 +1,9 @@
 <?php
+/** @var \Bitbull\Tooso\Block\Suggestion\Library $block */
 $libraryEndpoint = $block->getLibraryEndpoint();
 ?>
 
-<script>
+<script id="<?=$block->getScriptId()?>" type="text/javascript">
     require([
         "jquery"
     ], function(jQuery){

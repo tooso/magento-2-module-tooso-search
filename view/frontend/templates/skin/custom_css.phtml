@@ -1,0 +1,8 @@
+<?php
+/** @var \Bitbull\Tooso\Block\Skin\CustomCss $block */
+$customCss = $block->getGetCustomCss();
+?>
+
+<style id="<?=$block->getScriptId()?>" type="text/css">
+<?=$customCss?>
+</style>

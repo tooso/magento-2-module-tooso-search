@@ -170,3 +170,35 @@ $result = $client->doRequest('/path/to/service', \Tooso\SDK\Client::HTTP_METHOD_
 ]);
 $responseData = $result->getResponse();
 ```
+
+## Required theme changes
+
+### Product click after search tracking
+
+In order to make product click after search tracking work the frontend script need to find 
+an attribute `data-product-sku` on the `a` tag with the product's link valorized with the product SKU. 
+To do this edit your theme file `view/frontend/templates/product/list.phtml`, inside the product list cycle, in the following way:
+```php
+<a href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>" data-product-sku="<?= $block->escapeHtml($_product->getSku()) ?>" class="product photo product-item-photo" tabindex="-1">
+    <?= $productImage->toHtml() ?>
+</a>
+<div class="product details product-item-details">
+  <!-- here the product details -->
+```
+
+### Suggestion frontend
+
+This module can provide a suggestion on the search input, when you enable this feature you have to remove the default Magento suggestions system.
+In order to do this remove the Magento suggestion initialization from your template or override the default template `view/frontend/templates/form.mini.phtml`.
+Remove this initialization attribute from the search input:
+```html
+data-mage-init='{"quickSearch":{
+    "formSelector":"#search_mini_form",
+    "url":"<?= /* @escapeNotVerified */ $helper->getSuggestUrl()?>",
+    "destinationSelector":"#search_autocomplete"}
+}'
+```  
+and remove the suggestions container from the template:
+```html
+<div id="search_autocomplete" class="search-autocomplete"></div>
+```
