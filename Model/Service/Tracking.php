@@ -246,7 +246,7 @@ class Tracking implements TrackingInterface
             ->addAttributeToSelect('name')
             ->addFieldToFilter('entity_id', $id);
         $category = $categoriesCollection->getFirstItem();
-        $this->categories[$category->getId()] = $category->getName();
+        $this->categories[$category->getId()] = $category;
     }
 
     /**
