@@ -141,10 +141,12 @@
                 <field id="attributes_to_index" translate="label" type="multiselect" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Attributes - Configurable Product</label>
                     <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\Attributes</source_model>
+                    <comment><![CDATA[Default exported attributes are: sku, name, description, price, visibility, status, image, is_in_stock, categories, gallery, variants]]></comment>
                 </field>
                 <field id="attributes_simple_to_index" translate="label" type="multiselect" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Attributes - Simple Product</label>
                     <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SimpleAttributes</source_model>
+                    <comment><![CDATA[Default exported attributes are: sku, name, description, price, short_description]]></comment>
                 </field>
                 <field id="access_key" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>AWS Access key id</label>
