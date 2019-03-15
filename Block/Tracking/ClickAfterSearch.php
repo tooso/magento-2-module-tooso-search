@@ -129,14 +129,44 @@ class ClickAfterSearch extends \Magento\Framework\View\Element\Template implemen
 
         $data = [];
         $index = 0;
+        $currentPage = $productCollection->getCurPage();
+        $pageSize = $productCollection->getPageSize();
         foreach ($productCollection as $product) {
             $data[$product->getSku()] = $this->tracking->getProductTrackingParams(
                 $product,
-                $index,
+                $index + ( $pageSize * ($currentPage - 1)),
                 1
             );
             $index++;
         }
         return $data;
+    }
+
+    /**
+     * Get current list page
+     *
+     * @return integer
+     */
+    public function getCurrentPage()
+    {
+        $productCollection = $this->search->getSearchCollection();
+        if ($productCollection === null || $productCollection->getSize() === 0){
+            return 1;
+        }
+        return $productCollection->getCurPage();
+    }
+
+    /**
+     * Get current page size
+     *
+     * @return integer
+     */
+    public function getCurrentPageSize()
+    {
+        $productCollection = $this->search->getSearchCollection();
+        if ($productCollection === null || $productCollection->getSize() === 0){
+            return 0;
+        }
+        return $productCollection->getPageSize();
     }
 }

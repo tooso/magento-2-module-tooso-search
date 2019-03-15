@@ -12,9 +12,6 @@ $libraryEndpoint = $block->getLibraryEndpoint();
             js.id = id;
             js.src = "<?=$libraryEndpoint?>";
             js.async = true;
-            js.onload = function(){
-                console.log('loaded')
-            };
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', '<?=$block->getScriptId()?>'));
     });
