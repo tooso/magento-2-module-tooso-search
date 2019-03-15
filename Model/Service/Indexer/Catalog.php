@@ -74,6 +74,10 @@ class Catalog implements CatalogInterface
             }
         }
 
+        if (is_array($ids) && sizeof($ids) === 0) {
+            return;
+        }
+
         $stores = $this->indexerConfig->getStores();
 
         foreach ($stores as $storeId) {
