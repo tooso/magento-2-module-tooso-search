@@ -4,9 +4,9 @@
         <resources>
             <resource id="Magento_Backend::admin">
                 <resource id="Bitbull_Tooso::operations" title="Tooso Operations">
-                    <resource id="Bitbull_Tooso::reindex" title="Execute Reindex"/>
-                    <resource id="Bitbull_Tooso::clear_log" title="Clear tooso.log file"/>
-                    <resource id="Bitbull_Tooso::download_log" title="Download tooso.log file"/>
+                    <resource id="Bitbull_Tooso::catalog_reindex" title="Execute Catalog Reindex"/>
+                    <resource id="Bitbull_Tooso::send_catalog_data" title="Send Index Data"/>
+                    <resource id="Bitbull_Tooso::send_stock_data" title="Send Stock Data"/>
                 </resource>
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
