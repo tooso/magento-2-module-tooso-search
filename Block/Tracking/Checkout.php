@@ -110,7 +110,7 @@ class Checkout extends \Magento\Framework\View\Element\Template implements Scrip
                 $index,
                 round($item->getQtyOrdered())
             );
-        }, $items, array_keys($items));
+        }, $items, array_keys(array_values($items)));
     }
 
     /**

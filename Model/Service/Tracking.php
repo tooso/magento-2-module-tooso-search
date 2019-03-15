@@ -272,7 +272,7 @@ class Tracking implements TrackingInterface
     public function getOrderTrackingParams($order)
     {
         return [
-            'id' => $order->getId(),
+            'id' => $order->getIncrementId(),
             'shipping' => $order->getShippingAmount(),
             'coupon' => $order->getCouponCode(),
             'tax' => $order->getTaxAmount(),
