@@ -1,0 +1,26 @@
+<?php
+/** @var \Bitbull\Tooso\Block\Suggestion\LibraryInit $block */
+$inputSelector = $block->getInputSelector();
+$initParams = $block->getInitParams();
+$onSelectCallbackValue = $block->getOnSelectCallbackValue();
+?>
+
+<script id="<?=$block->getScriptId()?>" type="text/javascript">
+    window.ts_suggestion_callback = function() {
+        jQuery(document).ready(function ($) {
+            var element = $('<?=$inputSelector?>');
+            if(element){
+                var params = <?=json_encode($initParams)?>;
+                params.autocomplete.onSelect = <?=$onSelectCallbackValue?>;
+                element.ts(params);
+            }else{
+                console.error('Tooso: Suggestion search input not found');
+            }
+        });
+    }
+    var magentoAutocomplete = document.getElementById('search_autocomplete');
+    if (magentoAutocomplete !== null) {
+        console.warn('Tooso: cannot use both Magento autocomplete and Tooso one');
+        magentoAutocomplete.remove();
+    }
+</script>

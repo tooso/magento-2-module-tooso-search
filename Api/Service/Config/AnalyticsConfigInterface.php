@@ -12,9 +12,66 @@ interface AnalyticsConfigInterface
     /**
      * Get cookie domain
      *
+     * @param string $default
      * @return array
      */
-    public function getCookieDomain();
+    public function getCookieDomain($default = null);
+
+    /**
+     * Get library endpoint
+     *
+     * @return string|null
+     */
+    public function getLibraryEndpoint();
+
+    /**
+     * Get API endpoint
+     *
+     * @return string|null
+     */
+    public function getAPIEndpoint();
+
+    /**
+     * Get API version
+     *
+     * @return string|null
+     */
+    public function getAPIVersion();
+
+    /**
+     * Get Analytics key
+     *
+     * @return string|null
+     */
+    public function getKey();
+
+    /**
+     * Get product link selector in search page
+     *
+     * @return string|null
+     */
+    public function getProductLinkSelector();
+
+    /**
+     * Get product attribute name
+     *
+     * @return string|null
+     */
+    public function getProductAttributeName();
+
+    /**
+     * Is library included
+     *
+     * @return boolean
+     */
+    public function isLibraryIncluded();
+
+    /**
+     * Is in debug mode
+     *
+     * @return boolean
+     */
+    public function isDebugMode();
 
     /**
      * Is customer users tracking enabled

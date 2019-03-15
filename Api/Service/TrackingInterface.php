@@ -46,6 +46,40 @@ interface TrackingInterface
     public function getProfilingParams($override = null);
 
     /**
+     * Load single category
+     *
+     * @param integer $id
+     * @return null|array
+     */
+    public function loadCategory($id);
+
+    /**
+     * Load products categories
+     *
+     * @param array $ids
+     * @return null|array
+     */
+    public function loadCategories($ids);
+
+    /**
+     * Get product tracking params
+     *
+     * @param \Magento\Catalog\Api\Data\ProductInterface $product
+     * @param integer $position
+     * @param integer $quantity
+     * @return null|array
+     */
+    public function getProductTrackingParams($product, $position = 0, $quantity = 1);
+
+    /**
+     * Get order tracking params
+     *
+     * @param \Magento\Sales\Api\Data\OrderInterface $order
+     * @return null|array
+     */
+    public function getOrderTrackingParams($order);
+
+    /**
      * Get client IP
      *
      * @return string
@@ -72,4 +106,19 @@ interface TrackingInterface
      * @return string
      */
     public function getCurrentPage();
+
+    /**
+     * Get currency code
+     *
+     * @return string
+     */
+    public function getCurrencyCode();
+
+    /**
+     * Get currency code
+     *
+     * @param array $params
+     * @return boolean
+     */
+    public function executeTrackingRequest($params);
 }

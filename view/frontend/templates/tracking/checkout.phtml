@@ -1,0 +1,27 @@
+<?php
+/** @var \Bitbull\Tooso\Block\Tracking\Checkout $block */
+$isLibraryIncluded = $block->isLibraryIncluded();
+$trackingProductsParams = $block->getProductsTrackingParams();
+$trackingOrderParams = $block->getOrderTrackingParams();
+?>
+
+<?php if ($isLibraryIncluded === true): ?>
+
+    <script id="<?=$block->getScriptId()?>" type='text/javascript'>
+        <?php foreach($trackingProductsParams as $productData): ?>
+        ta('ec:addProduct', <?=json_encode($productData);?>);
+        <?php endforeach ?>
+        ta('ec:setAction', 'purchase', <?=json_encode($trackingOrderParams);?>);
+    </script>
+
+<?php else: ?>
+
+    <script id="<?=$block->getScriptId()?>" type='text/javascript'>
+        window.ToosoTrackingData = {
+            "products": <?=json_encode($trackingProductParams);?>,
+            "checkout": <?=json_encode($trackingOrderParams);?>,
+            "action": 'purchase',
+        };
+    </script>
+
+<?php endif ?>

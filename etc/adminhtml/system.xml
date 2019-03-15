@@ -5,17 +5,42 @@
             <class>separator-top</class>
             <label>Tooso Search Engine</label>
             <tab>catalog</tab>
-            <resource>Bitbull_Tooso::search_config</resource>
+            <resource>Bitbull_Tooso::config</resource>
             <group id="info" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>About</label>
                 <field id="module_version" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\Version</frontend_model>
                 </field>
             </group>
+            <group id="tools" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Tools</label>
+                <field id="send_catalog_index_Data" translate="label comment" type="button" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendCatalogIndexDataButton</frontend_model>
+                    <label>Send catalog index data</label>
+                    <comment><![CDATA[This procedure will send catalog index data to Tooso]]></comment>
+                </field>
+                <field id="reindex_catalog_btn" translate="label comment" type="button" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\CatalogReindexButton</frontend_model>
+                    <label>Catalog reindex</label>
+                    <comment><![CDATA[This procedure will reindex Tooso catalog index, it is required when you change indexed attribute configuration]]></comment>
+                </field>
+                <!--<field id="send_stock_index_Data" translate="label comment" type="button" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">-->
+                    <!--<frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendStockIndexDataButton</frontend_model>-->
+                    <!--<label>Send stock index data</label>-->
+                <!--</field>-->
+            </group>
             <group id="active" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Active Tooso</label>
                 <field id="frontend" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Search</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="tracking" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Tracking</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="suggestion" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Suggestion client side</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
@@ -69,13 +94,141 @@
             </group>
             <group id="analytics" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Analytics</label>
-                <field id="cookie_domain" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="include_library" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include library</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Disable if you are using a tag manager]]></comment>
+                </field>
+                <field id="library_endpoint" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Javascript library endpoint</label>
+                </field>
+                <field id="api_endpoint" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API endpoint</label>
+                </field>
+                <field id="api_version" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API Version</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\AnalyticsApiVersions</source_model>
+                </field>
+                <field id="key" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Analytics Key</label>
+                </field>
+                <field id="debug_mode" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Debug mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cookie_domain" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Cookie domain</label>
                     <comment><![CDATA[Leave empty for all subdomains]]></comment>
                 </field>
-                <field id="track_userid" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="track_userid" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Track user with their customer ID</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="product_link_selector" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product link selector on search page</label>
+                </field>
+                <field id="product_link_attribute" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product link attribute with product SKU</label>
+                    <comment><![CDATA[This needs a manual change on product list template to print this custom attribute with product's SKU]]></comment>
+                </field>
+            </group>
+            <group id="indexer" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Indexer Configuration</label>
+                <field id="stores_to_index" translate="label" type="multiselect" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Store Views</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\Stores</source_model>
+                </field>
+                <field id="attributes_to_index" translate="label" type="multiselect" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Attributes - Configurable Product</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\Attributes</source_model>
+                    <comment><![CDATA[Default exported attributes are: sku, name, description, price, visibility, status, image, is_in_stock, categories, gallery, variants]]></comment>
+                </field>
+                <field id="attributes_simple_to_index" translate="label" type="multiselect" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Attributes - Simple Product</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SimpleAttributes</source_model>
+                    <comment><![CDATA[Default exported attributes are: sku, name, description, price, short_description]]></comment>
+                </field>
+                <field id="access_key" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>AWS Access key id</label>
+                </field>
+                <field id="secret_key" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>AWS Secret key</label>
+                </field>
+                <field id="bucket" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>AWS Bucket name</label>
+                </field>
+                <field id="path" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>AWS Object path</label>
+                    <comment><![CDATA[Must end with a slash]]></comment>
+                </field>
+                <field id="dry_run_mode" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Dry run mode</label>
+                    <comment><![CDATA[Use a local file (var/tooso/tooso_index_%store id%.csv) instead to send it]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+            <group id="suggestion" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Suggest client side</label>
+                <field id="include_library" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include Tooso suggest javascript library</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="library_endpoint" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Tooso suggest Javascript library endpoint</label>
+                </field>
+                <field id="input_selector" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Input selector</label>
+                </field>
+                <field id="buckets" translate="label" type="multiselect" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Buckets</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SuggestionBuckets</source_model>
+                </field>
+                <field id="limit" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Limit results</label>
+                </field>
+                <field id="groupby" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Group by</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="nocache" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Disable Cache</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="onselect_behaviour" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>On-select behaviour</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SuggestionOnSelectBehaviour</source_model>
+                </field>
+                <field id="onselect_callback" translate="label" type="textarea" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom on-select callback</label>
+                    <depends>
+                        <field id="tooso/suggestion/onselect_behaviour">custom</field>
+                    </depends>
+                </field>
+                <field id="minchars" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Minimum number of chars</label>
+                </field>
+                <field id="width" translate="label" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Width</label>
+                    <source_model>Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SuggestionWidth</source_model>
+                </field>
+                <field id="width_custom" translate="label" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom width in pixel</label>
+                    <depends>
+                        <field id="tooso/suggestion/width">custom</field>
+                    </depends>
+                </field>
+                <field id="zindex" translate="label" type="text" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Z-Index</label>
+                </field>
+            </group>
+            <group id="skin_configuration" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Skin configuration</label>
+                <field id="custom_css_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include custom CSS</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="custom_css" translate="label" type="textarea" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom CSS</label>
                 </field>
             </group>
         </section>

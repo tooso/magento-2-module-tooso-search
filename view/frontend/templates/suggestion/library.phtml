@@ -1,0 +1,24 @@
+<?php
+/** @var \Bitbull\Tooso\Block\Suggestion\Library $block */
+$libraryEndpoint = $block->getLibraryEndpoint();
+?>
+
+<script id="<?=$block->getScriptId()?>" type="text/javascript">
+    require([
+        "jquery"
+    ], function(jQuery){
+        window.jQuery = jQuery;
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "<?=$libraryEndpoint?>";
+            js.async = true;
+            js.onload = function(){
+                if (window.ts_suggestion_callback) window.ts_suggestion_callback()
+            };
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'tooso-ts'));
+    });
+</script>

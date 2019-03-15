@@ -1,18 +1,38 @@
 <?php
-
-/** @var \Tooso\SDK\Search\Result $searchData */
-$searchResult = $block->search->getResult();
+/** @var \Bitbull\Tooso\Block\Tracking\ClickAfterSearch $block */
+$searchResult = $block->getSearchResult();
 $searchId = null;
 $searchData = null;
 if ($searchResult !== null) {
     $searchId = $searchResult->getSearchId();
     $searchData = $searchResult->getResponse();
 }
+
+$productLinkSelector = $this->getProductLinkSelector();
+$productAttributeName = $this->getProductAttributeName();
+$productsData = $block->getProducts();
+$currentPage = $block->getCurrentPage();
+$pageSize = $block->getCurrentPageSize();
 ?>
 
 <?php if ($block->config->isDebugModeEnabled()): ?>
-<script id="tooso-search-debug">
-    console.debug('search id: <?=$searchId ?: 'not set'?>');
-    console.debug('search data:', <?=$searchData ? json_encode($searchData) : "'not set'"?>);
+<script id="tooso-search-debug" type="text/javascript">
+    console.debug('Tooso: search id is <?=$searchId ?: 'not set'?>');
+    console.debug('Tooso: search data:', <?=$searchData ? json_encode($searchData) : "'not set'"?>);
 </script>
 <?php endif; ?>
+
+<script id="<?=$block->getScriptId()?>" type="text/x-magento-init">
+    {
+        "<?=$productLinkSelector ?>": {
+            "toosoClickAfterSearch": {
+                "searchId": "<?=$searchId?>",
+                "products": <?=json_encode($productsData)?>,
+                "attributeName": "<?=$productAttributeName ?>",
+                "debug": <?=$block->config->isDebugModeEnabled() ? 'true' : 'false'?>,
+                "currentPage": <?=$currentPage?>,
+                "pageSize": <?=$pageSize?>
+            }
+        }
+    }
+</script>

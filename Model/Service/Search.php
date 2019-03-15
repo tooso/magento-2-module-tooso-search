@@ -8,6 +8,7 @@ use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\Search\RequestParserInterface;
 use Bitbull\Tooso\Api\Service\SearchInterface;
 use Bitbull\Tooso\Api\Service\TrackingInterface;
+use Magento\Catalog\Ui\DataProvider\Product\ProductCollection;
 use Tooso\SDK\Exception;
 use Tooso\SDK\ClientBuilder;
 use Tooso\SDK\Search\ResultFactory;
@@ -18,6 +19,7 @@ use Magento\Framework\Registry;
 class Search implements SearchInterface
 {
     const SEARCH_RESULT_REGISTRY_KEY = 'tooso_search_response';
+    const SEARCH_COLLECTION_REGISTRY_KEY = 'tooso_search_collection';
 
     const PARAM_FILTER = 'filter';
     const PARAM_ORDER = 'sort';
@@ -83,7 +85,7 @@ class Search implements SearchInterface
      * @param ResourceConnection $resourceConnection
      * @param Registry $registry
      * @param RequestParserInterface $requestParser
-     * @param ClientBuilder $clientBuilder,
+     * @param ClientBuilder $clientBuilder
      * @param ResultFactory $resultFactory
      */
     public function __construct(
@@ -197,6 +199,22 @@ class Search implements SearchInterface
         // Store result into registry
         $this->registry->register(self::SEARCH_RESULT_REGISTRY_KEY, $this->result, true);
         $this->logger->debug('[search] Result saved');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function registerSearchCollection($collection)
+    {
+        $this->registry->register(self::SEARCH_COLLECTION_REGISTRY_KEY, $collection, true);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSearchCollection()
+    {
+        return $this->registry->registry(self::SEARCH_COLLECTION_REGISTRY_KEY);
     }
 
     /**
