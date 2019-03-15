@@ -109,16 +109,8 @@ class ClickAfterSearch extends \Magento\Framework\View\Element\Template implemen
      */
     public function getProducts()
     {
-        $skus = $this->getSearchResult()->getResults();
-        $productCollection = $this->productCollectionFactory->create()
-            ->addAttributeToSelect('sku')
-            ->addAttributeToSelect('manufacturer')
-            ->addAttributeToSelect('price')
-            ->addAttributeToSelect('name')
-            ->addAttributeToFilter('sku', $skus);
-        $data = [];
-
-        if ($productCollection->getSize() === 0){
+        $productCollection = $this->search->getSearchCollection();
+        if ($productCollection === null || $productCollection->getSize() === 0){
             return [];
         }
 
@@ -135,12 +127,15 @@ class ClickAfterSearch extends \Magento\Framework\View\Element\Template implemen
             $this->tracking->loadCategories($categoriesIds);
         }
 
-        foreach ($productCollection as $index => $product) {
+        $data = [];
+        $index = 0;
+        foreach ($productCollection as $product) {
             $data[$product->getSku()] = $this->tracking->getProductTrackingParams(
                 $product,
                 $index,
                 1
             );
+            $index++;
         }
         return $data;
     }

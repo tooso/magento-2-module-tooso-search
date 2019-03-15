@@ -363,6 +363,7 @@ class Tracking implements TrackingInterface
     {
         return $this->clientBuilder
             ->withApiKey($this->config->getApiKey())
+            ->withLanguage($this->config->getLanguage())
             ->withApiBaseUrl($this->analyticsConfig->getAPIEndpoint())
             ->withAgent($this->getApiAgent())
             ->withLogger($this->logger)

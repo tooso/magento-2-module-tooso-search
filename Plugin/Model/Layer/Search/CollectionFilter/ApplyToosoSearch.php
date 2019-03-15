@@ -105,6 +105,8 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
             return;
         }
 
+        $this->search->registerSearchCollection($collection);
+
         /** @var \Magento\Search\Model\Query $query */
         $query = $this->queryFactory->get();
 

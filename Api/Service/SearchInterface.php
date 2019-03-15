@@ -3,6 +3,7 @@
 namespace Bitbull\Tooso\Api\Service;
 
 use Tooso\SDK\Search\Result;
+use Magento\Catalog\Ui\DataProvider\Product\ProductCollection;
 
 /**
  * @category Bitbull
@@ -39,4 +40,19 @@ interface SearchInterface
      * @return bool
      */
     public function isFallbackEnable();
+
+    /**
+     * Register search collection
+     *
+     * @param ProductCollection $collection
+     */
+    public function registerSearchCollection($collection);
+
+    /**
+     * Get search collection
+     *
+     * @return ProductCollection $collection
+     */
+    public function getSearchCollection();
+
 }
