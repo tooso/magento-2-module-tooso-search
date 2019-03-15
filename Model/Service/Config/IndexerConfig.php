@@ -5,6 +5,7 @@ namespace Bitbull\Tooso\Model\Service\Config;
 use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Bitbull\Tooso\Model\Adminhtml\System\Config\Source\Attributes as SourceAttributes;
+use Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SimpleAttributes as SourceSimpleAttributes;
 
 class IndexerConfig implements IndexerConfigInterface
 {
@@ -28,15 +29,22 @@ class IndexerConfig implements IndexerConfigInterface
     protected $sourceAttributes;
 
     /**
+     * @var SourceSimpleAttributes
+     */
+    protected $sourceSimpleAttributes;
+
+    /**
      * Config constructor.
      *
      * @param ScopeConfigInterface $scopeConfig
      * @param SourceAttributes $sourceAttributes
+     * @param SourceSimpleAttributes $sourceSimpleAttributes
      */
-    public function __construct(ScopeConfigInterface $scopeConfig, SourceAttributes $sourceAttributes)
+    public function __construct(ScopeConfigInterface $scopeConfig, SourceAttributes $sourceAttributes, SourceSimpleAttributes $sourceSimpleAttributes)
     {
         $this->scopeConfig = $scopeConfig;
         $this->sourceAttributes = $sourceAttributes;
+        $this->sourceSimpleAttributes = $sourceSimpleAttributes;
     }
 
     /**
@@ -60,7 +68,8 @@ class IndexerConfig implements IndexerConfigInterface
         if ($value === null) {
             return [];
         }
-        return explode(',', $value);
+        $attributes = explode(',', $value);
+        return array_unique(array_merge($attributes, $this->sourceAttributes->getDefaultAttributes()));
     }
 
     /**
@@ -82,7 +91,8 @@ class IndexerConfig implements IndexerConfigInterface
         if ($value === null) {
             return [];
         }
-        return explode(',', $value);
+        $attributes = explode(',', $value);
+        return array_unique(array_merge($attributes, $this->sourceSimpleAttributes->getDefaultAttributes()));
     }
 
     /**
