@@ -14,12 +14,12 @@
             </group>
             <group id="tools" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Tools</label>
-                <field id="send_catalog_index_Data" translate="label comment" type="button" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="send_catalog_index_Data" translate="label comment" type="button" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendCatalogIndexDataButton</frontend_model>
                     <label>Send catalog index data</label>
                     <comment><![CDATA[This procedure will send catalog index data to Tooso]]></comment>
                 </field>
-                <field id="reindex_catalog_btn" translate="label comment" type="button" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="reindex_catalog_btn" translate="label comment" type="button" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
                     <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\CatalogReindexButton</frontend_model>
                     <label>Catalog reindex</label>
                     <comment><![CDATA[This procedure will reindex Tooso catalog index, it is required when you change indexed attribute configuration]]></comment>
