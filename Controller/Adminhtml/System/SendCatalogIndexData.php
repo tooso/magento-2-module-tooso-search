@@ -9,6 +9,8 @@ use Bitbull\Tooso\Api\Service\LoggerInterface;
 
 class SendCatalogIndexData extends Action
 {
+    const PERMISSION_RESOURCE = 'Bitbull_Tooso::send_catalog_data';
+
     /**
      * @var JsonFactory
      */
@@ -57,6 +59,14 @@ class SendCatalogIndexData extends Action
         /** @var \Magento\Framework\Controller\Result\Json $result */
         $result = $this->resultJsonFactory->create();
         return $result->setData(['status' => 'ok']);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function _isAllowed()
+    {
+        return parent::_isAllowed() && $this->_authorization->isAllowed(self::PERMISSION_RESOURCE);
     }
 }
 ?>

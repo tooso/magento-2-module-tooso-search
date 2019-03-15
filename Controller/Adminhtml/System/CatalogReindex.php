@@ -9,6 +9,8 @@ use Bitbull\Tooso\Api\Service\Indexer\CatalogInterface;
 
 class CatalogReindex extends Action
 {
+    const PERMISSION_RESOURCE = 'Bitbull_Tooso::catalog_reindex';
+
     /**
      * @var JsonFactory
      */
@@ -58,5 +60,14 @@ class CatalogReindex extends Action
         $result = $this->resultJsonFactory->create();
         return $result->setData(['status' => 'ok']);
     }
+
+    /**
+     * @return bool
+     */
+    protected function _isAllowed()
+    {
+        return parent::_isAllowed() && $this->_authorization->isAllowed(self::PERMISSION_RESOURCE);
+    }
+
 }
 ?>

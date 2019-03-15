@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Bitbull_Tooso::operations" title="Tooso Operations">
+                    <resource id="Bitbull_Tooso::catalog_reindex" title="Execute Catalog Reindex"/>
+                    <resource id="Bitbull_Tooso::send_catalog_data" title="Send Index Data"/>
+                    <resource id="Bitbull_Tooso::send_stock_data" title="Send Stock Data"/>
+                </resource>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Bitbull_Tooso::config" title="Tooso Section"/>
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

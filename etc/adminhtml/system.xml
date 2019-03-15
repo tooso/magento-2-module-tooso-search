@@ -5,7 +5,7 @@
             <class>separator-top</class>
             <label>Tooso Search Engine</label>
             <tab>catalog</tab>
-            <resource>Bitbull_Tooso::search_config</resource>
+            <resource>Bitbull_Tooso::config</resource>
             <group id="info" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>About</label>
                 <field id="module_version" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
