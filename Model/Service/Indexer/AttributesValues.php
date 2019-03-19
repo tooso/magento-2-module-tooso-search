@@ -6,6 +6,7 @@ use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
 use Bitbull\Tooso\Model\Service\Indexer\Db\AttributesValuesIndexFlat;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as AttributeCollectionFactory;
+use Magento\Store\Model\StoreManagerInterface;
 
 class AttributesValues implements AttributesValuesInterface
 {
@@ -35,22 +36,31 @@ class AttributesValues implements AttributesValuesInterface
     protected $attributesCollectionFactory;
 
     /**
+     * @var StoreManagerInterfac
+     */
+    protected $storeManager;
+
+    /**
+     *
      * @var LoggerInterface $logger
      * @var IndexerConfigInterface $indexerConfig
      * @var AttributesValuesIndexFlat $attributesValuesIndexFlat
      * @var AttributeCollectionFactory $attributesCollectionFactory
+     * @var StoreManagerInterface $storeManager
      */
     public function __construct(
         LoggerInterface $logger,
         IndexerConfigInterface $indexerConfig,
         AttributesValuesIndexFlat $attributesValuesIndexFlat,
-        AttributeCollectionFactory $attributesCollectionFactory
+        AttributeCollectionFactory $attributesCollectionFactory,
+        StoreManagerInterface $storeManager
     )
     {
         $this->logger = $logger;
         $this->indexerConfig = $indexerConfig;
         $this->attributesValuesIndexFlat = $attributesValuesIndexFlat;
         $this->attributesCollectionFactory = $attributesCollectionFactory;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -61,29 +71,23 @@ class AttributesValues implements AttributesValuesInterface
         $attributesConfigured = $this->indexerConfig->getAttributesWithoutCustoms();
 
         if ($ids === null) {
-            $ids = [];
-            $attributes = $this->attributesCollectionFactory->create()
-                ->addAttributeToSelect('attribute_id')
-                ->addFieldToFilter('attribute_code', $attributesConfigured);
-
-            //TODO: array_map? toArray()? need something more "clean"
-            foreach ($attributes as $attribute) {
-                $ids[] = $attribute->getId();
-            }
-
-        }else{
-            $attributes = $this->attributesCollectionFactory->create()
-                ->addAttributeToSelect('attribute_id')
+            $attributesCollection = $this->attributesCollectionFactory->create()
+                ->addFieldToFilter('attribute_code', $attributesConfigured)
+                ->addFieldToFilter('frontend_input', [
+                    'select',
+                    'multiselect'
+                ]);
+        } else {
+            $attributesCollection = $this->attributesCollectionFactory->create()
                 ->addFieldToFilter('attribute_id', $ids)
-                ->addFieldToFilter('attribute_code', $attributesConfigured);
-
-            //TODO: array_map? toArray()? need something more "clean"
-            foreach ($attributes as $attribute) {
-                $ids[] = $attribute->getId();
-            }
+                ->addFieldToFilter('attribute_code', $attributesConfigured)
+                ->addFieldToFilter('frontend_input', [
+                    'select',
+                    'multiselect'
+                ]);
         }
 
-        if (is_array($ids) && sizeof($ids) === 0) {
+        if ($attributesCollection->getSize() === 0) {
             return;
         }
 
@@ -91,9 +95,25 @@ class AttributesValues implements AttributesValuesInterface
 
         foreach ($stores as $storeId) {
 
+            $this->storeManager->setCurrentStore($storeId);
+
             // Init data
 
             $data = [];
+
+            foreach ($attributesCollection as $attribute) {
+                $options = $attribute->getSource()->getAllOptions();
+
+                foreach ($options as $option){
+                    if ($option['value'] === '') {
+                        continue;
+                    }
+                    $data[] = [
+                        'attribute_id' => $option['value'],
+                        'value' => $option['label'],
+                    ];
+                }
+            }
 
             // Store data into flat table
 
