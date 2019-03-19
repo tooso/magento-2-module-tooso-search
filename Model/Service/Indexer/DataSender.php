@@ -5,6 +5,7 @@ use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
 use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Bitbull\Tooso\Api\Service\Indexer\DataSenderInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
+use Bitbull\Tooso\Model\Service\Indexer\Db\AttributesValuesIndexFlat;
 use Bitbull\Tooso\Model\Service\Indexer\Db\CatalogIndexFlat;
 use Bitbull\Tooso\Model\Service\Indexer\Db\StockIndexFlat;
 use Tooso\SDK\ClientBuilder;
@@ -47,6 +48,11 @@ class DataSender implements DataSenderInterface
     protected $stockIndexFlat;
 
     /**
+     * @var AttributesValuesIndexFlat
+     */
+    protected $attributesValuesIndexFlat;
+
+    /**
      * @var StoreManagerInterface
      */
     protected $storeManager;
@@ -73,6 +79,7 @@ class DataSender implements DataSenderInterface
         ClientBuilder $clientBuilder,
         CatalogIndexFlat $catalogIndexFlat,
         StockIndexFlat $stockIndexFlat,
+        AttributesValuesIndexFlat $attributesValuesIndexFlat,
         StoreManagerInterface $storeManager,
         Filesystem $filesystem
     )
@@ -83,6 +90,7 @@ class DataSender implements DataSenderInterface
         $this->clientBuilder = $clientBuilder;
         $this->catalogIndexFlat = $catalogIndexFlat;
         $this->stockIndexFlat = $stockIndexFlat;
+        $this->attributesValuesIndexFlat = $attributesValuesIndexFlat;
         $this->storeManager = $storeManager;
         $this->filesystem = $filesystem;
     }
@@ -94,23 +102,43 @@ class DataSender implements DataSenderInterface
     {
         $storeIds = $this->indexerConfig->getStores();
 
+        $this->logger->info('[catalog export] Start exporting data for stores ' . implode(',', $storeIds) . '..');
+
         foreach ($storeIds as $storeId) {
             $this->storeManager->setCurrentStore($storeId);
 
-            $data = $this->catalogIndexFlat->extractData($storeId);
-            if ($data === null) {
-                return false;
+            $this->logger->debug("[catalog export] Start exporting catalog data for store $storeId");
+
+            // Export catalog
+
+            $catalogData = $this->catalogIndexFlat->extractData($storeId);
+            if ($catalogData === null) {
+                $this->logger->warn("[catalog export] Store $storeId ha no catalog data, skipping..");
+                continue;
             }
-            $csvContent = $this->arrayToCsv($data);
+            $catalogCsvContent = $this->arrayToCsv($catalogData);
+
+            // Export attributes
+
+            $attributesData = $this->attributesValuesIndexFlat->extractData($storeId);
+            if ($attributesData === null) {
+                $this->logger->warn("[catalog export] Store $storeId ha no attributes data, skipping..");
+                continue;
+            }
+            $attributeCsvContent = $this->arrayToCsv($attributesData);
 
             if ($this->indexerConfig->isDryRunModeEnabled()) {
-                $this->writeCsvToFile($csvContent, $storeId, 'catalog_');
+                $this->writeCsvToFile($catalogCsvContent, $storeId, 'catalog_');
+                $this->writeCsvToFile($attributeCsvContent, $storeId, 'attributes_');
                 continue;
             }
 
             $client = $this->getClient();
             try{
-                $indexResult = $client->index($csvContent, [
+                $indexResult = $client->index([
+                    'magento_catalog.csv' => $catalogCsvContent,
+                    'magento_attributes.csv' => $attributeCsvContent
+                ], [
                     'ACCESS_KEY_ID' => $this->indexerConfig->getAwsAccessKey(),
                     'SECRET_KEY' => $this->indexerConfig->getAwsSecretKey(),
                     'BUCKET' => $this->indexerConfig->getAwsBucketName(),
@@ -123,8 +151,11 @@ class DataSender implements DataSenderInterface
                 $this->logger->error($e->getMessage());
                 return false;
             }
+
+            $this->logger->debug("[catalog export] Store $storeId catalog data successfully exported!");
         }
 
+        $this->logger->info('[catalog export] All stores catalog data successfully exported!');
         return true;
     }
 
@@ -135,7 +166,11 @@ class DataSender implements DataSenderInterface
     {
         $storeIds = $this->indexerConfig->getStores();
 
+        $this->logger->info('[stock export] Start exporting stock data for stores ' . implode(',', $storeIds) . '..');
+
         foreach ($storeIds as $storeId) {
+            $this->logger->debug("[stock export] Start exporting catalog data for store $storeId");
+
             $data = $this->stockIndexFlat->extractData(0); //NOTE: product's stock values are global
             if ($data === null) {
                 return false;
@@ -162,7 +197,11 @@ class DataSender implements DataSenderInterface
                 $this->logger->error($e->getMessage());
                 return false;
             }
+
+            $this->logger->debug("[stock export] Store $storeId stock data successfully exported!");
         }
+
+        $this->logger->info('[stock export] All stores stock data successfully exported!');
 
         return true;
     }
