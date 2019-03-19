@@ -70,7 +70,7 @@ class Catalog implements \Magento\Framework\Indexer\ActionInterface, \Magento\Fr
     public function executeRow($id){
         //Works in runtime for a single order using plugins
         $this->logger->debug('[indexer catalog] asked to execute a reindex for single entity: '.$id);
-        $this->catalog->execute();
+        $this->catalog->execute([$id]);
         $this->logger->debug('[indexer catalog] done!');
     }
 }
