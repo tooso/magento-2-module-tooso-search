@@ -63,6 +63,8 @@ class TrackAddToCart implements ObserverInterface
         $product = $observer->getProduct();
         $productData = $this->tracking->getProductTrackingParams($product, 1, round($product->getCartQty()));
 
+        $this->logger->info('[cart tracking add] Product "'. $productData['name'] .'" added to cart with qty ' . $productData['quantity']);
+
         $this->tracking->executeTrackingRequest([
             't' => 'event',
             'pr1id' => $productData['id'],

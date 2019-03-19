@@ -30,10 +30,7 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * Logging facility
-     *
-     * @param string $message
-     * @param int $level
+     * @inheritdoc
      */
     public function log($message, $level = null)
     {
@@ -44,7 +41,7 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * @param Exception $e
+     * @inheritdoc
      */
     public function logException(Exception $e)
     {
@@ -52,7 +49,7 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * @param string $message
+     * @inheritdoc
      */
     public function debug($message)
     {
@@ -62,12 +59,32 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * @param string $message
+     * @inheritdoc
      */
     public function error($message)
     {
         if ($this->config->isDebugModeEnabled()) {
             $this->log($message, Monolog::ERROR);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function warn($message)
+    {
+        if ($this->config->isDebugModeEnabled()) {
+            $this->log($message, Monolog::ERROR);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function info($message)
+    {
+        if ($this->config->isDebugModeEnabled()) {
+            $this->log($message, Monolog::INFO);
         }
     }
 }

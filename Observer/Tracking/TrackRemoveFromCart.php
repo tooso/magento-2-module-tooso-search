@@ -55,7 +55,9 @@ class TrackRemoveFromCart implements ObserverInterface
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface $product */
         $product = $quoteItem->getProduct();
-        $productData = $this->tracking->getProductTrackingParams($product, 1, round($product->getCartQty()));
+        $productData = $this->tracking->getProductTrackingParams($product, 1, round($quoteItem->getQty()));
+
+        $this->logger->info('[cart tracking add] Product "'. $productData['name'] .'" with qty ' . $productData['quantity'] . ' removed from cart');
 
         $this->tracking->executeTrackingRequest([
             't' => 'event',
