@@ -2,19 +2,16 @@
 
 namespace Bitbull\Tooso\Model\Service\Config;
 
-use Bitbull\Tooso\Api\Service\Config\SdkConfigInterface;
+use Bitbull\Tooso\Api\Service\Config\SpeechToTextConfigInterface;
 use Bitbull\Tooso\Api\Service\Config\SuggestionConfigInterface;
 use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
-class SdkConfig implements SdkConfigInterface
+class SpeechToTextConfig implements SpeechToTextConfigInterface
 {
-    const XML_PATH_SDK_LIBRARY_ENDPOINT = 'tooso/sdk/library_endpoint';
-    const XML_PATH_SDK_CORE_KEY = 'tooso/sdk/core_key';
-    const XML_PATH_SDK_INPUT_SELECTOR = 'tooso/sdk/input_selector';
-    const XML_PATH_SDK_LANGUAGE = 'tooso/sdk/language';
-    const XML_PATH_SDK_DEBUG_MODE = 'tooso/sdk/debug_mode';
+    const XML_PATH_SPEECH_TO_TEXT_INPUT_SELECTOR = 'tooso/speech_to_text/input_selector';
+    const XML_PATH_SPEECH_TO_TEXT_LANGUAGE = 'tooso/speech_to_text/language';
+    const XML_PATH_SPEECH_TO_TEXT_EXAMPLE_TEMPLATE = 'tooso/speech_to_text/example_template';
 
     /**
      * @var ScopeConfigInterface
@@ -51,29 +48,9 @@ class SdkConfig implements SdkConfigInterface
     /**
      * @inheritdoc
      */
-    public function getLibraryEndpoint()
-    {
-        return $this->scopeConfig->getValue(self::XML_PATH_SDK_LIBRARY_ENDPOINT);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCoreKey()
-    {
-        $codeKey = $this->scopeConfig->getValue(self::XML_PATH_SDK_CORE_KEY);
-        if ($codeKey === null) {
-            return $this->config->getApiKey();
-        }
-        return $codeKey;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getInputSelector()
     {
-        $inputSelector = $this->scopeConfig->getValue(self::XML_PATH_SDK_INPUT_SELECTOR);
+        $inputSelector = $this->scopeConfig->getValue(self::XML_PATH_SPEECH_TO_TEXT_INPUT_SELECTOR);
         if ($inputSelector === null) {
             return $this->suggestionConfig->getInputSelector();
         }
@@ -85,7 +62,7 @@ class SdkConfig implements SdkConfigInterface
      */
     public function getLanguage()
     {
-        $inputSelector = $this->scopeConfig->getValue(self::XML_PATH_SDK_LANGUAGE);
+        $inputSelector = $this->scopeConfig->getValue(self::XML_PATH_SPEECH_TO_TEXT_LANGUAGE);
         if ($inputSelector === null) {
             return $this->config->getLanguage();
         }
@@ -95,9 +72,9 @@ class SdkConfig implements SdkConfigInterface
     /**
      * @inheritdoc
      */
-    public function isDebugModeEnabled()
+    public function isExampleTemplateEnabled()
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_SDK_DEBUG_MODE);
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_SPEECH_TO_TEXT_EXAMPLE_TEMPLATE);
     }
 
 }
