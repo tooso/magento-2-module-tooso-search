@@ -73,4 +73,11 @@ interface ConfigInterface
      * @return boolean
      */
     public function isSuggestionEnabled();
+
+    /**
+     * Is SDK Javascript library active
+     *
+     * @return boolean
+     */
+    public function isSdkEnabled();
 }

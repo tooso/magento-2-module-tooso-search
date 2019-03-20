@@ -43,6 +43,10 @@
                     <label>Suggestion client side</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="speech_to_text" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Speech to Text</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
             <group id="server" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>API Configuration</label>
@@ -229,6 +233,41 @@
                 </field>
                 <field id="custom_css" translate="label" type="textarea" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Custom CSS</label>
+                </field>
+            </group>
+            <group id="sdk" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Javascript SDK</label>
+                <comment><![CDATA[<b>This feature require tracking feature to be active</b>]]></comment>
+                <field id="library_endpoint" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Javascript library endpoint</label>
+                    <depends>
+                        <field id="tooso/active/tracking">1</field>
+                    </depends>
+                </field>
+                <field id="core_key" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Override core key</label>
+                    <comment><![CDATA[Leave empty to use search API key]]></comment>
+                    <depends>
+                        <field id="tooso/active/tracking">1</field>
+                    </depends>
+                </field>
+                <field id="input_selector" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Input selector</label>
+                    <comment><![CDATA[Leave empty to use the same as suggestion]]></comment>
+                    <depends>
+                        <field id="tooso/active/tracking">1</field>
+                    </depends>
+                </field>
+                <field id="language" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Override language locale</label>
+                    <comment><![CDATA[Leave empty to use Magento store locale]]></comment>
+                    <depends>
+                        <field id="tooso/active/tracking">1</field>
+                    </depends>
+                </field>
+                <field id="debug_mode" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Debug mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
         </section>
