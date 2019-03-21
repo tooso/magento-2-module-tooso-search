@@ -48,6 +48,12 @@
     <preference for="Bitbull\Tooso\Api\Service\Config\SkinConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config\SkinConfig" />
 
+    <preference for="Bitbull\Tooso\Api\Service\Config\SdkConfigInterface"
+                type="Bitbull\Tooso\Model\Service\Config\SdkConfig" />
+
+    <preference for="Bitbull\Tooso\Api\Service\Config\SpeechToTextConfigInterface"
+                type="Bitbull\Tooso\Model\Service\Config\SpeechToTextConfig" />
+
     <preference for="Bitbull\Tooso\Api\Service\ConfigInterface"
                 type="Bitbull\Tooso\Model\Service\Config" />
 

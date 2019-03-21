@@ -6,7 +6,6 @@ use Bitbull\Tooso\Api\Service\Config\SdkConfigInterface;
 use Bitbull\Tooso\Api\Service\Config\SuggestionConfigInterface;
 use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
 class SdkConfig implements SdkConfigInterface
 {

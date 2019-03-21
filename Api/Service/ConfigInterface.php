@@ -75,9 +75,16 @@ interface ConfigInterface
     public function isSuggestionEnabled();
 
     /**
-     * Is SDK Javascript library active
+     * Is SDK library active
      *
      * @return boolean
      */
     public function isSdkEnabled();
+
+    /**
+     * Is SpeechToText active
+     *
+     * @return boolean
+     */
+    public function isSpeechToTextEnabled();
 }

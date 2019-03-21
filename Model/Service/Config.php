@@ -12,7 +12,7 @@ class Config implements ConfigInterface
     const XML_PATH_SEARCH_ACTIVE = 'tooso/active/frontend';
     const XML_PATH_TRACKING_ACTIVE = 'tooso/active/tracking';
     const XML_PATH_SUGGESTION_ACTIVE = 'tooso/active/suggestion';
-    const XML_PATH_SDK_ACTIVE = 'tooso/active/sdk';
+    const XML_PATH_SPEECH_TO_TEXT_ACTIVE = 'tooso/active/speech_to_text';
     const XML_PATH_API_KEY = 'tooso/server/api_key';
     const XML_PATH_API_VERSION = 'tooso/server/api_version';
     const XML_PATH_API_BASE_URL = 'tooso/server/api_base_url';
@@ -122,6 +122,14 @@ class Config implements ConfigInterface
      */
     public function isSdkEnabled()
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_SDK_ACTIVE);
+        return $this->isSpeechToTextEnabled(); // Insert here more service that require SDK library
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isSpeechToTextEnabled()
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_SPEECH_TO_TEXT_ACTIVE);
     }
 }
