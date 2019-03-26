@@ -7,7 +7,7 @@
     "php": "~7.0.0|~7.1.0",
     "magento/framework" : "101.0.*",
     "magento/module-catalog-search": "^100.2.4",
-    "bitbull/tooso-sdk": "1.1.*"
+    "bitbull/tooso-sdk": "dev-develop"
   },
   "autoload": {
     "files": [ "registration.php" ],
