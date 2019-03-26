@@ -52,6 +52,12 @@
                 <width_custom>300</width_custom>
                 <zindex>100000</zindex>
             </suggestion>
+            <sdk>
+                <library_endpoint>https://cdndev.tooso.ai/sdk.js</library_endpoint>
+            </sdk>
+            <speech_to_text>
+                <example_template>0</example_template>
+            </speech_to_text>
         </tooso>
     </default>
 </config>

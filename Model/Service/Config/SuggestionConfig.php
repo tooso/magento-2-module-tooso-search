@@ -3,6 +3,7 @@
 namespace Bitbull\Tooso\Model\Service\Config;
 
 use Bitbull\Tooso\Api\Service\Config\SuggestionConfigInterface;
+use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -11,7 +12,6 @@ class SuggestionConfig implements SuggestionConfigInterface
     const XML_PATH_SUGGEST_LIBRARY_INCLUDE = 'tooso/suggestion/include_library';
     const XML_PATH_SUGGEST_LIBRARY_ENDPOINT = 'tooso/suggestion/library_endpoint';
     const XML_PATH_SUGGEST_INPUT_SELECTOR = 'tooso/suggestion/input_selector';
-    const XML_PATH_SUGGEST_API_KEY = 'tooso/server/api_key'; //NOTE: at this this suggestion API key is the same as search API key
 
     const XML_PATH_SUGGEST_BUCKETS = 'tooso/suggestion/buckets';
     const XML_PATH_SUGGEST_LIMIT = 'tooso/suggestion/limit';
@@ -35,17 +35,25 @@ class SuggestionConfig implements SuggestionConfigInterface
     protected $storeManager;
 
     /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
+    /**
      * Config constructor.
      *
      * @param ScopeConfigInterface $scopeConfig
      * @param StoreManagerInterface $storeManager
+     * @param ConfigInterface $config
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        ConfigInterface $config
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
+        $this->config = $config;
     }
 
     /**
@@ -83,7 +91,7 @@ class SuggestionConfig implements SuggestionConfigInterface
             $data['language'] = strtolower($locale);
         }
 
-        $apiKey = $this->scopeConfig->getValue(self::XML_PATH_SUGGEST_API_KEY);
+        $apiKey = $this->config->getApiKey();
         if($apiKey !== null){
             $data['apiKey'] = $apiKey;
         }

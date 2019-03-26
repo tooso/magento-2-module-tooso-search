@@ -1,0 +1,15 @@
+<?php
+/** @var \Bitbull\Tooso\Block\Sdk\Library $block */
+$libraryEndpoint = $block->getLibraryEndpoint();
+?>
+
+<script id="<?=$block->getScriptId()?>-loader" type="text/javascript">
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "<?=$libraryEndpoint?>";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'tooso-jssdk'));
+</script>
