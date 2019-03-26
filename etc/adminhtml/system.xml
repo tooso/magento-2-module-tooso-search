@@ -129,9 +129,13 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="product_link_selector" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Product link selector on search page</label>
+                    <label>Product links selector on search page</label>
                 </field>
-                <field id="product_link_attribute" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="product_container_selector" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product container selector on search page</label>
+                    <comment><![CDATA[If you are using an AJAX products loader pay attention to find a container that does not change during changes]]></comment>
+                </field>
+                <field id="product_link_attribute" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Product link attribute with product SKU</label>
                     <comment><![CDATA[This needs a manual change on product list template to print this custom attribute with product's SKU]]></comment>
                 </field>
