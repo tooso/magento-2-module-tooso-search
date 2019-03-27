@@ -22,4 +22,11 @@
             <table name="catalog_category_product" entity_column="product_id" />
         </subscriptions>
     </view>
+    <view id="tooso_attributes_values_flat" class="Bitbull\Tooso\Model\Indexer\AttributesValues" group="indexer">
+        <subscriptions>
+            <table name="catalog_product_entity_decimal" entity_column="entity_id" />
+            <table name="catalog_product_entity_int" entity_column="entity_id" />
+            <table name="catalog_product_entity_varchar" entity_column="entity_id" />
+        </subscriptions>
+    </view>
 </config>

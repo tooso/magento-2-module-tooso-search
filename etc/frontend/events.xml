@@ -14,4 +14,8 @@
         <observer name="ToosoTrackRemoveFromCart" instance="Bitbull\Tooso\Observer\Tracking\TrackRemoveFromCart" />
     </event>
 
+    <event name="checkout_cart_update_items_before">
+        <observer name="ToosoTrackCartUpdateQty" instance="Bitbull\Tooso\Observer\Tracking\TrackCartUpdateQty" />
+    </event>
+
 </config>

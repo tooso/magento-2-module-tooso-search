@@ -5,7 +5,7 @@ use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Indexer\StateInterface;
 use Magento\Indexer\Model\Indexer\StateFactory;
 use Bitbull\Tooso\Model\Indexer\Catalog;
-use Bitbull\Tooso\Model\Indexer\Stock;
+use Bitbull\Tooso\Model\Indexer\AttributesValues;
 
 class InstallSchema implements InstallSchemaInterface
 {
@@ -41,6 +41,20 @@ class InstallSchema implements InstallSchemaInterface
 
         $state = $this->stateFactory->create();
         $state->loadByIndexer(Catalog::INDEX_NAME);
+        $state->setStatus(StateInterface::STATUS_INVALID);
+        $state->setUpdated($updateTimeStr);
+        $state->save(); //TODO: fix deprecation
+
+
+        /**
+         * Init attributes index status
+         */
+
+        $updateTime = new \DateTime();
+        $updateTimeStr = $updateTime->format('Y-m-d H:i:s');
+
+        $state = $this->stateFactory->create();
+        $state->loadByIndexer(AttributesValues::INDEX_NAME);
         $state->setStatus(StateInterface::STATUS_INVALID);
         $state->setUpdated($updateTimeStr);
         $state->save(); //TODO: fix deprecation

@@ -1,0 +1,10 @@
+<?php
+/** @var \Bitbull\Tooso\Block\Sdk\LibraryInit $block */
+$initParams = $block->getInitParams();
+?>
+
+<script id="<?=$block->getScriptId()?>" type="text/javascript">
+    window.toosoAsyncInit = function () {
+        Tooso.init(<?=json_encode($initParams)?>);
+    };
+</script>

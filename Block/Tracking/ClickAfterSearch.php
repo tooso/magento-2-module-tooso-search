@@ -85,6 +85,16 @@ class ClickAfterSearch extends \Magento\Framework\View\Element\Template implemen
     }
 
     /**
+     * Get product container selector
+     *
+     * @return string
+     */
+    public function getProductContainerSelector()
+    {
+        return $this->analyticsConfig->getProductContainerSelector();
+    }
+
+    /**
      * Get product link attribute name
      *
      * @return string

@@ -8,6 +8,7 @@ if ($searchResult !== null) {
     $searchData = $searchResult->getResponse();
 }
 
+$productContainerSelector = $this->getProductContainerSelector();
 $productLinkSelector = $this->getProductLinkSelector();
 $productAttributeName = $this->getProductAttributeName();
 $productsData = $block->getProducts();
@@ -24,9 +25,10 @@ $pageSize = $block->getCurrentPageSize();
 
 <script id="<?=$block->getScriptId()?>" type="text/x-magento-init">
     {
-        "<?=$productLinkSelector ?>": {
+        "<?=$productContainerSelector ?>": {
             "toosoClickAfterSearch": {
                 "searchId": "<?=$searchId?>",
+                "productLinksSelector": "<?=$productLinkSelector ?>",
                 "products": <?=json_encode($productsData)?>,
                 "attributeName": "<?=$productAttributeName ?>",
                 "debug": <?=$block->config->isDebugModeEnabled() ? 'true' : 'false'?>,

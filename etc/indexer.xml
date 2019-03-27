@@ -13,4 +13,11 @@
             <indexer id="cataloginventory_stock" />
         </dependencies>
     </indexer>
+    <indexer id="tooso_attributes_values" view_id="tooso_attributes_values_flat" class="Bitbull\Tooso\Model\Indexer\AttributesValues">
+        <title translate="true">Tooso Attributes Values</title>
+        <description translate="true">Attributes values syncronization with Tooso service</description>
+        <dependencies>
+            <indexer id="catalog_product_attribute" />
+        </dependencies>
+    </indexer>
 </config>

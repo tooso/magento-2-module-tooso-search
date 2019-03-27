@@ -53,6 +53,13 @@ interface AnalyticsConfigInterface
     public function getProductLinkSelector();
 
     /**
+     * Get product container selector
+     *
+     * @return string|null
+     */
+    public function getProductContainerSelector();
+
+    /**
      * Get product attribute name
      *
      * @return string|null
