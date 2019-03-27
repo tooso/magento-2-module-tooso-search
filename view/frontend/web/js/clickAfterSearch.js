@@ -90,7 +90,7 @@ define([
      */
     function observeForChanges(target, callback) {
         var observer = new MutationObserver(callback);
-        observer.observe(target, { attributes: true, childList: true, characterData: true });
+        observer.observe(target, { attributes: true, childList: true, characterData: true, subtree: false });
     }
 
     /**
