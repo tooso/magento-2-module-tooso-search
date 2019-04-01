@@ -69,6 +69,7 @@ class DataSender implements DataSenderInterface
      * @param ClientBuilder $clientBuilder
      * @param CatalogIndexFlat $catalogIndexFlat
      * @param StockIndexFlat $stockIndexFlat
+     * @param AttributesValuesIndexFlat $attributesValuesIndexFlat
      * @param StoreManagerInterface $storeManager
      * @param Filesystem $filesystem
      */
@@ -113,7 +114,7 @@ class DataSender implements DataSenderInterface
 
             $catalogData = $this->catalogIndexFlat->extractData($storeId);
             if ($catalogData === null) {
-                $this->logger->warn("[catalog export] Store $storeId ha no catalog data, skipping..");
+                $this->logger->warn("[catalog export] An error occurred during store $storeId catalog data extract, skipping..");
                 continue;
             }
             $catalogCsvContent = $this->arrayToCsv($catalogData);
@@ -122,7 +123,7 @@ class DataSender implements DataSenderInterface
 
             $attributesData = $this->attributesValuesIndexFlat->extractData($storeId);
             if ($attributesData === null) {
-                $this->logger->warn("[catalog export] Store $storeId ha no attributes data, skipping..");
+                $this->logger->warn("[catalog export] An error occurred during store $storeId attributes data extract, skipping..");
                 continue;
             }
             $attributeCsvContent = $this->arrayToCsv($attributesData);
@@ -145,6 +146,7 @@ class DataSender implements DataSenderInterface
                     'PATH' => $this->indexerConfig->getAwsBucketPath(),
                 ]);
                 if ($indexResult->isValid() === false) {
+                    $this->logger->error($indexResult->getErrorMessage());
                     return false;
                 }
             }catch (\Tooso\SDK\Exception $e){
@@ -171,7 +173,7 @@ class DataSender implements DataSenderInterface
         foreach ($storeIds as $storeId) {
             $this->logger->debug("[stock export] Start exporting catalog data for store $storeId");
 
-            $data = $this->stockIndexFlat->extractData(0); //NOTE: product's stock values are global
+            $data = $this->stockIndexFlat->extractData(); //NOTE: product's stock values are global
             if ($data === null) {
                 return false;
             }
@@ -182,7 +184,7 @@ class DataSender implements DataSenderInterface
                 continue;
             }
 
-            $client = $this->getClient($storeId);
+            $client = $this->getClient();
             try{
                 $indexResult = $client->index($csvContent, [
                     'ACCESS_KEY_ID' => $this->indexerConfig->getAwsAccessKey(),
@@ -191,6 +193,7 @@ class DataSender implements DataSenderInterface
                     'PATH' => $this->indexerConfig->getAwsBucketPath(),
                 ]);
                 if ($indexResult->isValid() === false) {
+                    $this->logger->error($indexResult->getErrorMessage());
                     return false;
                 }
             }catch (\Tooso\SDK\Exception $e){
@@ -244,11 +247,14 @@ class DataSender implements DataSenderInterface
      * @param string $csvContent
      * @param integer $storeId
      * @param string $prefix
-     * @throws \Magento\Framework\Exception\FileSystemException
      */
     protected function writeCsvToFile($csvContent, $storeId, $prefix = '')
     {
-        $varDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
-        $varDirectory->writeFile("tooso/${prefix}${storeId}.csv", $csvContent);
+        try {
+            $varDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
+            $varDirectory->writeFile("tooso/${prefix}${storeId}.csv", $csvContent);
+        }catch (\Magento\Framework\Exception\FileSystemException $e) {
+            $this->logger->error($e->getMessage());
+        }
     }
 }

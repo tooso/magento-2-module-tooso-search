@@ -65,17 +65,18 @@ class DownloadLog extends Action
     {
         $this->logger->debug('[Download log] Requested log from download button..');
 
+        /** @var \Magento\Framework\Controller\Result\Json $result */
+        $result = $this->resultJsonFactory->create();
         $content = '';
         try {
             $logPath = $this->filesystem->getDirectoryWrite($this->directoryList::LOG);
             $content = $logPath->readFile(Handler::LOG_FILE_NAME);
         } catch (FileSystemException $e) {
             $this->logger->error($e->getMessage());
+            return $result->setHttpResponseCode(500);
         }
         $this->logger->debug('[Download log] Sent!');
 
-        /** @var \Magento\Framework\Controller\Result\Json $result */
-        $result = $this->resultJsonFactory->create();
         return $result->setData(['status' => 'ok', 'contentToDownload' => $content]);
     }
 

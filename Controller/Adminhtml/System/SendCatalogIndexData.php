@@ -53,11 +53,16 @@ class SendCatalogIndexData extends Action
     public function execute()
     {
         $this->logger->debug('[DataSender Catalog] Request catalog data send..');
-        $this->dataSender->sendCatalog();
-        $this->logger->debug('[DataSender Catalog] Done!');
+        $isSuccess = $this->dataSender->sendCatalog();
 
         /** @var \Magento\Framework\Controller\Result\Json $result */
         $result = $this->resultJsonFactory->create();
+
+        if ($isSuccess === false) {
+            return $result->setHttpResponseCode(500);
+        }
+
+        $this->logger->debug('[DataSender Catalog] Done!');
         return $result->setData(['status' => 'ok']);
     }
 

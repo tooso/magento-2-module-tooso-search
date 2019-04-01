@@ -64,16 +64,18 @@ class CleanLog extends Action
     public function execute()
     {
         $this->logger->debug('[Clean log] Request log cleaning..');
+
+        /** @var \Magento\Framework\Controller\Result\Json $result */
+        $result = $this->resultJsonFactory->create();
         try {
             $logPath = $this->filesystem->getDirectoryWrite($this->directoryList::LOG);
             $logPath->writeFile(Handler::LOG_FILE_NAME, '', 'w');
         } catch (FileSystemException $e) {
             $this->logger->error($e->getMessage());
+            return $result->setHttpResponseCode(500);
         }
         $this->logger->debug('[Clean log] Log cleaned!');
 
-        /** @var \Magento\Framework\Controller\Result\Json $result */
-        $result = $this->resultJsonFactory->create();
         return $result->setData(['status' => 'ok']);
     }
 

@@ -44,7 +44,6 @@ class StockIndexFlat
      * Extract data from database flat table
      *
      * @return array|null
-     * @throws \Exception
      */
     public function extractData()
     {

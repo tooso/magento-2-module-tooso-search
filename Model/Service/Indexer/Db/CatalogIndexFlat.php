@@ -89,7 +89,6 @@ class CatalogIndexFlat
      *
      * @param integer $storeId
      * @return array|null
-     * @throws \Exception
      */
     public function extractData($storeId)
     {
@@ -104,7 +103,7 @@ class CatalogIndexFlat
 
         if (sizeof($data) === 0) {
             $this->logger->error('No data into '.self::TABLE_NAME.', reindex is required');
-            return null;
+            return [];
         }
 
         $headers = array_keys($this->serializerJson->unserialize($data[0]['data']));
