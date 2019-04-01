@@ -2,9 +2,17 @@
 namespace Bitbull\Tooso\Model\Logger;
 
 use Magento\Framework\Logger\Handler\Base;
+use Magento\Framework\Filesystem\DriverInterface;
 
 class Handler extends Base
 {
+    /**
+     * Log file name
+     *
+     * @var string
+     */
+    const LOG_FILE_NAME = 'tooso.log';
+
     /**
      * Logging level
      * @var int
@@ -12,8 +20,18 @@ class Handler extends Base
     protected $loggerType = \Monolog\Logger::DEBUG;
 
     /**
-     * File name
-     * @var string
+     * @param DriverInterface $filesystem
+     * @param string $filePath
+     * @param string $fileName
      */
-    protected $fileName = '/var/log/tooso.log';
+    public function __construct(
+        DriverInterface $filesystem,
+        $filePath = null,
+        $fileName = null
+    ) {
+
+        $this->fileName = '/var/log/'.self::LOG_FILE_NAME;
+
+        parent::__construct($filesystem, $filePath, $fileName);
+    }
 }

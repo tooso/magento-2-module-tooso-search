@@ -1,15 +1,18 @@
 <?php
 namespace Bitbull\Tooso\Controller\Adminhtml\System;
 
-use Bitbull\Tooso\Api\Service\Indexer\DataSenderInterface;
+use Bitbull\Tooso\Model\Logger\Handler;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Filesystem;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
-class SendCatalogIndexData extends Action
+class DownloadLog extends Action
 {
-    const PERMISSION_RESOURCE = 'Bitbull_Tooso::send_catalog_data';
+    const PERMISSION_RESOURCE = 'Bitbull_Tooso::download_log';
 
     /**
      * @var JsonFactory
@@ -22,26 +25,34 @@ class SendCatalogIndexData extends Action
     private $logger;
 
     /**
-     * @var DataSenderInterface
+     * @var Filesystem
      */
-    private $dataSender;
+    protected $filesystem;
+
+    /**
+     * @var DirectoryList
+     */
+    protected $directoryList;
 
     /**
      * @param Context $context
      * @param JsonFactory $resultJsonFactory
      * @param LoggerInterface $logger
-     * @param DataSenderInterface $dataSender
+     * @param Filesystem $filesystem
+     * @param DirectoryList $directoryList
      */
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
         LoggerInterface $logger,
-        DataSenderInterface $dataSender
+        Filesystem $filesystem,
+        DirectoryList $directoryList
     )
     {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->logger = $logger;
-        $this->dataSender = $dataSender;
+        $this->filesystem = $filesystem;
+        $this->directoryList = $directoryList;
         parent::__construct($context);
     }
 
@@ -52,18 +63,21 @@ class SendCatalogIndexData extends Action
      */
     public function execute()
     {
-        $this->logger->debug('[DataSender Catalog] Request catalog data send..');
-        $isSuccess = $this->dataSender->sendCatalog();
+        $this->logger->debug('[Download log] Requested log from download button..');
 
         /** @var \Magento\Framework\Controller\Result\Json $result */
         $result = $this->resultJsonFactory->create();
-
-        if ($isSuccess === false) {
+        $content = '';
+        try {
+            $logPath = $this->filesystem->getDirectoryWrite($this->directoryList::LOG);
+            $content = $logPath->readFile(Handler::LOG_FILE_NAME);
+        } catch (FileSystemException $e) {
+            $this->logger->error($e->getMessage());
             return $result->setHttpResponseCode(500);
         }
+        $this->logger->debug('[Download log] Sent!');
 
-        $this->logger->debug('[DataSender Catalog] Done!');
-        return $result->setData(['status' => 'ok']);
+        return $result->setData(['status' => 'ok', 'contentToDownload' => $content]);
     }
 
     /**
@@ -73,5 +87,6 @@ class SendCatalogIndexData extends Action
     {
         return parent::_isAllowed() && $this->_authorization->isAllowed(self::PERMISSION_RESOURCE);
     }
+
 }
 ?>

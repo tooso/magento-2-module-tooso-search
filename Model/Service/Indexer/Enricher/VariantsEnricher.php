@@ -46,7 +46,7 @@ class VariantsEnricher implements EnricherInterface
         foreach ($productsCollection as $product) {
             $dataIndex = array_search($product->getId(), $ids, true);
             if ($dataIndex === -1) {
-                return; // this shouldn't happen
+                continue; // this shouldn't happen
             }
 
             $variants = $this->getProductVariants($product);
@@ -82,6 +82,9 @@ class VariantsEnricher implements EnricherInterface
         }
 
         $variantsIds = $product->getTypeInstance()->getUsedProductIds($product);
+        if ($variantsIds === null || sizeof($variantsIds) === 0) {
+            return [];
+        }
         $variantsCollection = $this->productCollectionFactory->create()
             ->addFieldToFilter('entity_id', $variantsIds);
 

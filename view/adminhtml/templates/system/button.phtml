@@ -1,4 +1,4 @@
-<?php /* @var $block \Bitbull\Tooso\Block\Adminhtml\System */ ?>
+<?php /* @var $block \Bitbull\Tooso\Block\Adminhtml\System\AbstractButton */ ?>
 
 <script>
     require([
@@ -28,6 +28,10 @@
                     button.prop("disabled",false);
                     if (response.status === 200) {
                         collectSpan.find('.done').show();
+                        if (response.responseJSON && response.responseJSON.contentToDownload) {
+                            var myBlob = new Blob([response.responseJSON.contentToDownload.toString()], {type: "plain/text"});
+                            window.location = URL.createObjectURL(myBlob);
+                        }
                     }
                     setTimeout(function () {
                         collectSpan.find('.done').hide();
