@@ -12,85 +12,103 @@ define([
     var config = {};
 
     /**
-     * Product links elements
+     * Get element position
      *
-     * @type {Array}
+     * @param {String} sku
+     * @param {*} parent
+     * @return {Number}
      */
-    var elements = [];
-
-    /**
-     * Find alla products links into container
-     */
-    function elaborateProductsElements(parentContainer) {
-        elements = [];
-        $(parentContainer).find(config.productLinksSelector).each(function () {
-            var element = $(this);
-            elements.push(element);
-            var productSku = element.attr(config.attributeName);
-            var linkValue = element.attr('href');
-            element.attr('data-href', linkValue);
-            element.attr('href', '#');
-            attachClickHandler(element, productSku, linkValue);
-        });
+    function getElementPosition(sku, parent) {
+        var allSkus = $.unique($(parent).find(config.productLinksSelector).toArray().map((i) => $(i).attr(config.attributeName)));
+        return allSkus.indexOf(sku);
     }
 
     /**
-     * Attach click handler to element
+     * Click handler for product link elements
      *
-     * @param {*} element
-     * @param {String} productSku
-     * @param {String} linkValue
+     * @param {*} event
      */
-    function attachClickHandler(element, productSku, linkValue) {
-        element.click(function () {
-            if (window.ta === undefined) {
-                console.warn('Tooso: ta is not include but analytics is active');
-                document.location.href = linkValue; // this should never happens
-                return;
-            }
+    function clickHandler(event) {
+        var element = $(this);
+        var linkValue = element.attr('href');
+        var productSku = element.attr(config.attributeName);
+        var searchId = config.searchId;
 
-            var product = config.products[productSku];
-            if (product === undefined) {
-                product = {
-                    id: productSku,
-                    position: elements.indexOf(element) + (config.pageSize * (config.currentPage - 1))
-                }
+        if (config.searchIdAttribute && element.get(0).hasAttribute(config.searchIdAttribute)) {
+            searchId = element.attr(config.searchIdAttribute);
+            console.debug('Tooso: using search id '+searchId+' from element attribute '+config.searchIdAttribute);
+        }
+
+        if (config.debug) {
+            console.debug('Tooso: click after search captured');
+        }
+
+        if (window.ta === undefined) {
+            console.warn('Tooso: ta is not include but analytics is active');
+            return;
+        }
+        if (linkValue === null || linkValue === undefined) {
+            console.warn('Tooso: click handled on a non-link element, href attribute not found');
+            return;
+        }
+        if (productSku === null || productSku === undefined) {
+            console.warn('Tooso: product link does not have the attribute '.config.attributeName);
+            return;
+        }
+
+        elaboratePaginationFromURL();
+
+        var product = config.products[productSku];
+        if (product === undefined) {
+            product = {
+                id: productSku,
+                position: getElementPosition(sku, event.data.parent) + (config.pageSize * (config.currentPage - 1))
             }
-            if (config.debug) {
-                console.debug('Tooso: click after search captured');
-            }
-            ta('ec:addProduct', product);
-            if (config.debug) {
-                console.debug('Tooso: tracked product:', product);
-            }
-            ta('ec:setAction', 'click', {
-                'list': config.searchId
-            });
-            var timeout = setTimeout(function () {
+        }
+        ta('ec:addProduct', product);
+        if (config.debug) {
+            console.debug('Tooso: tracked product:', product);
+        }
+        ta('ec:setAction', 'click', {
+            'list': searchId
+        });
+
+        var needRedirect = (event.metaKey || event.altKey || event.ctrlKey) === false;
+
+        var timeout = null;
+        if (needRedirect) {
+            setTimeout(function () {
                 console.warn('Tooso: tracking system does not respond in time');
                 document.location.href = linkValue; // fallback in case the library did not respond in time
             }, 1000);
-            ta('send', 'event', 'cart', 'click', {
-                hitCallback: function () {
-                    clearTimeout(timeout);
+        }
+
+        ta('send', 'event', 'cart', 'click', {
+            hitCallback: function () {
+                if (config.debug) {
+                    console.debug('Tooso: click after search tracked');
+                }
+                if (needRedirect) {
+                    if (timeout !== null) {
+                        clearTimeout(timeout);
+                    }
                     if (config.debug) {
                         console.debug('Tooso: redirecting to ' + linkValue);
                     }
                     document.location.href = linkValue;
-                },
-            });
-        })
-    }
+                }
+            },
+        });
 
-    /**
-     * Observer for HTML changes
-     *
-     * @param {*} target
-     * @param {function} callback
-     */
-    function observeForChanges(target, callback) {
-        var observer = new MutationObserver(callback);
-        observer.observe(target, { attributes: true, childList: true, characterData: true, subtree: true });
+        // We have to allow users to open links in a new window
+        if (needRedirect === false) {
+            return
+        }
+
+        // Prevent default click behaviour
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
     }
 
     /**
@@ -120,29 +138,21 @@ define([
     /**
      * Configuration function
      *
-     * @param {Object} config
-     * @param {*} element
+     * @param {Object} configParams
+     * @param {*} parentContainer
      */
     return function (configParams, parentContainer) {
         config = Object.assign({}, configParams);
         config.pageSize = config.pageSize || 0;
         config.currentPage = config.currentPage || 1;
 
-        // Elaborate child elements
-        elaborateProductsElements(parentContainer);
-
-        // Observer for HTML changes (like AJAX pagination,filters..)
-        observeForChanges(parentContainer, function () {
-            if (config.debug) {
-                console.debug('Tooso: products container changed');
-            }
-
-            // Check for pagination change
-            elaboratePaginationFromURL();
-
-            // Re-elaborate child elements
-            elaborateProductsElements(parentContainer);
-        })
-
+        $(parentContainer).on(
+            'click',
+            config.productLinksSelector,
+            {
+                parent: parentContainer
+            },
+            clickHandler
+        );
     }
 });
