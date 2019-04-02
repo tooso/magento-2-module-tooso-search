@@ -8,9 +8,10 @@ if ($searchResult !== null) {
     $searchData = $searchResult->getResponse();
 }
 
-$productContainerSelector = $this->getProductContainerSelector();
-$productLinkSelector = $this->getProductLinkSelector();
-$productAttributeName = $this->getProductAttributeName();
+$productContainerSelector = $block->getProductContainerSelector();
+$productLinkSelector = $block->getProductLinkSelector();
+$productAttributeName = $block->getProductAttributeName();
+$searchIdAttribute = $block->getSearchIdAttribute();
 $productsData = $block->getProducts();
 $currentPage = $block->getCurrentPage();
 $pageSize = $block->getCurrentPageSize();
@@ -31,6 +32,7 @@ $pageSize = $block->getCurrentPageSize();
                 "productLinksSelector": "<?=$productLinkSelector ?>",
                 "products": <?=json_encode($productsData)?>,
                 "attributeName": "<?=$productAttributeName ?>",
+                "searchIdAttribute": "<?=$searchIdAttribute ?>",
                 "debug": <?=$block->config->isDebugModeEnabled() ? 'true' : 'false'?>,
                 "currentPage": <?=$currentPage?>,
                 "pageSize": <?=$pageSize?>

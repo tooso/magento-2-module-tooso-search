@@ -139,6 +139,10 @@
                     <label>Product link attribute with product SKU</label>
                     <comment><![CDATA[This needs a manual change on product list template to print this custom attribute with product's SKU]]></comment>
                 </field>
+                <field id="search_id_attribute" translate="label" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product link attribute with search id</label>
+                    <comment><![CDATA[This needs a manual change on product list template to print this custom attribute with search id]]></comment>
+                </field>
             </group>
             <group id="indexer" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Indexer Configuration</label>

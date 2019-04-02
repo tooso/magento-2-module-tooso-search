@@ -186,6 +186,26 @@ To do this edit your theme file `view/frontend/templates/product/list.phtml`, in
   <!-- here the product details -->
 ```
 
+If you are using an AJAX pagination approach (for example an infinite scrolling loading) you also have to add an attribute `data-search-id` on the `a` tag with the product's link.
+In order to to this edit your theme file `view/frontend/templates/product/list.phtml` to load the Tooso Search ID value from registry key `tooso_search_response` (available from `\Bitbull\Tooso\Model\Service\Search::SEARCH_RESULT_REGISTRY_KEY` class constant), 
+in this way:
+```php
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+/** @var \Tooso\SDK\Search\Result $searchResult */
+$searchResult = $objectManager->get('Magento\Framework\Registry')->registry(\Bitbull\Tooso\Model\Service\Search::SEARCH_RESULT_REGISTRY_KEY);
+?>
+
+<!-- your product collection loop -->
+
+<a href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>" data-product-sku="<?= $block->escapeHtml($_product->getSku()) ?>" data-search-id="<?= $searchResult->getSearchId() ?>" class="product photo product-item-photo" tabindex="-1">
+    <?= $productImage->toHtml() ?>
+</a>
+<div class="product details product-item-details">
+  <!-- here the product details -->
+```
+Obviously, this is just an example, is better to inject `Magento\Framework\Registry` dependency in your product's list controller using the [DI approach](https://devdocs.magento.com/guides/v2.2/extension-dev-guide/depend-inj.html).
+
 ### Suggestion frontend
 
 This module can provide a suggestion on the search input, when you enable this feature you have to remove the default Magento suggestions system.

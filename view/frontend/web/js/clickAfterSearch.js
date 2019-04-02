@@ -14,13 +14,13 @@ define([
     /**
      * Get element position
      *
-     * @param {*} element
+     * @param {String} sku
      * @param {*} parent
      * @return {Number}
      */
-    function getElementPosition(element, parent) {
-        var links = $(parent).find(config.productLinksSelector);
-        return links.toArray().indexOf(element);
+    function getElementPosition(sku, parent) {
+        var allSkus = $.unique($(parent).find(config.productLinksSelector).toArray().map((i) => $(i).attr(config.attributeName)));
+        return allSkus.indexOf(sku);
     }
 
     /**
@@ -32,6 +32,12 @@ define([
         var element = $(this);
         var linkValue = element.attr('href');
         var productSku = element.attr(config.attributeName);
+        var searchId = config.searchId;
+
+        if (config.searchIdAttribute && element.get(0).hasAttribute(config.searchIdAttribute)) {
+            searchId = element.attr(config.searchIdAttribute);
+            console.debug('Tooso: using search id '+searchId+' from element attribute '+config.searchIdAttribute);
+        }
 
         if (config.debug) {
             console.debug('Tooso: click after search captured');
@@ -56,7 +62,7 @@ define([
         if (product === undefined) {
             product = {
                 id: productSku,
-                position: getElementPosition(element.get(0), event.data.parent) + (config.pageSize * (config.currentPage - 1))
+                position: getElementPosition(sku, event.data.parent) + (config.pageSize * (config.currentPage - 1))
             }
         }
         ta('ec:addProduct', product);
@@ -64,22 +70,40 @@ define([
             console.debug('Tooso: tracked product:', product);
         }
         ta('ec:setAction', 'click', {
-            'list': config.searchId
+            'list': searchId
         });
 
-        var timeout = setTimeout(function () {
-            console.warn('Tooso: tracking system does not respond in time');
-            document.location.href = linkValue; // fallback in case the library did not respond in time
-        }, 1000);
+        var needRedirect = (event.metaKey || event.altKey || event.ctrlKey) === false;
+
+        var timeout = null;
+        if (needRedirect) {
+            setTimeout(function () {
+                console.warn('Tooso: tracking system does not respond in time');
+                document.location.href = linkValue; // fallback in case the library did not respond in time
+            }, 1000);
+        }
+
         ta('send', 'event', 'cart', 'click', {
             hitCallback: function () {
-                clearTimeout(timeout);
                 if (config.debug) {
-                    console.debug('Tooso: redirecting to ' + linkValue);
+                    console.debug('Tooso: click after search tracked');
                 }
-                document.location.href = linkValue;
+                if (needRedirect) {
+                    if (timeout !== null) {
+                        clearTimeout(timeout);
+                    }
+                    if (config.debug) {
+                        console.debug('Tooso: redirecting to ' + linkValue);
+                    }
+                    document.location.href = linkValue;
+                }
             },
         });
+
+        // We have to allow users to open links in a new window
+        if (needRedirect === false) {
+            return
+        }
 
         // Prevent default click behaviour
         event.preventDefault();

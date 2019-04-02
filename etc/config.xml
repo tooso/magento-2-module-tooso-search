@@ -37,6 +37,7 @@
                 <product_link_selector>.product-item-info > a.product</product_link_selector>
                 <product_container_selector>#maincontent</product_container_selector>
                 <product_link_attribute>data-product-sku</product_link_attribute>
+                <search_id_attribute>data-search-id</search_id_attribute>
             </analytics>
             <suggestion>
                 <include_library>0</include_library>

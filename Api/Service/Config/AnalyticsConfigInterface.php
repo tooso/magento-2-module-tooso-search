@@ -67,6 +67,13 @@ interface AnalyticsConfigInterface
     public function getProductAttributeName();
 
     /**
+     * Get search id attribute
+     *
+     * @return string|null
+     */
+    public function getSearchIdAttribute();
+
+    /**
      * Is library included
      *
      * @return boolean
