@@ -58,7 +58,7 @@ class GalleryEnricher implements EnricherInterface
         foreach ($productsCollection as $product) {
             $dataIndex = array_search($product->getId(), $ids, true);
             if ($dataIndex === -1) {
-                return; // this shouldn't happen
+                continue; // this shouldn't happen
             }
 
             $this->galleryReadHandler->execute($product);

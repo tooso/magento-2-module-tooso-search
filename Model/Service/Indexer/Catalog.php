@@ -63,6 +63,7 @@ class Catalog implements CatalogInterface
     public function execute($ids = null)
     {
         if ($ids === null) {
+            $this->logger->info('[Reindex catalog] Executing full reindex..');
             $ids = [];
             $productsCollection = $this->productCollectionFactory->create()
                 ->addAttributeToSelect('entity_id')
@@ -74,9 +75,11 @@ class Catalog implements CatalogInterface
             }
         }
 
-        if (is_array($ids) && sizeof($ids) === 0) {
+        if (\is_array($ids) && sizeof($ids) === 0) {
+            $this->logger->warn('[Reindex catalog] Provided an empty set of ids, skipping logic');
             return;
         }
+        $this->logger->info('[Reindex catalog] Start reindex for '.sizeof($ids).' entities');
 
         $stores = $this->indexerConfig->getStores();
 
@@ -94,11 +97,14 @@ class Catalog implements CatalogInterface
             $attributes = $this->indexerConfig->getAttributes();
             array_walk($this->enrichers, function ($enricher) use (&$data, $attributes) {
 
+                $this->logger->debug('[Reindex catalog] Executing enricher ' . \get_class($enricher) . '..');
+
                 if (sizeof($data) === 0) {
-                    throw new \UnexpectedValueException('No data provided to enricher');  //TODO: use a proper exception
+                    throw new \UnexpectedValueException('No data provided to enricher');
                 }
 
                 if (sizeof(array_intersect($enricher->getEnrichedKeys(), $attributes)) === 0) {
+                    $this->logger->warn('[Reindex catalog] Enricher ' . \get_class($enricher) . ' not using the correct attributes');
                     return;
                 }
 
@@ -109,7 +115,7 @@ class Catalog implements CatalogInterface
                 }
 
                 $data = $enricher->execute($data); // TODO: pass store id
-
+                $this->logger->debug('[Reindex catalog] Enricher ' . \get_class($enricher) . ' executed!');
             });
 
             // Now $data is enriched, store it
@@ -117,6 +123,6 @@ class Catalog implements CatalogInterface
             $this->catalogIndexFlat->storeData($data, $storeId);
         }
 
-
+        $this->logger->info('[Reindex catalog] Reindex executed!');
     }
 }

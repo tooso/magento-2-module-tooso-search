@@ -52,12 +52,17 @@ class SendStockIndexData extends Action
      */
     public function execute()
     {
-        $this->logger->debug('[DataSender Stock] Request stock data send..');
-        $this->dataSender->sendStock();
-        $this->logger->debug('[DataSender Stock] Done!');
+        $this->logger->debug('[DataSender Stock] Request catalog data send..');
+        $isSuccess = $this->dataSender->sendStock();
 
         /** @var \Magento\Framework\Controller\Result\Json $result */
         $result = $this->resultJsonFactory->create();
+
+        if ($isSuccess === false) {
+            return $result->setHttpResponseCode(500);
+        }
+
+        $this->logger->debug('[DataSender Stock] Done!');
         return $result->setData(['status' => 'ok']);
     }
 

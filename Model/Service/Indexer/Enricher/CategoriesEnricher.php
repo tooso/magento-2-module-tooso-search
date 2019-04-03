@@ -56,7 +56,7 @@ class CategoriesEnricher implements EnricherInterface
         foreach ($productsCollection as $product) {
             $dataIndex = array_search($product->getId(), $ids, true);
             if ($dataIndex === -1) {
-                return; // this shouldn't happen
+                continue; // this shouldn't happen
             }
 
             $data[$dataIndex][self::CATEGORIES_ATTRIBUTE] = implode(self::CATEGORIES_ATTRIBUTE_SEPARATOR, $this->getProductCategories($product));

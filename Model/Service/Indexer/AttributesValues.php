@@ -36,7 +36,7 @@ class AttributesValues implements AttributesValuesInterface
     protected $attributesCollectionFactory;
 
     /**
-     * @var StoreManagerInterfac
+     * @var StoreManagerInterface
      */
     protected $storeManager;
 
@@ -71,6 +71,7 @@ class AttributesValues implements AttributesValuesInterface
         $attributesConfigured = $this->indexerConfig->getAttributesWithoutCustoms();
 
         if ($ids === null) {
+            $this->logger->info('[Reindex attributes] Executing full reindex..');
             $attributesCollection = $this->attributesCollectionFactory->create()
                 ->addFieldToFilter('attribute_code', $attributesConfigured)
                 ->addFieldToFilter('frontend_input', [
@@ -88,8 +89,10 @@ class AttributesValues implements AttributesValuesInterface
         }
 
         if ($attributesCollection->getSize() === 0) {
+            $this->logger->warn('[Reindex attributes] No attributes to reindex, skipping logic');
             return;
         }
+        $this->logger->info('[Reindex attributes] Start reindex for '.$attributesCollection->getSize().' attributes');
 
         $stores = $this->indexerConfig->getStores();
 
@@ -120,6 +123,6 @@ class AttributesValues implements AttributesValuesInterface
             $this->attributesValuesIndexFlat->storeData($data, $storeId);
         }
 
-
+        $this->logger->info('[Reindex attributes] Reindex executed!');
     }
 }

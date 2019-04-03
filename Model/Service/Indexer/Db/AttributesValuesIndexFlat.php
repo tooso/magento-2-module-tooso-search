@@ -79,7 +79,6 @@ class AttributesValuesIndexFlat
      *
      * @param integer $storeId
      * @return array|null
-     * @throws \Exception
      */
     public function extractData($storeId)
     {
@@ -98,7 +97,7 @@ class AttributesValuesIndexFlat
 
         if (sizeof($data) === 0) {
             $this->logger->error('No data into '.self::TABLE_NAME.', reindex is required');
-            return null;
+            return [];
         }
 
         return array_merge([$headers], $data);

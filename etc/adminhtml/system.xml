@@ -28,6 +28,14 @@
                     <!--<frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendStockIndexDataButton</frontend_model>-->
                     <!--<label>Send stock index data</label>-->
                 <!--</field>-->
+                <field id="clean_log_btn" translate="label comment" type="button" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\CleanLogButton</frontend_model>
+                    <label>Clean log file</label>
+                </field>
+                <field id="download_log_btn" translate="label comment" type="button" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\DownloadLogButton</frontend_model>
+                    <label>Download log file</label>
+                </field>
             </group>
             <group id="active" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Active Tooso</label>
@@ -138,6 +146,10 @@
                 <field id="product_link_attribute" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Product link attribute with product SKU</label>
                     <comment><![CDATA[This needs a manual change on product list template to print this custom attribute with product's SKU]]></comment>
+                </field>
+                <field id="search_id_attribute" translate="label" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product link attribute with search id</label>
+                    <comment><![CDATA[This needs a manual change on product list template to print this custom attribute with search id]]></comment>
                 </field>
             </group>
             <group id="indexer" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">

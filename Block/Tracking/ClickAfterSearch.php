@@ -105,6 +105,16 @@ class ClickAfterSearch extends \Magento\Framework\View\Element\Template implemen
     }
 
     /**
+     * Get product link search id attribute name
+     *
+     * @return string
+     */
+    public function getSearchIdAttribute()
+    {
+        return $this->analyticsConfig->getSearchIdAttribute();
+    }
+
+    /**
      * @inheritdoc
      */
     public function getScriptId()
