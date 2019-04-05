@@ -191,6 +191,16 @@ class ClickAfterSearch extends \Magento\Framework\View\Element\Template implemen
     }
 
     /**
+     * Get pagination type
+     *
+     * @return integer
+     */
+    public function getPaginationType()
+    {
+        return $this->analyticsConfig->getPaginationType();
+    }
+
+    /**
      * @inheritdoc
      */
     public function _toHtml()

@@ -18,6 +18,7 @@ class AnalyticsConfig implements AnalyticsConfigInterface
     const XML_PATH_ANALYTICS_PRODUCT_CONTAINER_SELECTOR = 'tooso/analytics/product_container_selector';
     const XML_PATH_ANALYTICS_PRODUCT_ATTRIBUTE = 'tooso/analytics/product_link_attribute';
     const XML_PATH_ANALYTICS_SEARCH_ID_ATTRIBUTE = 'tooso/analytics/search_id_attribute';
+    const XML_PATH_ANALYTICS_PAGINATION_TYPE = 'tooso/analytics/pagination_type';
     const XML_PATH_ANALYTICS_DEBUG_MODE = 'tooso/analytics/debug_mode';
     const XML_PATH_ANALYTICS_COOKIE_DOMAIN = 'tooso/analytics/cookie_domain';
     const XML_PATH_ANALYTICS_TRACK_USERID = 'tooso/analytics/track_userid';
@@ -134,6 +135,14 @@ class AnalyticsConfig implements AnalyticsConfigInterface
     public function getSearchIdAttribute()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_ANALYTICS_SEARCH_ID_ATTRIBUTE);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPaginationType()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_ANALYTICS_PAGINATION_TYPE);
     }
 
     /**
