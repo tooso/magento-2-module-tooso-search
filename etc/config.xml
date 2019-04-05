@@ -38,6 +38,7 @@
                 <product_container_selector>#maincontent</product_container_selector>
                 <product_link_attribute>data-product-sku</product_link_attribute>
                 <search_id_attribute>data-search-id</search_id_attribute>
+                <pagination_type>no-ajax</pagination_type>
             </analytics>
             <suggestion>
                 <include_library>0</include_library>
