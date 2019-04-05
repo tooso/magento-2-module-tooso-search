@@ -56,13 +56,12 @@ define([
             return;
         }
 
-        elaboratePaginationFromURL();
-
         var product = config.products[productSku];
         if (product === undefined) {
+            elaboratePaginationFromURL();
             product = {
                 id: productSku,
-                position: getElementPosition(sku, event.data.parent) + (config.pageSize * (config.currentPage - 1))
+                position: getElementPosition(productSku, event.data.parent) + (config.pageSize * (config.currentPage - 1))
             }
         }
         ta('ec:addProduct', product);
