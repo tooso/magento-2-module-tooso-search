@@ -15,6 +15,7 @@ $searchIdAttribute = $block->getSearchIdAttribute();
 $productsData = $block->getProducts();
 $currentPage = $block->getCurrentPage();
 $pageSize = $block->getCurrentPageSize();
+$paginationType = $block->getPaginationType();
 ?>
 
 <?php if ($block->config->isDebugModeEnabled()): ?>
@@ -35,7 +36,8 @@ $pageSize = $block->getCurrentPageSize();
                 "searchIdAttribute": "<?=$searchIdAttribute ?>",
                 "debug": <?=$block->config->isDebugModeEnabled() ? 'true' : 'false'?>,
                 "currentPage": <?=$currentPage?>,
-                "pageSize": <?=$pageSize?>
+                "pageSize": <?=$pageSize?>,
+                "paginationType": "<?=$paginationType?>"
             }
         }
     }

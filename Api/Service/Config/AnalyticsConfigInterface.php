@@ -74,6 +74,13 @@ interface AnalyticsConfigInterface
     public function getSearchIdAttribute();
 
     /**
+     * Get pagination type
+     *
+     * @return string|null
+     */
+    public function getPaginationType();
+
+    /**
      * Is library included
      *
      * @return boolean

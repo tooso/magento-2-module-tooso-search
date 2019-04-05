@@ -52,17 +52,25 @@ define([
             return;
         }
         if (productSku === null || productSku === undefined) {
-            console.warn('Tooso: product link does not have the attribute '.config.attributeName);
+            console.warn('Tooso: product link does not have the attribute '+config.attributeName);
             return;
         }
 
-        elaboratePaginationFromURL();
-
         var product = config.products[productSku];
         if (product === undefined) {
+            if (config.paginationType && config.paginationType !== 'no-ajax') {
+                if (config.paginationType === 'ajax-pagination') {
+                    elaboratePaginationFromURL();
+                }
+                if (config.paginationType === 'ajax-infinite-scroll') {
+                    config.pageSize = 0;
+                    config.currentPage = 1;
+                }
+            }
+
             product = {
                 id: productSku,
-                position: getElementPosition(sku, event.data.parent) + (config.pageSize * (config.currentPage - 1))
+                position: getElementPosition(productSku, event.data.parent) + (config.pageSize * (config.currentPage - 1))
             }
         }
         ta('ec:addProduct', product);
