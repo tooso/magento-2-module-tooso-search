@@ -12,17 +12,35 @@ use \Tooso\SDK\Log\LoggerInterface as SDKLoggerInterface;
 interface LoggerInterface extends SDKLoggerInterface
 {
     /**
+     * Logging facility
+     *
      * @param string $message
+     * @param int $level
+     * @param array $context
      */
-    public function error($message);
+    public function log($message, $level = null, $context = []);
 
     /**
      * @param string $message
+     * @param array $context
      */
-    public function warn($message);
+    public function debug($message, $context = []);
 
     /**
      * @param string $message
+     * @param array $context
      */
-    public function info($message);
+    public function error($message, $context = []);
+
+    /**
+     * @param string $message
+     * @param array $context
+     */
+    public function warn($message, $context = []);
+
+    /**
+     * @param string $message
+     * @param array $context
+     */
+    public function info($message, $context = []);
 }
