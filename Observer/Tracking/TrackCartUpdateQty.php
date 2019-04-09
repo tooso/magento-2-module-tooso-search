@@ -64,6 +64,13 @@ class TrackCartUpdateQty implements ObserverInterface
 
         foreach ($items as $item) {
             $qtyFrom = $item->getQty();
+            if (!isset($info[$item->getId()]) || !isset($info[$item->getId()]['qty'])) {
+                $this->logger->warn('[cart tracking update] Invalid observer data: '.$item->getId().' not found in infos, tracking skipped', [
+                    'info' => $info,
+                    'item' => $item->getId()
+                ]);
+                continue;
+            }
             $qtyTo = $info[$item->getId()]['qty'];
             $qtyDiff = round($qtyTo) - round($qtyFrom);
 
@@ -74,7 +81,7 @@ class TrackCartUpdateQty implements ObserverInterface
             }else if($qtyDiff < 0){
                 $event = 'remove';
             }else{
-                $this->logger->warn('[cart tracking update] Product "'. $item->getName() .'" has no changes, qty delta is 0, skipping..');
+                $this->logger->warn('[cart tracking update] Product "'. $item->getName() .'" has no changes, qty delta is 0, tracking skipped');
                 continue;
             }
 

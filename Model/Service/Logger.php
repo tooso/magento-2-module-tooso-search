@@ -32,12 +32,12 @@ class Logger implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public function log($message, $level = null)
+    public function log($message, $level = null, $context = [])
     {
         if ($level === null) {
             $level = Monolog::INFO;
         }
-        $this->logger->log($level, $message);
+        $this->logger->log($level, $message, $context);
     }
 
     /**
@@ -45,46 +45,46 @@ class Logger implements LoggerInterface
      */
     public function logException(Exception $e)
     {
-        $this->log($e->__toString(), Monolog::ERROR);
+        $this->log($e->__toString(), Monolog::CRITICAL, $e->getTrace());
     }
 
     /**
      * @inheritdoc
      */
-    public function debug($message)
+    public function debug($message, $context = [])
     {
         if ($this->config->isDebugModeEnabled()) {
-            $this->log($message, Monolog::DEBUG);
+            $this->log($message, Monolog::DEBUG, $context);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function error($message)
+    public function error($message, $context = [])
     {
         if ($this->config->isDebugModeEnabled()) {
-            $this->log($message, Monolog::ERROR);
+            $this->log($message, Monolog::ERROR, $context);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function warn($message)
+    public function warn($message, $context = [])
     {
         if ($this->config->isDebugModeEnabled()) {
-            $this->log($message, Monolog::ERROR);
+            $this->log($message, Monolog::WARNING, $context);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function info($message)
+    public function info($message, $context = [])
     {
         if ($this->config->isDebugModeEnabled()) {
-            $this->log($message, Monolog::INFO);
+            $this->log($message, Monolog::INFO, $context);
         }
     }
 }
