@@ -285,7 +285,12 @@ class Tracking implements TrackingInterface
      */
     public function getRemoteAddr()
     {
-        return $this->request->getClientIp(true);
+        $remoteAddr = $this->request->getClientIp(true);
+        if (strpos($remoteAddr, ',') !== false){
+            $remoteAddrParts = explode(',', $remoteAddr);
+            $remoteAddr = $remoteAddrParts[0];
+        }
+        return $remoteAddr;
     }
 
     /**
