@@ -192,7 +192,7 @@ class Tracking implements TrackingInterface
     {
         $params = [
             'uip' => $this->getRemoteAddr(),
-            'ua' => $this->getUserAgent(),
+            'ua' => $this->getUserAgent() || 'unknown',
             'cid' => $this->session->getClientId(),
             'dr' => $this->getLastPage(),
             'dl' => $this->getCurrentPage(),
@@ -286,7 +286,7 @@ class Tracking implements TrackingInterface
     public function getRemoteAddr()
     {
         $remoteAddr = $this->request->getClientIp(true);
-        if (strpos($remoteAddr, ',') !== false){
+        if ($remoteAddr !== null && strpos($remoteAddr, ',') !== false){
             $remoteAddrParts = explode(',', $remoteAddr);
             $remoteAddr = $remoteAddrParts[0];
         }
