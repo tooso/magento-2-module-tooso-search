@@ -192,7 +192,7 @@ class Tracking implements TrackingInterface
     {
         $params = [
             'uip' => $this->getRemoteAddr(),
-            'ua' => $this->getUserAgent() || 'unknown',
+            'ua' => $this->getUserAgent(),
             'cid' => $this->session->getClientId(),
             'dr' => $this->getLastPage(),
             'dl' => $this->getCurrentPage(),
@@ -298,7 +298,11 @@ class Tracking implements TrackingInterface
      */
     public function getUserAgent()
     {
-        return $this->httpHeader->getHttpUserAgent();
+        $userAgent = $this->httpHeader->getHttpUserAgent();
+        if ($userAgent === null) {
+            $userAgent = 'unknown';
+        }
+        return $userAgent;
     }
 
     /**
