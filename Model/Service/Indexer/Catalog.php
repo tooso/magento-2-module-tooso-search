@@ -7,6 +7,7 @@ use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
 use Bitbull\Tooso\Model\Service\Indexer\Db\CatalogIndexFlat;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Catalog implements CatalogInterface
 {
@@ -36,10 +37,16 @@ class Catalog implements CatalogInterface
     protected $productCollectionFactory;
 
     /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
      * @var LoggerInterface $logger
      * @var IndexerConfigInterface $indexerConfig
      * @var CatalogIndexFlat $catalogIndexFlat
      * @var ProductCollectionFactory $productCollectionFactory
+     * @var StoreManagerInterface $storeManager
      * @var EnricherInterface[] $enrichers
      */
     public function __construct(
@@ -47,6 +54,7 @@ class Catalog implements CatalogInterface
         IndexerConfigInterface $indexerConfig,
         CatalogIndexFlat $catalogIndexFlat,
         ProductCollectionFactory $productCollectionFactory,
+        StoreManagerInterface $storeManager,
         array $enrichers
     )
     {
@@ -54,6 +62,7 @@ class Catalog implements CatalogInterface
         $this->indexerConfig = $indexerConfig;
         $this->catalogIndexFlat = $catalogIndexFlat;
         $this->productCollectionFactory = $productCollectionFactory;
+        $this->storeManager = $storeManager;
         $this->enrichers = $enrichers;
     }
 
@@ -92,6 +101,10 @@ class Catalog implements CatalogInterface
                 ];
             }, array_values($ids));
 
+            // Force store change
+
+            $this->storeManager->setCurrentStore($storeId);
+
             // Run enrichers
 
             $attributes = $this->indexerConfig->getAttributes();
@@ -114,7 +127,7 @@ class Catalog implements CatalogInterface
                     throw new \UnexpectedValueException('An other enricher did the same job, collision keys are: '.implode(',', $collisionKeys)); //TODO: use a proper exception
                 }
 
-                $data = $enricher->execute($data); // TODO: pass store id
+                $data = $enricher->execute($data);
                 $this->logger->debug('[Reindex catalog] Enricher ' . \get_class($enricher) . ' executed!');
             });
 
