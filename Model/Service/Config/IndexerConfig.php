@@ -6,6 +6,7 @@ use Bitbull\Tooso\Api\Service\Config\IndexerConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Bitbull\Tooso\Model\Adminhtml\System\Config\Source\Attributes as SourceAttributes;
 use Bitbull\Tooso\Model\Adminhtml\System\Config\Source\SimpleAttributes as SourceSimpleAttributes;
+use Magento\Store\Model\StoreManagerInterface;
 
 class IndexerConfig implements IndexerConfigInterface
 {
@@ -34,17 +35,29 @@ class IndexerConfig implements IndexerConfigInterface
     protected $sourceSimpleAttributes;
 
     /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
      * Config constructor.
      *
      * @param ScopeConfigInterface $scopeConfig
      * @param SourceAttributes $sourceAttributes
      * @param SourceSimpleAttributes $sourceSimpleAttributes
+     * @param StoreManagerInterface $storeManager
      */
-    public function __construct(ScopeConfigInterface $scopeConfig, SourceAttributes $sourceAttributes, SourceSimpleAttributes $sourceSimpleAttributes)
+    public function __construct(
+        ScopeConfigInterface $scopeConfig,
+        SourceAttributes $sourceAttributes,
+        SourceSimpleAttributes $sourceSimpleAttributes,
+        StoreManagerInterface $storeManager
+    )
     {
         $this->scopeConfig = $scopeConfig;
         $this->sourceAttributes = $sourceAttributes;
         $this->sourceSimpleAttributes = $sourceSimpleAttributes;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -55,6 +68,11 @@ class IndexerConfig implements IndexerConfigInterface
         $value = $this->scopeConfig->getValue(self::XML_PATH_INDEXER_STORES);
         if ($value === null) {
             $value = [];
+        }
+        if ((int) $value === 0) { // 0 is the value for "all stores"
+            return array_map(static function ($store) {
+                return $store->getId();
+            }, $this->storeManager->getStores());
         }
         return explode(',', $value);
     }
