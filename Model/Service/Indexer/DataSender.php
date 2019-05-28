@@ -105,6 +105,10 @@ class DataSender implements DataSenderInterface
 
         $this->logger->info('[catalog export] Start exporting data for stores ' . implode(',', $storeIds) . '..');
 
+        $headers = $this->indexerConfig->getAttributes();
+        array_unshift($headers, 'id');
+        sort($headers);
+
         foreach ($storeIds as $storeId) {
             $this->storeManager->setCurrentStore($storeId);
 
@@ -112,7 +116,8 @@ class DataSender implements DataSenderInterface
 
             // Export catalog
 
-            $catalogData = $this->catalogIndexFlat->extractData($storeId);
+
+            $catalogData = $this->catalogIndexFlat->extractData($storeId, $headers);
             if ($catalogData === null) {
                 $this->logger->warn("[catalog export] An error occurred during store $storeId catalog data extract, skipping..");
                 continue;
