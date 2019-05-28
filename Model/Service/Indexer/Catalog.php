@@ -82,6 +82,10 @@ class Catalog implements CatalogInterface
             foreach ($productsCollection as $product) {
                 $ids[] = $product->getId();
             }
+
+            $this->logger->info('[Reindex catalog] Deleting all data from flat table..');
+            $this->catalogIndexFlat->truncateData();
+            $this->logger->info('[Reindex catalog] All data deleted');
         }
 
         if (\is_array($ids) && sizeof($ids) === 0) {

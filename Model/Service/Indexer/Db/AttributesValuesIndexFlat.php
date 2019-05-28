@@ -46,6 +46,7 @@ class AttributesValuesIndexFlat
      * @param array $data
      * @param integer $storeId
      * @return boolean
+     * @throws \Exception
      */
     public function storeData($data, $storeId)
     {
@@ -101,5 +102,34 @@ class AttributesValuesIndexFlat
         }
 
         return array_merge([$headers], $data);
+    }
+
+    /**
+     * Delete all data from flat table
+     *
+     * @param integer|null $storeId
+     * @return boolean
+     */
+    public function truncateData($storeId = null)
+    {
+        $tableName = $this->resource->getTableName(self::TABLE_NAME);
+
+        if ($storeId === null) {
+            try {
+                $this->connection->truncateTable($tableName);
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage());
+                return false;
+            }
+            return true;
+        }
+
+        try {
+            $this->connection->delete($tableName, ['store_id' => $storeId]);
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+            return false;
+        }
+        return true;
     }
 }

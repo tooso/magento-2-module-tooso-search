@@ -78,6 +78,9 @@ class AttributesValues implements AttributesValuesInterface
                     'select',
                     'multiselect'
                 ]);
+            $this->logger->info('[Reindex attributes] Deleting all data from flat table..');
+            $this->attributesValuesIndexFlat->truncateData();
+            $this->logger->info('[Reindex attributes] All data deleted');
         } else {
             $attributesCollection = $this->attributesCollectionFactory->create()
                 ->addFieldToFilter('attribute_id', $ids)

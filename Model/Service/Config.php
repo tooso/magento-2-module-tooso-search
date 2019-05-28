@@ -50,7 +50,7 @@ class Config implements ConfigInterface
             return $currentLocaleCode;
         }
 
-        return $this->scopeConfig->getValue(self::XML_PATH_GENERAL_LOCALE_CODE);
+        return $this->scopeConfig->getValue(self::XML_PATH_GENERAL_LOCALE_CODE, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**

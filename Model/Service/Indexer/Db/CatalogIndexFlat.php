@@ -55,6 +55,7 @@ class CatalogIndexFlat
      * @param array $data
      * @param integer $storeId
      * @return boolean
+     * @throws \Exception
      */
     public function storeData($data, $storeId)
     {
@@ -88,9 +89,10 @@ class CatalogIndexFlat
      * Extract data from database flat table
      *
      * @param integer $storeId
+     * @param array $headers
      * @return array|null
      */
-    public function extractData($storeId)
+    public function extractData($storeId, $headers)
     {
         try {
             $tableName = $this->resource->getTableName(self::TABLE_NAME);
@@ -106,10 +108,42 @@ class CatalogIndexFlat
             return [];
         }
 
-        $headers = array_keys($this->serializerJson->unserialize($data[0]['data']));
-
-        return array_merge([$headers], array_map(function ($item){
-            return $this->serializerJson->unserialize($item['data']);
+        return array_merge([$headers], array_map(function ($item) use ($headers){
+            $unSerializedItem = $this->serializerJson->unserialize($item['data']);
+            $resultItem = [];
+            foreach ($headers as $header) {
+                $resultItem[$header] = isset($unSerializedItem[$header]) ? $unSerializedItem[$header] : null;
+            }
+            return $resultItem;
         }, $data));
+    }
+
+    /**
+     * Delete all data from flat table
+     *
+     * @param integer|null $storeId
+     * @return boolean
+     */
+    public function truncateData($storeId = null)
+    {
+        $tableName = $this->resource->getTableName(self::TABLE_NAME);
+
+        if ($storeId === null) {
+            try {
+                $this->connection->truncateTable($tableName);
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage());
+                return false;
+            }
+            return true;
+        }
+
+        try {
+            $this->connection->delete($tableName, ['store_id' => $storeId]);
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+            return false;
+        }
+        return true;
     }
 }

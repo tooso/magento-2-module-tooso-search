@@ -5,7 +5,6 @@ namespace Bitbull\Tooso\Model\Service\Config;
 use Bitbull\Tooso\Api\Service\Config\SuggestionConfigInterface;
 use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
 class SuggestionConfig implements SuggestionConfigInterface
 {
@@ -30,11 +29,6 @@ class SuggestionConfig implements SuggestionConfigInterface
     protected $scopeConfig;
 
     /**
-     * @var StoreManagerInterface
-     */
-    protected $storeManager;
-
-    /**
      * @var ConfigInterface
      */
     protected $config;
@@ -43,16 +37,13 @@ class SuggestionConfig implements SuggestionConfigInterface
      * Config constructor.
      *
      * @param ScopeConfigInterface $scopeConfig
-     * @param StoreManagerInterface $storeManager
      * @param ConfigInterface $config
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        StoreManagerInterface $storeManager,
         ConfigInterface $config
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->storeManager = $storeManager;
         $this->config = $config;
     }
 
@@ -86,7 +77,7 @@ class SuggestionConfig implements SuggestionConfigInterface
             ]
         ];
 
-        $locale = $this->storeManager->getStore()->getLocaleCode();
+        $locale = $this->config->getLanguage();
         if($locale !== null){
             $data['language'] = strtolower($locale);
         }
