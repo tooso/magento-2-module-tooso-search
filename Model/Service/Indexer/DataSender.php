@@ -243,6 +243,7 @@ class DataSender implements DataSenderInterface
         $csvContent = stream_get_contents($f);
         fclose($f);
         $csvContent = rtrim($csvContent);
+        $csvContent = str_replace('\"', '\""', $csvContent); // Fix JSON interpolation for "
         return mb_convert_encoding($csvContent, 'UTF-8', mb_detect_encoding($csvContent, 'UTF-8, ISO-8859-1', true));
     }
 
