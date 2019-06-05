@@ -7,6 +7,7 @@ use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\Search\UrlRewriteSwitcherInterface;
 use Bitbull\Tooso\Api\Service\SearchInterface;
 use Bitbull\Tooso\Api\Service\SessionInterface;
+use Magento\CmsUrlRewrite\Model\CmsPageUrlRewriteGenerator;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
@@ -113,10 +114,18 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
                     $this->logger->debug("[url rewrite] Cannot find path '$urlPath' for store '".$redirectStore->getCode()."'");
                     return $redirectUrl;
                 }
-                $redirectRewrite = $this->urlFinder->findOneByData([
-                    UrlRewrite::TARGET_PATH => $currentRewrite->getTargetPath(),
-                    UrlRewrite::STORE_ID => $currentStore->getId(),
-                ]);
+                if ($currentRewrite->getEntityType() === CmsPageUrlRewriteGenerator::ENTITY_TYPE) {
+                    $this->logger->debug("[url rewrite] Path '$urlPath' is a CMS, not possible to retrieve translated page, searching for the same path");
+                    $redirectRewrite = $this->urlFinder->findOneByData([
+                        UrlRewrite::REQUEST_PATH => $urlPath,
+                        UrlRewrite::STORE_ID => $currentStore->getId(),
+                    ]);
+                }else{
+                    $redirectRewrite = $this->urlFinder->findOneByData([
+                        UrlRewrite::TARGET_PATH => $currentRewrite->getTargetPath(),
+                        UrlRewrite::STORE_ID => $currentStore->getId(),
+                    ]);
+                }
                 if ($redirectRewrite === null) {
                     $this->logger->debug("[url rewrite] Cannot find path '$urlPath' for store '".$currentStore->getCode()."'");
                     return $redirectUrl;
