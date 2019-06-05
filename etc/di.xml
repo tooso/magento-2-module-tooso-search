@@ -66,6 +66,9 @@
     <preference for="Bitbull\Tooso\Api\Service\Search\RequestParserInterface"
                 type="Bitbull\Tooso\Model\Service\Search\RequestParser" />
 
+    <preference for="Bitbull\Tooso\Api\Service\Search\UrlRewriteSwitcherInterface"
+                type="Bitbull\Tooso\Model\Service\Search\UrlRewriteSwitcher" />
+
     <preference for="Bitbull\Tooso\Api\Service\SessionInterface"
                 type="Bitbull\Tooso\Model\Service\Session" />
 
