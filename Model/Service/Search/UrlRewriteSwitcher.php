@@ -18,7 +18,8 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
 class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
 {
-    const REDIRECT_AUTO_STORE_QUERY = '___redirect=auto';
+    const REDIRECT_AUTO_STORE_QUERY = '___redirect';
+    const REDIRECT_AUTO_STORE_QUERY_VALUE = 'auto';
 
     /**
      * @var LoggerInterface
@@ -97,8 +98,15 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
      */
     public function elaborate($redirectUrl)
     {
+        // Check query string
         $queryString = parse_url($redirectUrl, PHP_URL_QUERY);
-        if ($queryString !== null && strpos($queryString, self::REDIRECT_AUTO_STORE_QUERY ) !== false) {
+        parse_str($queryString, $queryStringParts);
+        if (
+            $queryString !== null &&
+            isset($queryStringParts[self::REDIRECT_AUTO_STORE_QUERY]) &&
+            $queryStringParts[self::REDIRECT_AUTO_STORE_QUERY] === self::REDIRECT_AUTO_STORE_QUERY_VALUE
+        ) {
+            // Elaborate store code from path
             $urlPathParts = explode('/', ltrim(parse_url($redirectUrl, PHP_URL_PATH), '/'));
             $storeCodeRedirect = array_shift($urlPathParts);
             $urlPath = implode('/', $urlPathParts);
@@ -106,6 +114,7 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
                 $currentStore = $this->storeManager->getStore();
                 $redirectStore = $this->storeRepository->get($storeCodeRedirect);
 
+                // Get current rewrite
                 $currentRewrite = $this->urlFinder->findOneByData([
                     UrlRewrite::REQUEST_PATH => $urlPath,
                     UrlRewrite::STORE_ID => $redirectStore->getId(),
@@ -114,6 +123,8 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
                     $this->logger->debug("[url rewrite] Cannot find path '$urlPath' for store '".$redirectStore->getCode()."'");
                     return $redirectUrl;
                 }
+
+                // Get target rewrite
                 if ($currentRewrite->getEntityType() === CmsPageUrlRewriteGenerator::ENTITY_TYPE) {
                     $this->logger->debug("[url rewrite] Path '$urlPath' is a CMS, not possible to retrieve translated page, searching for the same path");
                     $redirectRewrite = $this->urlFinder->findOneByData([
@@ -130,7 +141,16 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
                     $this->logger->debug("[url rewrite] Cannot find path '$urlPath' for store '".$currentStore->getCode()."'");
                     return $redirectUrl;
                 }
-                return '/' . $currentStore->getCode() . '/' . $redirectRewrite->getRequestPath();
+
+                // Override redirect url
+                $redirectUrl = '/' . $currentStore->getCode() . '/' . $redirectRewrite->getRequestPath();
+
+                // Preserve query parameters
+                unset($queryStringParts[self::REDIRECT_AUTO_STORE_QUERY]);
+                if (sizeof($queryStringParts) > 0) {
+                    $redirectUrl .= '?'.http_build_query($queryStringParts);
+                }
+
             } catch (NoSuchEntityException $exception) {
                 $this->logger->error($exception->getMessage());
                 $this->logger->debug("[url rewrite] Store '$storeCodeRedirect' found in path is not a valid store code");
@@ -138,6 +158,8 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
         } else {
             $this->logger->debug("[url rewrite] Not found query '".self::REDIRECT_AUTO_STORE_QUERY."' for redirect '$redirectUrl', do not performing redirect");
         }
+
+        // Fallback
         return $redirectUrl;
     }
 }
