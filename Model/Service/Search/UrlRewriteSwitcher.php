@@ -120,7 +120,7 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
                         UrlRewrite::REQUEST_PATH => $urlPath,
                         UrlRewrite::STORE_ID => $currentStore->getId(),
                     ]);
-                }else{
+                } else {
                     $redirectRewrite = $this->urlFinder->findOneByData([
                         UrlRewrite::TARGET_PATH => $currentRewrite->getTargetPath(),
                         UrlRewrite::STORE_ID => $currentStore->getId(),
