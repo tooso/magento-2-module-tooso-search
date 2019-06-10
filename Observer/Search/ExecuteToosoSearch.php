@@ -2,6 +2,7 @@
 
 namespace Bitbull\Tooso\Observer\Search;
 
+use Bitbull\Tooso\Api\Service\Search\UrlRewriteSwitcherInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\App\ActionFlag;
@@ -39,21 +40,29 @@ class ExecuteToosoSearch implements ObserverInterface
     protected $actionFlag;
 
     /**
+     * @var UrlRewriteSwitcherInterface
+     */
+    protected $urlRewriteSwitcher;
+
+    /**
      * @param LoggerInterface $logger
      * @param ConfigInterface $config
      * @param SearchInterface $search
      * @param ActionFlag $actionFlag
+     * @param UrlRewriteSwitcherInterface $urlRewriteSwitcher
      */
     public function __construct(
         LoggerInterface $logger,
         ConfigInterface $config,
         SearchInterface $search,
-        ActionFlag $actionFlag
+        ActionFlag $actionFlag,
+        UrlRewriteSwitcherInterface $urlRewriteSwitcher
     ) {
         $this->logger = $logger;
         $this->config = $config;
         $this->search = $search;
         $this->actionFlag = $actionFlag;
+        $this->urlRewriteSwitcher = $urlRewriteSwitcher;
     }
 
     /**
@@ -88,11 +97,13 @@ class ExecuteToosoSearch implements ObserverInterface
 
         $this->logger->debug("[catalog search result observer] Performing redirect to '$redirect'");
 
+        // Check auto store redirect
+        $redirect = $this->urlRewriteSwitcher->elaborate($redirect);
+
         $this->actionFlag->set('', \Magento\Framework\App\Action\Action::FLAG_NO_DISPATCH, true);
         /** @var \Magento\CatalogSearch\Controller\Result\Index\Interceptor $controllerAction */
         $controllerAction = $observer->getControllerAction();
         $response = $controllerAction->getResponse();
         $response->setRedirect($redirect);
-
     }
 }
