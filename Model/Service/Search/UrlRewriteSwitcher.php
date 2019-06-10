@@ -98,6 +98,9 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
      */
     public function elaborate($redirectUrl)
     {
+        // Fallback with the same URL
+        $finalRedirect = $redirectUrl;
+
         // Check query string
         $queryString = parse_url($redirectUrl, PHP_URL_QUERY);
         if ($queryString !== null) {
@@ -121,7 +124,7 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
                     ]);
                     if ($currentRewrite === null) {
                         $this->logger->debug("[url rewrite] Cannot find path '$urlPath' for store '".$redirectStore->getCode()."'");
-                        return $redirectUrl;
+                        return $finalRedirect;
                     }
 
                     // Get target rewrite
@@ -139,16 +142,22 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
                     }
                     if ($redirectRewrite === null) {
                         $this->logger->debug("[url rewrite] Cannot find path '$urlPath' for store '".$currentStore->getCode()."'");
-                        return $redirectUrl;
+                        return $finalRedirect;
                     }
 
                     // Override redirect url
-                    $redirectUrl = '/' . $currentStore->getCode() . '/' . $redirectRewrite->getRequestPath();
+                    $finalRedirect = '/' . $currentStore->getCode() . '/' . $redirectRewrite->getRequestPath();
 
                     // Preserve query parameters
                     unset($queryStringParts[self::REDIRECT_AUTO_STORE_QUERY]);
                     if (sizeof($queryStringParts) > 0) {
-                        $redirectUrl .= '?'.http_build_query($queryStringParts);
+                        $finalRedirect .= '?'.http_build_query($queryStringParts);
+                    }
+
+                    // Preserve URL fragment
+                    $urlFragment = parse_url($redirectUrl, PHP_URL_FRAGMENT);
+                    if ($urlFragment !== null) {
+                        $finalRedirect .=  '#'.$urlFragment;
                     }
 
                 } catch (NoSuchEntityException $exception) {
@@ -162,7 +171,7 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
             $this->logger->debug("[url rewrite] No query string found for redirect '$redirectUrl', do not performing redirect manipulation");
         }
 
-        // Fallback
-        return $redirectUrl;
+        // Return redirect
+        return $finalRedirect;
     }
 }
