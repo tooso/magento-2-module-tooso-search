@@ -5,6 +5,7 @@
             <resource id="Magento_Backend::admin">
                 <resource id="Bitbull_Tooso::operations" title="Tooso Operations">
                     <resource id="Bitbull_Tooso::catalog_reindex" title="Execute Catalog Reindex"/>
+                    <resource id="Bitbull_Tooso::attributes_values_reindex" title="Execute Attributes Values Reindex"/>
                     <resource id="Bitbull_Tooso::send_catalog_data" title="Send Index Data"/>
                     <resource id="Bitbull_Tooso::send_stock_data" title="Send Stock Data"/>
                     <resource id="Bitbull_Tooso::clean_log" title="Clean Log"/>

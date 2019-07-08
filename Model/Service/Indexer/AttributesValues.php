@@ -83,6 +83,7 @@ class AttributesValues implements AttributesValuesInterface
             $this->logger->info('[Reindex attributes] All data deleted');
         } else {
             $attributesCollection = $this->attributesCollectionFactory->create()
+                ->addFilterToMap('attribute_id', 'main_table.attribute_id') // TODO: is really necessary?
                 ->addFieldToFilter('attribute_id', $ids)
                 ->addFieldToFilter('attribute_code', $attributesConfigured)
                 ->addFieldToFilter('frontend_input', [
@@ -91,11 +92,12 @@ class AttributesValues implements AttributesValuesInterface
                 ]);
         }
 
-        if ($attributesCollection->getSize() === 0) {
+        $attributesCount = $attributesCollection->getSize();
+        if ($attributesCount === 0) {
             $this->logger->warn('[Reindex attributes] No attributes to reindex, skipping logic');
             return;
         }
-        $this->logger->info('[Reindex attributes] Start reindex for '.$attributesCollection->getSize().' attributes');
+        $this->logger->info('[Reindex attributes] Start reindex for '.$attributesCount.' attributes');
 
         $stores = $this->indexerConfig->getStores();
 
