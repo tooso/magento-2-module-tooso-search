@@ -22,17 +22,22 @@
                 <field id="reindex_catalog_btn" translate="label comment" type="button" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
                     <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\CatalogReindexButton</frontend_model>
                     <label>Catalog reindex</label>
-                    <comment><![CDATA[This procedure will reindex Tooso catalog index, it is required when you change indexed attribute configuration]]></comment>
+                    <comment><![CDATA[This procedure will reindex Tooso catalog index, it is required when you change indexed attributes configuration]]></comment>
                 </field>
-                <!--<field id="send_stock_index_Data" translate="label comment" type="button" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">-->
+                <field id="reindex_attributes_btn" translate="label comment" type="button" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\AttributesReindexButton</frontend_model>
+                    <label>Attributes reindex</label>
+                    <comment><![CDATA[This procedure will reindex Tooso attributes values index, it is required when you change indexed attributes configuration]]></comment>
+                </field>
+                <!--<field id="send_stock_index_Data" translate="label comment" type="button" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">-->
                     <!--<frontend_model>Bitbull\Tooso\Block\Adminhtml\System\SendStockIndexDataButton</frontend_model>-->
                     <!--<label>Send stock index data</label>-->
                 <!--</field>-->
-                <field id="clean_log_btn" translate="label comment" type="button" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="clean_log_btn" translate="label comment" type="button" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
                     <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\CleanLogButton</frontend_model>
                     <label>Clean log file</label>
                 </field>
-                <field id="download_log_btn" translate="label comment" type="button" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="download_log_btn" translate="label comment" type="button" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
                     <frontend_model>Bitbull\Tooso\Block\Adminhtml\System\DownloadLogButton</frontend_model>
                     <label>Download log file</label>
                 </field>
