@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2019-07-09
+### Added
+- Add button in backend to trigger attributes values index reindex
+### Fixed
+- Fix error on attributes values index update
+
 ## [1.5.0] - 2019-06-10
 ### Added
 - Add redirect improvements to automatically switch store when "___redirect" query param is set to "auto"
