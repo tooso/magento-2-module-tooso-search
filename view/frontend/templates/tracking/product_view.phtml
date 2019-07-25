@@ -15,7 +15,7 @@ $trackingParameters = $block->getProductTrackingParams();
 
 <script id="<?=$block->getScriptId()?>" type="text/javascript">
     window.ToosoTrackingData = {
-        product: <?=json_encode($trackingProductParams);?>,
+        product: <?=json_encode($trackingParameters);?>,
         action: 'detail'
     };
 </script>
