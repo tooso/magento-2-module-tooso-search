@@ -99,12 +99,8 @@
         </arguments>
     </type>
 
-    <type name="Magento\Customer\CustomerData\SectionPoolInterface">
-        <arguments>
-            <argument name="sectionSourceMap" xsi:type="array">
-                <item name="tooso" xsi:type="string">Bitbull\Tooso\Plugin\CustomerData\AddDataForCustomerSection</item>
-            </argument>
-        </arguments>
+    <type name="Magento\Customer\CustomerData\Customer">
+        <plugin name="tooso_additional_section_data" type="Bitbull\Tooso\Plugin\CustomerData\AddDataForCustomerSection" />
     </type>
 
 </config>

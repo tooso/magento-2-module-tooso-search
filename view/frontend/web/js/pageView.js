@@ -8,11 +8,8 @@ define([
      * @param customerInfo
      */
     function executePageTracking(customerInfo) {
-        if (customerInfo && customerInfo.websiteId) {
-            console.log('Customer is logged in');
-            console.log(customerInfo);
-        } else {
-            console.log('Customer not logged in');
+        if (customerInfo && customerInfo.customerId) {
+            window.ta('set', 'userId', customerInfo.customerId);
         }
         window.ta('send', 'pageview');
     }

@@ -8,6 +8,7 @@ namespace Bitbull\Tooso\Plugin\CustomerData;
 
 use \Magento\Framework\DataObject;
 use Bitbull\Tooso\Api\Service\SessionInterface;
+use Magento\Customer\CustomerData\Customer\Interceptor as CustomerInterceptor;
 
 class AddDataForCustomerSection
 {
@@ -30,11 +31,11 @@ class AddDataForCustomerSection
     /**
      * Add data to customer
      *
-     * @param \Magento\Framework\DataObject $subject
+     * @param CustomerInterceptor $subject
      * @param array $result
      * @return array
      */
-    public function afterGetSectionData(DataObject $subject, $result)
+    public function afterGetSectionData(CustomerInterceptor $subject, $result)
     {
         $result['customerId'] = $this->getCustomerId();
 
