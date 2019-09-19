@@ -172,7 +172,6 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                     return $product['product_id'];
                 }, $this->search->getProducts());
 
-
                 if (sizeof($products) === 0) {
                     $this->logger->error('[search plugin] No product found with SKU response, check products with SKUs: '.implode(',', $searchResult->getResults()));
                     if ($this->search->isFallbackEnable()) {
@@ -186,8 +185,13 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
 
                 $this->logger->debug('[search plugin] Filter entity_id with ids: '.implode(',', $products));
 
-                if (strpos(get_class($collection), 'Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection') === 0) {
-                    $collection->addAttributeToFilter('entity_id', $products);
+                /**
+                 * Be compatible with both \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection and \Magento\Catalog\Model\ResourceModel\Product\Collection
+                 */
+                if ($collection instanceof \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection) {
+                    $collection->addAttributeToFilter('entity_id', [
+                        'in' => $products
+                    ]);
                 } else {
                     $collection->addFieldToFilter('entity_id', $products);
                 }
