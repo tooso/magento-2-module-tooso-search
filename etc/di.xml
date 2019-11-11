@@ -99,4 +99,8 @@
         </arguments>
     </type>
 
+    <type name="Magento\Customer\CustomerData\Customer">
+        <plugin name="tooso_additional_section_data" type="Bitbull\Tooso\Plugin\CustomerData\AddDataForCustomerSection" />
+    </type>
+
 </config>
