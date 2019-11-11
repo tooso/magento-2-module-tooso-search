@@ -3,23 +3,22 @@
     <body>
         <referenceContainer name="after.body.start">
             <!-- Tracking -->
-            <block class="Bitbull\Tooso\Block\Tracking\LibraryInit" cacheable="true" name="tooso_tracking_library_init" template="Bitbull_Tooso::tracking/library_init.phtml" ifconfig="tooso/active/tracking" />
-            <block class="Bitbull\Tooso\Block\Tracking\Library" cacheable="true" name="tooso_tracking_library" template="Bitbull_Tooso::tracking/library.phtml" ifconfig="tooso/active/tracking" />
+            <block class="Bitbull\Tooso\Block\Tracking\LibraryInit" name="tooso_tracking_library_init" template="Bitbull_Tooso::tracking/library_init.phtml" ifconfig="tooso/active/tracking" />
+            <block class="Bitbull\Tooso\Block\Tracking\Library" name="tooso_tracking_library" template="Bitbull_Tooso::tracking/library.phtml" ifconfig="tooso/active/tracking" />
             <!-- Suggestions -->
-            <block class="Bitbull\Tooso\Block\Suggestion\LibraryInit" cacheable="true" name="tooso_suggestion_library_init" template="Bitbull_Tooso::suggestion/library_init.phtml" ifconfig="tooso/active/suggestion" />
-            <block class="Bitbull\Tooso\Block\Suggestion\Library" cacheable="true" name="tooso_suggestion_library" template="Bitbull_Tooso::suggestion/library.phtml" ifconfig="tooso/active/suggestion" />
+            <block class="Bitbull\Tooso\Block\Suggestion\LibraryInit" name="tooso_suggestion_library_init" template="Bitbull_Tooso::suggestion/library_init.phtml" ifconfig="tooso/active/suggestion" />
+            <block class="Bitbull\Tooso\Block\Suggestion\Library" name="tooso_suggestion_library" template="Bitbull_Tooso::suggestion/library.phtml" ifconfig="tooso/active/suggestion" />
             <!-- SDK -->
-            <block class="Bitbull\Tooso\Block\Sdk\LibraryInit" cacheable="true" name="tooso_sdk_library_init" template="Bitbull_Tooso::sdk/library_init.phtml" />
-            <block class="Bitbull\Tooso\Block\Sdk\Library" cacheable="true" name="tooso_sdk_library" template="Bitbull_Tooso::sdk/library.phtml" />
+            <block class="Bitbull\Tooso\Block\Sdk\LibraryInit" name="tooso_sdk_library_init" template="Bitbull_Tooso::sdk/library_init.phtml" />
+            <block class="Bitbull\Tooso\Block\Sdk\Library" name="tooso_sdk_library" template="Bitbull_Tooso::sdk/library.phtml" />
             <!-- Skin -->
-            <block class="Bitbull\Tooso\Block\Skin\CustomCss" cacheable="true" name="tooso_skin_customcss" template="Bitbull_Tooso::skin/custom_css.phtml" ifconfig="tooso/skin_configuration/custom_css_enable" />
+            <block class="Bitbull\Tooso\Block\Skin\CustomCss" name="tooso_skin_customcss" template="Bitbull_Tooso::skin/custom_css.phtml" ifconfig="tooso/skin_configuration/custom_css_enable" />
         </referenceContainer>
         <referenceContainer name="before.body.end">
             <!-- Tracking -->
-            <block class="Bitbull\Tooso\Block\Tracking\CustomerTracking" cacheable="true" name="tooso_tracking_customer" template="Bitbull_Tooso::tracking/customer_tracking.phtml" ifconfig="tooso/active/tracking" />
-            <block class="Bitbull\Tooso\Block\Tracking\PageView" after="-" cacheable="true" name="tooso_tracking_pageview" template="Bitbull_Tooso::tracking/page_view.phtml" ifconfig="tooso/active/tracking" />
+            <block class="Bitbull\Tooso\Block\Tracking\PageView" after="-" name="tooso_tracking_pageview" template="Bitbull_Tooso::tracking/page_view.phtml" ifconfig="tooso/active/tracking" />
             <!-- SDK -->
-            <block class="Bitbull\Tooso\Block\Sdk\SpeechToTextTemplate" cacheable="true" name="tooso_speech_to_text_template" template="Bitbull_Tooso::sdk/speech_to_text_template.phtml" />
+            <block class="Bitbull\Tooso\Block\Sdk\SpeechToTextTemplate" name="tooso_speech_to_text_template" template="Bitbull_Tooso::sdk/speech_to_text_template.phtml" />
         </referenceContainer>
     </body>
 </page>
