@@ -109,13 +109,26 @@ class UrlRewriteSwitcher implements UrlRewriteSwitcherInterface
                 isset($queryStringParts[self::REDIRECT_AUTO_STORE_QUERY]) &&
                 $queryStringParts[self::REDIRECT_AUTO_STORE_QUERY] === self::REDIRECT_AUTO_STORE_QUERY_VALUE
             ) {
+                // Get current store
+                $currentStore = $this->storeManager->getStore();
+
                 // Elaborate store code from path
-                $urlPathParts = explode('/', ltrim(parse_url($redirectUrl, PHP_URL_PATH), '/'));
-                $storeCodeRedirect = array_shift($urlPathParts);
-                $urlPath = implode('/', $urlPathParts);
+                $path = parse_url($redirectUrl, PHP_URL_PATH);
+                if ($path === null) {
+                    $storeCodeRedirect = $currentStore->getCode();
+                    $urlPath = '/';
+                    $this->logger->warn("[url rewrite] Redirect '$redirectUrl' does not contain store code in path.");
+                }else{
+                    $urlPathParts = explode('/', ltrim($path, '/'));
+                    $storeCodeRedirect = array_shift($urlPathParts);
+                    $urlPath = implode('/', $urlPathParts);
+                }
                 try {
-                    $currentStore = $this->storeManager->getStore();
-                    $redirectStore = $this->storeRepository->get($storeCodeRedirect);
+                    if ($storeCodeRedirect !== $currentStore->getCode()) {
+                        $redirectStore = $this->storeRepository->get($storeCodeRedirect);
+                    }else{
+                        $redirectStore = $currentStore;
+                    }
 
                     // Get current rewrite
                     $currentRewrite = $this->urlFinder->findOneByData([
