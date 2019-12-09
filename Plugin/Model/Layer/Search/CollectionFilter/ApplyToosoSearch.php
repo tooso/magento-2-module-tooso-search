@@ -188,7 +188,8 @@ class ApplyToosoSearch extends \Magento\CatalogSearch\Model\Layer\Search\Plugin\
                 /**
                  * Be compatible with both \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection and \Magento\Catalog\Model\ResourceModel\Product\Collection
                  */
-                if ($collection instanceof \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection) {
+                if ($collection instanceof \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection ||
+                    $collection instanceof \Magento\Catalog\Model\ResourceModel\Product\Collection) {
                     $collection->addAttributeToFilter('entity_id', [
                         'in' => $products
                     ]);
