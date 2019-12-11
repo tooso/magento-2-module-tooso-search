@@ -14,11 +14,11 @@ define([
      * @param customerInfo
      */
     function executePageTracking(customerInfo) {
-        if (alreadySent) {
-            return;
-        }
         if (customerInfo && customerInfo.customerId) {
             window.ta('set', 'userId', customerInfo.customerId);
+        }
+        if (alreadySent) {
+            return;
         }
         window.ta('send', 'pageview');
         if (timeout !== null) {
