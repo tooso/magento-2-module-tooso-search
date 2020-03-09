@@ -103,4 +103,8 @@
         <plugin name="tooso_additional_section_data" type="Bitbull\Tooso\Plugin\CustomerData\AddDataForCustomerSection" />
     </type>
 
+    <type name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection\SearchResultApplier">
+        <plugin name="tooso_disable_result_applier" type="Bitbull\Tooso\Plugin\Model\ResourceModel\Fulltext\Collection\SearchResultApplier\DisableApply" />
+    </type>
+
 </config>
