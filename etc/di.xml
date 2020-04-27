@@ -107,4 +107,5 @@
         <plugin name="tooso_disable_result_applier" type="Bitbull\Tooso\Plugin\Model\ResourceModel\Fulltext\Collection\SearchResultApplier\DisableApply" />
     </type>
 
+    <preference for="Magento\CatalogSearch\Model\ResourceModel\Fulltext\SearchCollection" type="Bitbull\Tooso\Model\ResourceModel\Fulltext\Collection"/>
 </config>
