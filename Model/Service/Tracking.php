@@ -2,20 +2,20 @@
 
 namespace Bitbull\Tooso\Model\Service;
 
-use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Bitbull\Tooso\Api\Service\Config\AnalyticsConfigInterface;
+use Bitbull\Tooso\Api\Service\ConfigInterface;
 use Bitbull\Tooso\Api\Service\LoggerInterface;
 use Bitbull\Tooso\Api\Service\SessionInterface;
 use Bitbull\Tooso\Api\Service\TrackingInterface;
-use Magento\Framework\App\ProductMetadataInterface;
-use Magento\Framework\HTTP\Header;
-use Magento\Framework\UrlInterface;
-use Magento\Framework\App\Request\Http as RequestHttp;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
-use Tooso\SDK\ClientBuilder;
+use Magento\Framework\App\ProductMetadataInterface;
+use Magento\Framework\App\Request\Http as RequestHttp;
+use Magento\Framework\HTTP\Header;
+use Magento\Framework\UrlInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Tooso\SDK\Client;
+use Tooso\SDK\ClientBuilder;
 use Tooso\SDK\Exception;
 
 class Tracking implements TrackingInterface
@@ -179,9 +179,9 @@ class Tracking implements TrackingInterface
     public function getApiAgent()
     {
         return implode(' ', [
-            'PHP/'.$this->getPHPVersion(),
-            'Magento/'.$this->getMagentoVersion(),
-            'Tooso/'.$this->getModuleVersion(),
+            'PHP/' . $this->getPHPVersion(),
+            'Magento/' . $this->getMagentoVersion(),
+            'Tooso/' . $this->getModuleVersion(),
         ]);
     }
 
@@ -225,12 +225,12 @@ class Tracking implements TrackingInterface
         ];
 
         $categoryIds = $product->getCategoryIds();
-        if(count($categoryIds) > 0){
-            if(!isset($this->categories[$categoryIds[0]])){
+        if ($categoryIds !== null && count($categoryIds) > 0) {
+            if (!isset($this->categories[$categoryIds[0]])) {
                 $this->loadCategory($categoryIds[0]);
             }
             $trackingProductParams['category'] = $this->categories[$categoryIds[0]]->getName();
-        }else{
+        } else {
             $trackingProductParams['category'] = null;
         }
 
@@ -256,7 +256,7 @@ class Tracking implements TrackingInterface
     {
         $categoriesCollection = $this->categoryCollectionFactory->create()
             ->addAttributeToSelect('name')
-            ->addFieldToFilter('entity_id', array_map(function($id) {
+            ->addFieldToFilter('entity_id', array_map(function ($id) {
                 return (string) $id; // fix wrong interpolation with 0
             }, $ids));
 
@@ -286,7 +286,7 @@ class Tracking implements TrackingInterface
     public function getRemoteAddr()
     {
         $remoteAddr = $this->request->getClientIp(true);
-        if ($remoteAddr !== null && strpos($remoteAddr, ',') !== false){
+        if ($remoteAddr !== null && strpos($remoteAddr, ',') !== false) {
             $remoteAddrParts = explode(',', $remoteAddr);
             $remoteAddr = $remoteAddrParts[0];
         }
@@ -342,9 +342,9 @@ class Tracking implements TrackingInterface
         ], $profilingParams, $params);
 
         $client = $this->getClient();
-        try{
+        try {
             $client->doRequest('collect', Client::HTTP_METHOD_GET, $params, self::TRACKING_REQUEST_TIMEOUT, true);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             $this->logger->logException($e);
             return false;
         }
