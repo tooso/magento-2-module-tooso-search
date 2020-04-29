@@ -4,8 +4,6 @@
         <title translate="true">Tooso Catalog</title>
         <description translate="true">Catalog syncronization with Tooso service</description>
         <dependencies>
-            <indexer id="catalog_product_flat" />
-            <indexer id="catalog_category_flat" />
             <indexer id="catalog_category_product" />
             <indexer id="catalog_product_category" />
             <indexer id="catalog_product_price" />
